@@ -189,8 +189,6 @@ map <C-b> :NERDTreeToggle<CR>
 nnoremap <leader>s :so %<CR>
 
 " search and replace
-nnoremap <leader>r :%s/
-
 nmap <leader>gs :Gstatus<cr>
 nmap <leader>gc :Gcommit<cr>
 nmap <leader>gd :Gdiff<cr>
@@ -227,6 +225,12 @@ omap F <Plug>Sneak_F
 
 nnoremap <Leader>jj :Ttoggle<CR>
 tnoremap jj <C-\><C-n> :Ttoggle<CR>
+
+" Quickly edit and source config files
+noremap <leader>ec :tabe ~/.config/nvim/init.vim<CR>
+noremap <leader>sc :source ~/.config/nvim/init.vim<CR>
+noremap <leader>et :tabe ~/.tmux.conf<CR>
+noremap <leader>eg :tabe ~/.gitconfig<CR>
 
 "*****************************************************************************
 "" Configs
@@ -309,7 +313,7 @@ let g:startify_list_order = [
 "let g:ale_set_loclist = 0
 "let g:ale_set_quickfix = 1
 "let g:ale_open_list = 1
-"let g:ale_lint_on_text_changed = 'never'
+let g:ale_sign_column_always = 1
 
 " NCM
 "let g:cm_refresh_default_min_word_len = [[1, 2]]

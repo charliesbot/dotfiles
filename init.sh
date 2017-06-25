@@ -24,5 +24,4 @@ ln -s ~/dotfiles/tmux.conf ~/.tmux.conf
 ln -s ~/dotfiles/vimrc ~/.config/nvim/init.vim
 
 # Writting vim will launch nvim
-# alias vim="nvim" to your init.sh
-
+alias vim="nvim"
