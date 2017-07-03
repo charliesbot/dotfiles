@@ -57,8 +57,8 @@ Plug 'pangloss/vim-javascript'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'pbogut/deoplete-elm'
 Plug 'wokalski/autocomplete-flow'
-"Plug 'Shougo/neosnippet'
-"Plug 'Shougo/neosnippet-snippets'
+Plug 'Shougo/neosnippet'
+Plug 'Shougo/neosnippet-snippets'
 
 " NCM
 "Plug 'roxma/nvim-completion-manager'
@@ -91,6 +91,7 @@ Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'jreybert/vimagit'
+Plug 'idanarye/vim-merginal'
 
 " Multiple Cursors
 Plug 'terryma/vim-multiple-cursors'
@@ -227,8 +228,8 @@ nnoremap <Leader>jj :Ttoggle<CR>
 tnoremap jj <C-\><C-n> :Ttoggle<CR>
 
 " Quickly edit and source config files
-noremap <leader>ec :tabe ~/.config/nvim/init.vim<CR>
-noremap <leader>sc :source ~/.config/nvim/init.vim<CR>
+noremap <leader>ev :tabe ~/.config/nvim/init.vim<CR>
+noremap <leader>sv :source ~/.config/nvim/init.vim<CR>
 noremap <leader>et :tabe ~/.tmux.conf<CR>
 noremap <leader>eg :tabe ~/.gitconfig<CR>
 
