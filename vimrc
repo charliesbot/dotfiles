@@ -225,7 +225,8 @@ omap f <Plug>Sneak_f
 omap F <Plug>Sneak_F
 
 nnoremap <Leader>jj :Ttoggle<CR>
-tnoremap jj <C-\><C-n> :Ttoggle<CR>
+tnoremap jj <C-\><C-n> :TtoggleAll<CR>
+tnoremap <esc> <C-\><C-n><CR>
 
 " Quickly edit and source config files
 noremap <leader>ev :tabe ~/.config/nvim/init.vim<CR>
