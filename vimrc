@@ -55,18 +55,10 @@ Plug 'pangloss/vim-javascript'
 " Autocomplete
 " Deoplete
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'pbogut/deoplete-elm'
+Plug 'pbogut/deoplete-elm', { 'for': ['elm'] }
 Plug 'wokalski/autocomplete-flow'
 Plug 'Shougo/neosnippet'
 Plug 'Shougo/neosnippet-snippets'
-
-" NCM
-"Plug 'roxma/nvim-completion-manager'
-"Plug 'roxma/nvim-cm-tern',  {'do': 'npm install', 'for': ['javascript']}
-"Plug 'roxma/ncm-elm-oracle', { 'for': ['elm'] }
-"Plug 'Shougo/neoinclude.vim'
-"Plug 'roxma/ncm-flow'
-"Plug 'flowtype/vim-flow'
 
 " Syntax
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
@@ -91,13 +83,9 @@ Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'jreybert/vimagit'
-Plug 'idanarye/vim-merginal'
 
 " Multiple Cursors
 Plug 'terryma/vim-multiple-cursors'
-
-" Display the indention levels with thin vertical lines
-"Plug 'Yggdroot/indentLine'
 
 " Emmet
 Plug 'mattn/emmet-vim'
@@ -110,9 +98,6 @@ Plug 'wellle/targets.vim'
 
 " Highlight White Space
 Plug 'ntpeters/vim-better-whitespace'
-
-" Tmux Navigator
-"Plug 'christoomey/vim-tmux-navigator'
 
 call plug#end()
 
@@ -225,8 +210,10 @@ omap f <Plug>Sneak_f
 omap F <Plug>Sneak_F
 
 nnoremap <Leader>jj :Ttoggle<CR>
-tnoremap jj <C-\><C-n> :TtoggleAll<CR>
-tnoremap <esc> <C-\><C-n><CR>
+tnoremap jj <C-\><C-n> :Ttoggle<CR>
+
+" find git merge conflict markers
+nmap <silent> <leader>fc <ESC>/\v^[<=>]{7}( .*\|$)<CR>
 
 " Quickly edit and source config files
 noremap <leader>ev :tabe ~/.config/nvim/init.vim<CR>
@@ -252,7 +239,7 @@ let g:multi_cursor_quit_key='<Esc>'
 let g:sneak#s_next = 1
 
 " Magit
-let g:magit_show_magit_mapping='<leader>gm'
+let g:magit_show_magit_mapping='<leader>m'
 
 " JSX syntax in JS files
 let g:jsx_ext_required = 0
@@ -316,9 +303,6 @@ let g:startify_list_order = [
 "let g:ale_set_quickfix = 1
 "let g:ale_open_list = 1
 let g:ale_sign_column_always = 1
-
-" NCM
-"let g:cm_refresh_default_min_word_len = [[1, 2]]
 
 " Deoplete
 let g:deoplete#enable_at_startup = 1
