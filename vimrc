@@ -213,7 +213,7 @@ nnoremap <Leader>jj :Ttoggle<CR>
 tnoremap jj <C-\><C-n> :Ttoggle<CR>
 
 " find git merge conflict markers
-nmap <silent> <leader>fc <ESC>/\v^[<=>]{7}( .*\|$)<CR>
+nmap <silent> <leader>c <ESC>/\v^[<=>]{7}( .*\|$)<CR>
 
 " Quickly edit and source config files
 noremap <leader>ev :tabe ~/.config/nvim/init.vim<CR>
