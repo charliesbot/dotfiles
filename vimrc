@@ -48,6 +48,7 @@ Plug 'sheerun/vim-polyglot'
 Plug 'othree/javascript-libraries-syntax.vim'
 Plug 'ElmCast/elm-vim'
 Plug 'pangloss/vim-javascript'
+Plug 'fleischie/vim-styled-components'
 "Plug 'othree/yajs.vim'
 "Plug 'othree/es.next.syntax.vim'
 "Plug 'flowtype/vim-flow', { 'for': 'javascript.jsx' }
