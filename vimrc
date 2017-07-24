@@ -14,6 +14,7 @@ Plug 'trevordmiller/nova-vim'
 
 Plug 'mhinz/vim-startify'
 
+" Search
 Plug 'nelstrom/vim-visual-star-search'
 
 " Tree
@@ -57,9 +58,7 @@ Plug 'fleischie/vim-styled-components'
 " Deoplete
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'pbogut/deoplete-elm', { 'for': ['elm'] }
-Plug 'wokalski/autocomplete-flow'
-Plug 'Shougo/neosnippet'
-Plug 'Shougo/neosnippet-snippets'
+Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
 
 " Syntax
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
@@ -152,6 +151,8 @@ let mapleader=' '
 
 let g:onedark_terminal_italics = 1
 let g:one_allow_italics = 1
+let g:oceanic_next_terminal_bold = 1
+let g:oceanic_next_terminal_italic = 1
 set background=dark
 "colorscheme PaperColor
 "colorscheme one
@@ -159,6 +160,7 @@ colorscheme neodark
 "colorscheme nova
 "colorscheme onedark
 "colorscheme cobalt2
+"colorscheme OceanicNext
 
 hi htmlArg gui=italic
 hi Comment gui=italic
@@ -172,9 +174,6 @@ hi Type    cterm=italic
 "*****************************************************************************
 map <C-b> :NERDTreeToggle<CR>
 
-" Resource vimrc
-nnoremap <leader>s :so %<CR>
-
 " search and replace
 nmap <leader>gs :Gstatus<cr>
 nmap <leader>gc :Gcommit<cr>
@@ -185,6 +184,9 @@ nmap <leader>gP :Gpush<cr>
 nnoremap <C-p> :GitFiles<CR>
 nnoremap <C-P> :FZF<CR>
 nnoremap <C-f> :Ag 
+
+" search current word under cursor
+nnoremap <silent> <Leader>ag :Ag <C-R><C-W><CR>
 
 " Have the indent commands re-highlight the last visual selection to make
 " multiple indentations easier
@@ -218,7 +220,7 @@ nmap <silent> <leader>c <ESC>/\v^[<=>]{7}( .*\|$)<CR>
 
 " Quickly edit and source config files
 noremap <leader>ev :tabe ~/.config/nvim/init.vim<CR>
-noremap <leader>sv :source ~/.config/nvim/init.vim<CR>
+noremap <leader>s :source ~/.config/nvim/init.vim<CR>
 noremap <leader>et :tabe ~/.tmux.conf<CR>
 noremap <leader>eg :tabe ~/.gitconfig<CR>
 
@@ -308,7 +310,8 @@ let g:ale_sign_column_always = 1
 " Deoplete
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#file#enable_buffer_path = 1
-let g:neosnippet#enable_completed_snippet = 1
+let g:deoplete#auto_complete_delay = 0
+let g:deoplete#max_list = 20
 
 " Neoformat
 let g:neoformat_javascript_prettier = {
@@ -336,11 +339,11 @@ let g:airline#extensions#branch#enabled = 0 " Disable branch
 let g:polyglot_disabled = ['elm', 'javascript']
 
 " LanguageClient
-" Automatically start language servers.
-"let g:LanguageClient_serverCommands = {
-      "\ 'javascript.jsx': ['javascript-typescript-stdio'],
-    "\ }
-"let g:LanguageClient_autoStart = 1
+let g:LanguageClient_serverCommands = {
+\ 'javascript': ['flow-language-server', '--stdio'],
+\ 'javascript.jsx': ['flow-language-server', '--stdio'],
+\ }
+let g:LanguageClient_autoStart = 1
 
 "FZF + ripgrep
 " --column: Show column number
