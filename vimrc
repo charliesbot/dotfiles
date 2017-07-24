@@ -120,6 +120,9 @@ set whichwrap=b,s,h,l,<,>,[,]         " backspace and cursor keys wrap too
 set showmatch                         " highlight matching parenthesis
 set updatetime=250                    " Update file each 250ms
 
+set foldmethod=syntax
+set foldlevel=99
+
 " searching
 set ignorecase                        " set case insensitive searching
 set smartcase                         " case sensitive searching when not all lowercase
@@ -187,6 +190,9 @@ nnoremap <C-f> :Ag
 
 " search current word under cursor
 nnoremap <silent> <Leader>ag :Ag <C-R><C-W><CR>
+
+nnoremap zC zM
+nnoremap zO zR
 
 " Have the indent commands re-highlight the last visual selection to make
 " multiple indentations easier
