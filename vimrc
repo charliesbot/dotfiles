@@ -20,9 +20,6 @@ Plug 'nelstrom/vim-visual-star-search'
 " Tree
 Plug 'scrooloose/nerdtree'
 
-" Denite
-"Plug 'Shougo/denite.nvim'
-
 " Visual tab {bottom}
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -35,7 +32,6 @@ Plug 'ervandew/supertab'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all'  }
 Plug 'junegunn/fzf.vim'
 Plug 'ryanoasis/vim-devicons'
-Plug 'alvan/vim-closetag'
 Plug 'matze/vim-move'
 Plug 't9md/vim-choosewin'
 Plug 'dominikduda/vim_current_word'
@@ -46,19 +42,23 @@ Plug 'kassio/neoterm'
 
 " Language Support
 Plug 'sheerun/vim-polyglot'
+Plug 'hail2u/vim-css3-syntax'
 Plug 'othree/javascript-libraries-syntax.vim'
 Plug 'ElmCast/elm-vim'
 Plug 'pangloss/vim-javascript'
 Plug 'fleischie/vim-styled-components'
+Plug 'reasonml-editor/vim-reason'
 "Plug 'othree/yajs.vim'
 "Plug 'othree/es.next.syntax.vim'
 "Plug 'flowtype/vim-flow', { 'for': 'javascript.jsx' }
 
 " Autocomplete
-" Deoplete
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'pbogut/deoplete-elm', { 'for': ['elm'] }
+Plug 'roxma/nvim-completion-manager'
+Plug 'roxma/ncm-elm-oracle'
+Plug 'othree/csscomplete.vim'
 Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
+Plug 'reasonml-editor/vim-reason'
+Plug 'Shougo/echodoc.vim'
 
 " Syntax
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
@@ -83,6 +83,7 @@ Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'jreybert/vimagit'
+Plug 'idanarye/vim-merginal'
 
 " Multiple Cursors
 Plug 'terryma/vim-multiple-cursors'
@@ -105,6 +106,7 @@ call plug#end()
 "" Settings
 "*****************************************************************************
 set termguicolors                     " enable true colors
+set hidden
 
 " Indentation
 set expandtab
@@ -120,8 +122,8 @@ set whichwrap=b,s,h,l,<,>,[,]         " backspace and cursor keys wrap too
 set showmatch                         " highlight matching parenthesis
 set updatetime=250                    " Update file each 250ms
 
-set foldmethod=syntax
-set foldlevel=99
+"set foldmethod=syntax
+"set foldlevel=99
 
 " searching
 set ignorecase                        " set case insensitive searching
@@ -178,21 +180,29 @@ hi Type    cterm=italic
 map <C-b> :NERDTreeToggle<CR>
 
 " search and replace
-nmap <leader>gs :Gstatus<cr>
-nmap <leader>gc :Gcommit<cr>
-nmap <leader>gd :Gdiff<cr>
-nmap <leader>gp :Gpull<cr>
-nmap <leader>gP :Gpush<cr>
+nnoremap <leader>gs :Gstatus<cr>
+nnoremap <leader>gc :Gcommit<cr>
+nnoremap <leader>gd :Gdiff<cr>
+nnoremap <leader>gp :Gpull<cr>
+nnoremap <leader>gP :Gpush<cr>
 
 nnoremap <C-p> :GitFiles<CR>
 nnoremap <C-P> :FZF<CR>
 nnoremap <C-f> :Ag 
 
+nnoremap <leader>gm :MerginalToggle<CR>
+
 " search current word under cursor
 nnoremap <silent> <Leader>ag :Ag <C-R><C-W><CR>
 
+" replace text under cursor
+nnoremap <silent><Leader>r :%s/<C-R><C-W>/
+
 nnoremap zC zM
 nnoremap zO zR
+
+nnoremap <silent> gh :call LanguageClient_textDocument_hover()<CR>
+nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
 
 " Have the indent commands re-highlight the last visual selection to make
 " multiple indentations easier
@@ -222,13 +232,16 @@ nnoremap <Leader>jj :Ttoggle<CR>
 tnoremap jj <C-\><C-n> :Ttoggle<CR>
 
 " find git merge conflict markers
-nmap <silent> <leader>c <ESC>/\v^[<=>]{7}( .*\|$)<CR>
+noremap <silent> <leader>c <ESC>/\v^[<=>]{7}( .*\|$)<CR>
 
 " Quickly edit and source config files
 noremap <leader>ev :tabe ~/.config/nvim/init.vim<CR>
 noremap <leader>s :source ~/.config/nvim/init.vim<CR>
 noremap <leader>et :tabe ~/.tmux.conf<CR>
 noremap <leader>eg :tabe ~/.gitconfig<CR>
+
+" LSP
+nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
 
 "*****************************************************************************
 "" Configs
@@ -313,11 +326,8 @@ let g:startify_list_order = [
 "let g:ale_open_list = 1
 let g:ale_sign_column_always = 1
 
-" Deoplete
-let g:deoplete#enable_at_startup = 1
-let g:deoplete#file#enable_buffer_path = 1
-let g:deoplete#auto_complete_delay = 0
-let g:deoplete#max_list = 20
+" NCM
+let g:cm_refresh_default_min_word_len = [[1, 2]]
 
 " Neoformat
 let g:neoformat_javascript_prettier = {
@@ -326,28 +336,25 @@ let g:neoformat_javascript_prettier = {
             \ 'stdin': 1,
             \ }
 
-" format on save
-"augroup fmt
-  "autocmd!
-  ""autocmd BufWritePre *.js,*.py,*.elm Neoformat
-  "autocmd BufWritePre *.js Neoformat prettier
-"augroup END
-
 " Airline
 let g:airline_section_z="%l/%c"
 let g:airline_theme='neodark'
-"
+let g:airline#extensions#ale#enabled = 1
+
 " Disable git changes
 let g:airline#extensions#hunks#enabled = 0
 let g:airline#extensions#branch#enabled = 0 " Disable branch
 
 " Polyglot
-let g:polyglot_disabled = ['elm', 'javascript']
+let g:polyglot_disabled = ['elm', 'javascript', 'css']
+
+autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS noci
 
 " LanguageClient
 let g:LanguageClient_serverCommands = {
 \ 'javascript': ['flow-language-server', '--stdio'],
 \ 'javascript.jsx': ['flow-language-server', '--stdio'],
+\ 'reason': ['ocaml-language-server', '--stdio']
 \ }
 let g:LanguageClient_autoStart = 1
 
