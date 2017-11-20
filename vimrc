@@ -143,7 +143,6 @@ set fileencodings=utf-8
 
 set shortmess+=c
 
-
 "*****************************************************************************
 "" Visual Settings
 "*****************************************************************************
@@ -158,6 +157,7 @@ let g:oceanic_next_terminal_italic = 1
 let g:gruvbox_italic = 1
 set background=dark
 set t_ut=
+
 "colorscheme gruvbox
 "colorscheme PaperColor
 "colorscheme one
