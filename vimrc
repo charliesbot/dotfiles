@@ -4,13 +4,13 @@
 call plug#begin('~/.vim/plugged')
 
 " Theme
-Plug 'mhartington/oceanic-next'
 Plug 'NLKNguyen/papercolor-theme'
 Plug 'joshdick/onedark.vim'
 Plug 'rakr/vim-one'
 Plug 'KeitaNakamura/neodark.vim'
 Plug 'pwntester/cobalt2.vim'
 Plug 'trevordmiller/nova-vim'
+Plug 'morhetz/gruvbox'
 
 Plug 'mhinz/vim-startify'
 
@@ -36,6 +36,8 @@ Plug 'matze/vim-move'
 Plug 't9md/vim-choosewin'
 Plug 'dominikduda/vim_current_word'
 Plug 'tpope/vim-repeat'
+Plug 'Konfekt/FastFold'
+Plug 'chrisbra/Colorizer'
 
 " Neoterm
 Plug 'kassio/neoterm'
@@ -46,18 +48,14 @@ Plug 'hail2u/vim-css3-syntax'
 Plug 'othree/javascript-libraries-syntax.vim'
 Plug 'ElmCast/elm-vim'
 Plug 'pangloss/vim-javascript'
-Plug 'fleischie/vim-styled-components'
-Plug 'reasonml-editor/vim-reason'
-"Plug 'othree/yajs.vim'
-"Plug 'othree/es.next.syntax.vim'
-"Plug 'flowtype/vim-flow', { 'for': 'javascript.jsx' }
+Plug 'styled-components/vim-styled-components'
 
 " Autocomplete
 Plug 'roxma/nvim-completion-manager'
 Plug 'roxma/ncm-elm-oracle'
 Plug 'othree/csscomplete.vim'
 Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
-Plug 'reasonml-editor/vim-reason'
+Plug 'reasonml-editor/vim-reason-plus', { 'for': 'reason' }
 Plug 'Shougo/echodoc.vim'
 
 " Syntax
@@ -83,7 +81,6 @@ Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'jreybert/vimagit'
-Plug 'idanarye/vim-merginal'
 
 " Multiple Cursors
 Plug 'terryma/vim-multiple-cursors'
@@ -122,8 +119,8 @@ set whichwrap=b,s,h,l,<,>,[,]         " backspace and cursor keys wrap too
 set showmatch                         " highlight matching parenthesis
 set updatetime=250                    " Update file each 250ms
 
-"set foldmethod=syntax
-"set foldlevel=99
+set foldmethod=syntax
+set foldlevel=99
 
 " searching
 set ignorecase                        " set case insensitive searching
@@ -158,21 +155,21 @@ let g:onedark_terminal_italics = 1
 let g:one_allow_italics = 1
 let g:oceanic_next_terminal_bold = 1
 let g:oceanic_next_terminal_italic = 1
+let g:gruvbox_italic = 1
 set background=dark
+set t_ut=
+"colorscheme gruvbox
 "colorscheme PaperColor
 "colorscheme one
-colorscheme neodark
-"colorscheme nova
+"colorscheme neodark
+colorscheme nova
 "colorscheme onedark
 "colorscheme cobalt2
 "colorscheme OceanicNext
 
-hi htmlArg gui=italic
-hi Comment gui=italic
-hi Type    gui=italic
-hi htmlArg cterm=italic
-hi Comment cterm=italic
-hi Type    cterm=italic
+hi Comment cterm=italic gui=italic
+hi htmlArg cterm=italic gui=italic
+hi Type    cterm=italic gui=italic
 
 "*****************************************************************************
 "" Mappings
@@ -215,6 +212,7 @@ inoremap <expr> <CR> pumvisible() ? "\<C-Y>" : "\<CR>"
 nnoremap <esc> :noh<return><esc>
 
 noremap <Leader>f :Neoformat<CR>
+autocmd FileType reason map <buffer> <Leader>f :ReasonPrettyPrint<Cr>
 
 nnoremap <Leader>d :ALEDetail<CR>
 nnoremap <Leader>n :ALENextWrap<CR>
@@ -230,6 +228,9 @@ omap F <Plug>Sneak_F
 
 nnoremap <Leader>jj :Ttoggle<CR>
 tnoremap jj <C-\><C-n> :Ttoggle<CR>
+
+nnoremap <Leader>v :vnew<CR>
+nnoremap <Leader>V :vsplit<CR>
 
 " find git merge conflict markers
 noremap <silent> <leader>c <ESC>/\v^[<=>]{7}( .*\|$)<CR>
@@ -329,13 +330,6 @@ let g:ale_sign_column_always = 1
 " NCM
 let g:cm_refresh_default_min_word_len = [[1, 2]]
 
-" Neoformat
-let g:neoformat_javascript_prettier = {
-            \ 'exe': 'prettier',
-            \ 'args': ['--stdin', '--single-quote', 'true', '--trailing-comma', 'es5', '--arrow-parens', 'true'],
-            \ 'stdin': 1,
-            \ }
-
 " Airline
 let g:airline_section_z="%l/%c"
 let g:airline_theme='neodark'
@@ -352,11 +346,23 @@ autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS noci
 
 " LanguageClient
 let g:LanguageClient_serverCommands = {
-\ 'javascript': ['flow-language-server', '--stdio'],
-\ 'javascript.jsx': ['flow-language-server', '--stdio'],
-\ 'reason': ['ocaml-language-server', '--stdio']
-\ }
+      \ 'javascript': ['flow-language-server', '--stdio'],
+      \ 'javascript.jsx': ['flow-language-server', '--stdio'],
+      \ 'reason': ['ocaml-language-server', '--stdio'],
+      \ 'ocaml': ['ocaml-language-server', '--stdio'],
+      \ }
+
 let g:LanguageClient_autoStart = 1
+
+let g:ale_linters = {'jsx': ['stylelint', 'eslint']}
+let g:ale_linter_aliases = {'jsx': 'css'}
+
+" Neoformat
+let g:neoformat_javascript_prettier = {
+            \ 'exe': 'prettier',
+            \ 'args': ['--stdin', '--single-quote', 'true', '--trailing-comma', 'es5'],
+            \ 'stdin': 1,
+            \ }
 
 "FZF + ripgrep
 " --column: Show column number
