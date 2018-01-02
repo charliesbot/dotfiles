@@ -54,7 +54,7 @@ Plug 'styled-components/vim-styled-components'
 Plug 'roxma/nvim-completion-manager'
 Plug 'roxma/ncm-elm-oracle'
 Plug 'othree/csscomplete.vim'
-Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
+Plug 'autozimu/LanguageClient-neovim', { 'tag': 'binary-*-x86_64-apple-darwin' }
 Plug 'reasonml-editor/vim-reason-plus', { 'for': 'reason' }
 Plug 'Shougo/echodoc.vim'
 
@@ -161,11 +161,10 @@ set t_ut=
 "colorscheme gruvbox
 "colorscheme PaperColor
 "colorscheme one
-"colorscheme neodark
-colorscheme nova
+colorscheme neodark
+"colorscheme nova
 "colorscheme onedark
 "colorscheme cobalt2
-"colorscheme OceanicNext
 
 hi Comment cterm=italic gui=italic
 hi htmlArg cterm=italic gui=italic
@@ -187,8 +186,6 @@ nnoremap <C-p> :GitFiles<CR>
 nnoremap <C-P> :FZF<CR>
 nnoremap <C-f> :Ag 
 
-nnoremap <leader>gm :MerginalToggle<CR>
-
 " search current word under cursor
 nnoremap <silent> <Leader>ag :Ag <C-R><C-W><CR>
 
@@ -198,6 +195,7 @@ nnoremap <silent><Leader>r :%s/<C-R><C-W>/
 nnoremap zC zM
 nnoremap zO zR
 
+" LSP
 nnoremap <silent> gh :call LanguageClient_textDocument_hover()<CR>
 nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
 
@@ -214,8 +212,11 @@ nnoremap <esc> :noh<return><esc>
 noremap <Leader>f :Neoformat<CR>
 autocmd FileType reason map <buffer> <Leader>f :ReasonPrettyPrint<Cr>
 
+" ALE
 nnoremap <Leader>d :ALEDetail<CR>
 nnoremap <Leader>n :ALENextWrap<CR>
+" Toggle the autoopening of lists
+nnoremap <silent><Leader>q :call ToggleAleAutoList()<CR>
 
 nmap <Leader>\ <Plug>(choosewin)
 
@@ -240,9 +241,6 @@ noremap <leader>ev :tabe ~/.config/nvim/init.vim<CR>
 noremap <leader>s :source ~/.config/nvim/init.vim<CR>
 noremap <leader>et :tabe ~/.tmux.conf<CR>
 noremap <leader>eg :tabe ~/.gitconfig<CR>
-
-" LSP
-nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
 
 "*****************************************************************************
 "" Configs
@@ -270,6 +268,14 @@ let g:javascript_plugin_flow = 1
 
 " Close Tag
 let g:closetag_filenames = "*.html,*.xhtml,*.phtml,*.php,*.js,*.jsx"
+
+" Git gutter
+let g:gitgutter_override_sign_column_highlight = 0
+"highlight! link GitGutterAdd SignColumn
+"highlight! link GitGutterDelete SignColumn
+"highlight! link GitGutterChange SignColumn
+"highlight! link GitGutterChangeDelete SignColumn
+highlight clear SignColumn
 
 " Javascript libs syntax
 let g:used_javascript_libs = 'react, ramda'
@@ -357,13 +363,6 @@ let g:LanguageClient_autoStart = 1
 let g:ale_linters = {'jsx': ['stylelint', 'eslint']}
 let g:ale_linter_aliases = {'jsx': 'css'}
 
-" Neoformat
-let g:neoformat_javascript_prettier = {
-            \ 'exe': 'prettier',
-            \ 'args': ['--stdin', '--single-quote', 'true', '--trailing-comma', 'es5'],
-            \ 'stdin': 1,
-            \ }
-
 "FZF + ripgrep
 " --column: Show column number
 " --line-number: Show line number
@@ -376,3 +375,26 @@ let g:neoformat_javascript_prettier = {
 " --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
 " --color: Search color options
 command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>), 1, <bang>0)
+
+" Toggles shows or hides the nonempty lists
+" and turns on Ales auto open
+fun! ToggleAleAutoList()
+  let l:winnr = winnr()
+  if g:ale_open_list
+    let g:ale_open_list = 0
+    cclose
+    lclose
+  else
+    if len(getqflist()) != 0
+      copen
+      stopinsert
+    endif
+    if len(getloclist(0)) != 0
+      lopen
+    endif
+    let g:ale_open_list = 1
+  endif
+  if l:winnr !=# winnr()
+      wincmd p
+  endif
+endfun
