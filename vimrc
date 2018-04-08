@@ -11,6 +11,10 @@ Plug 'KeitaNakamura/neodark.vim'
 Plug 'pwntester/cobalt2.vim'
 Plug 'trevordmiller/nova-vim'
 Plug 'morhetz/gruvbox'
+Plug 'tyrannicaltoucan/vim-quantum'
+Plug 'dracula/vim'
+Plug 'ayu-theme/ayu-vim'
+Plug 'skielbasa/vim-material-monokai'
 
 Plug 'mhinz/vim-startify'
 
@@ -48,19 +52,24 @@ Plug 'hail2u/vim-css3-syntax'
 Plug 'othree/javascript-libraries-syntax.vim'
 Plug 'ElmCast/elm-vim'
 Plug 'pangloss/vim-javascript'
+"Plug 'neoclide/vim-jsx-improve'
+Plug 'maxmellon/vim-jsx-pretty'
 Plug 'styled-components/vim-styled-components'
+Plug 'jparise/vim-graphql'
 
 " Autocomplete
 Plug 'roxma/nvim-completion-manager'
-Plug 'roxma/ncm-elm-oracle'
-Plug 'othree/csscomplete.vim'
-Plug 'autozimu/LanguageClient-neovim', { 'tag': 'binary-*-x86_64-apple-darwin' }
+Plug 'autozimu/LanguageClient-neovim', {
+      \ 'branch': 'next',
+      \ 'do': 'bash install.sh',
+      \ }
 Plug 'reasonml-editor/vim-reason-plus', { 'for': 'reason' }
 Plug 'Shougo/echodoc.vim'
 
 " Syntax
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'Valloric/MatchTagAlways'
+Plug 'plasticboy/vim-markdown'
 
 " Language Formatter
 Plug 'sbdchd/neoformat'
@@ -70,7 +79,8 @@ Plug 'editorconfig/editorconfig-vim'
 Plug 'w0rp/ale'
 
 " Quoting/parenthesizing
-Plug 'tpope/vim-surround'
+"Plug 'tpope/vim-surround'
+Plug 'machakann/vim-sandwich'
 Plug 'jiangmiao/auto-pairs'
 
 " Comments
@@ -78,6 +88,7 @@ Plug 'scrooloose/nerdcommenter'
 
 " Git
 Plug 'airblade/vim-gitgutter'
+"Plug 'mhinz/vim-signify'
 Plug 'tpope/vim-fugitive'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'jreybert/vimagit'
@@ -104,6 +115,7 @@ call plug#end()
 "*****************************************************************************
 set termguicolors                     " enable true colors
 set hidden
+set nopaste
 
 " Indentation
 set expandtab
@@ -113,11 +125,10 @@ set softtabstop=2
 set splitright                        " vsplit at right side"
 set cursorline
 set number
-set relativenumber
 set wildmode=longest:list,full        " command line completion
 set whichwrap=b,s,h,l,<,>,[,]         " backspace and cursor keys wrap too
 set showmatch                         " highlight matching parenthesis
-set updatetime=250                    " Update file each 250ms
+set updatetime=100                    " Update file each 250ms
 
 set foldmethod=syntax
 set foldlevel=99
@@ -155,20 +166,29 @@ let g:one_allow_italics = 1
 let g:oceanic_next_terminal_bold = 1
 let g:oceanic_next_terminal_italic = 1
 let g:gruvbox_italic = 1
+let g:neodark#solid_vertsplit = 1
+let g:materialmonokai_italic = 1
+let ayucolor="mirage"
 set background=dark
 set t_ut=
 
 "colorscheme gruvbox
 "colorscheme PaperColor
 "colorscheme one
-colorscheme neodark
+"colorscheme neodark
 "colorscheme nova
 "colorscheme onedark
 "colorscheme cobalt2
+"colorscheme quantum
+"colorscheme ayu
+colorscheme material-monokai
+"colorscheme dracula
 
-hi Comment cterm=italic gui=italic
-hi htmlArg cterm=italic gui=italic
-hi Type    cterm=italic gui=italic
+hi Comment   cterm=italic gui=italic
+hi htmlArg   cterm=italic gui=italic
+hi Type      cterm=italic gui=italic
+hi xmlAttrib cterm=italic gui=italic
+hi jsxAttrib cterm=italic gui=italic
 
 "*****************************************************************************
 "" Mappings
@@ -184,6 +204,9 @@ nnoremap <leader>gP :Gpush<cr>
 
 nnoremap <C-p> :GitFiles<CR>
 nnoremap <C-P> :FZF<CR>
+nnoremap <leader>ff :Files<cr>
+nnoremap <leader>fb :Buffers<cr>
+nnoremap <leader>fg :GFiles<cr>
 nnoremap <C-f> :Ag 
 
 " search current word under cursor
@@ -195,9 +218,12 @@ nnoremap <silent><Leader>r :%s/<C-R><C-W>/
 nnoremap zC zM
 nnoremap zO zR
 
+nnoremap zz <C-w>|
+
 " LSP
 nnoremap <silent> gh :call LanguageClient_textDocument_hover()<CR>
 nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
+nnoremap <silent> gf :call LanguageClient_textDocument_formatting()<CR>
 
 " Have the indent commands re-highlight the last visual selection to make
 " multiple indentations easier
@@ -210,7 +236,6 @@ inoremap <expr> <CR> pumvisible() ? "\<C-Y>" : "\<CR>"
 nnoremap <esc> :noh<return><esc>
 
 noremap <Leader>f :Neoformat<CR>
-autocmd FileType reason map <buffer> <Leader>f :ReasonPrettyPrint<Cr>
 
 " ALE
 nnoremap <Leader>d :ALEDetail<CR>
@@ -230,7 +255,12 @@ omap F <Plug>Sneak_F
 nnoremap <Leader>jj :Ttoggle<CR>
 tnoremap jj <C-\><C-n> :Ttoggle<CR>
 
-nnoremap <Leader>v :vnew<CR>
+" Create new file from current buffer path
+function! s:CreateNewFile(fileName)
+  execute "vnew %:h/" . a:fileName
+endfunction
+command! -nargs=1 Nfile call s:CreateNewFile(<f-args>)
+
 nnoremap <Leader>V :vsplit<CR>
 
 " find git merge conflict markers
@@ -250,6 +280,11 @@ noremap <leader>eg :tabe ~/.gitconfig<CR>
 let g:neoterm_window = '10new'
 let g:neoterm_autoinsert = 1
 
+" Neoformat
+let g:neoformat_basic_format_align = 1
+let g:neoformat_basic_format_retab = 1
+let g:neoformat_basic_format_trim = 1
+
 " Vim multiple cursors
 let g:multi_cursor_next_key='<C-n>'
 let g:multi_cursor_prev_key='<C-m>'
@@ -266,15 +301,13 @@ let g:magit_show_magit_mapping='<leader>m'
 let g:jsx_ext_required = 0
 let g:javascript_plugin_flow = 1
 
+let g:vim_jsx_pretty_colorful_config = 1
+
 " Close Tag
 let g:closetag_filenames = "*.html,*.xhtml,*.phtml,*.php,*.js,*.jsx"
 
 " Git gutter
 let g:gitgutter_override_sign_column_highlight = 0
-"highlight! link GitGutterAdd SignColumn
-"highlight! link GitGutterDelete SignColumn
-"highlight! link GitGutterChange SignColumn
-"highlight! link GitGutterChangeDelete SignColumn
 highlight clear SignColumn
 
 " Javascript libs syntax
@@ -286,10 +319,6 @@ set completeopt-=preview " hide preview function window"
 let NERDTreeShowHidden=1
 let NERDTreeIgnore=['\.DS_Store', '\~$', '\.swp']
 let g:nerdtree_tabs_focus_on_files = 1
-
-" indentLine
-let g:indentLine_enabled = 1
-let g:indentLine_faster = 1
 
 " Vim Move
 " <C-k>   Move current line/selections up
@@ -315,22 +344,19 @@ let g:choosewin_tablabel = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 " Startify
 let g:startify_change_to_vcs_root = 1
 let g:startify_list_order = [
-            \ ['   Recently used files in the current directory:'],
-            \ 'dir',
-            \ ['   Recently used files'],
-            \ 'files',
-            \ ['   These are my sessions:'],
-            \ 'sessions',
-            \ ['   These are my bookmarks:'],
-            \ 'bookmarks',
-            \ ['   These are my commands:'],
-            \ 'commands',
-            \ ]
+      \ ['   Recently used files in the current directory:'],
+      \ 'dir',
+      \ ['   Recently used files'],
+      \ 'files',
+      \ ['   These are my sessions:'],
+      \ 'sessions',
+      \ ['   These are my bookmarks:'],
+      \ 'bookmarks',
+      \ ['   These are my commands:'],
+      \ 'commands',
+      \ ]
 
 " Ale
-"let g:ale_set_loclist = 0
-"let g:ale_set_quickfix = 1
-"let g:ale_open_list = 1
 let g:ale_sign_column_always = 1
 
 " NCM
@@ -346,9 +372,7 @@ let g:airline#extensions#hunks#enabled = 0
 let g:airline#extensions#branch#enabled = 0 " Disable branch
 
 " Polyglot
-let g:polyglot_disabled = ['elm', 'javascript', 'css']
-
-autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS noci
+let g:polyglot_disabled = ['elm', 'javascript', 'jsx', 'css', 'markdown']
 
 " LanguageClient
 let g:LanguageClient_serverCommands = {
@@ -356,6 +380,7 @@ let g:LanguageClient_serverCommands = {
       \ 'javascript.jsx': ['flow-language-server', '--stdio'],
       \ 'reason': ['ocaml-language-server', '--stdio'],
       \ 'ocaml': ['ocaml-language-server', '--stdio'],
+      \ 'python': ['pyls'],
       \ }
 
 let g:LanguageClient_autoStart = 1
@@ -395,6 +420,6 @@ fun! ToggleAleAutoList()
     let g:ale_open_list = 1
   endif
   if l:winnr !=# winnr()
-      wincmd p
+    wincmd p
   endif
 endfun

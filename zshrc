@@ -114,6 +114,21 @@ export GOROOT=/usr/local/opt/go/libexec
 export GOBIN=$GOPATH/bin
 export PATH=$PATH:$GOPATH
 export PATH=$PATH:$GOROOT/bin
+#Cargo
+export PATH="$HOME/.cargo/bin:$PATH"
+# postgresql@9.5
+export PATH="$PATH:/usr/local/opt/postgresql@9.5/bin"
+
+# GitHub Credentials
+GITHUB_USERNAME=charliesbox
+GITHUB_TOKEN=de9003d5c23509b047995dbd13df45f0615d2477
+
+# virtualenvwrapper
+VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
+source /usr/local/bin/virtualenvwrapper.sh
+
+# pyenv
+eval "$(pyenv init -)"
 
 # FZF Sugar
 
