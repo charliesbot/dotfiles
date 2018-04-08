@@ -7,12 +7,12 @@ zplug "zsh-users/zsh-autosuggestions"
 zplug "zsh-users/zsh-syntax-highlighting", defer:2
 
 if ! zplug check ; then
-	zplug install
+  zplug install
 fi
 
 zplug load
 # If you come from bash you might have to change your $PATH.
- export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH=/Users/charliesbox/.oh-my-zsh
@@ -121,7 +121,6 @@ export PATH="$PATH:/usr/local/opt/postgresql@9.5/bin"
 
 # GitHub Credentials
 GITHUB_USERNAME=charliesbox
-GITHUB_TOKEN=de9003d5c23509b047995dbd13df45f0615d2477
 
 # virtualenvwrapper
 VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
