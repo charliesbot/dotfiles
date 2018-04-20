@@ -22,7 +22,11 @@ Plug 'mhinz/vim-startify'
 Plug 'nelstrom/vim-visual-star-search'
 
 " Tree
-Plug 'scrooloose/nerdtree'
+Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'justinmk/vim-dirvish'
+
+" Helpers for UNIX
+Plug 'tpope/vim-eunuch'
 
 " Visual tab {bottom}
 Plug 'vim-airline/vim-airline'
@@ -35,27 +39,25 @@ Plug 'justinmk/vim-sneak'
 Plug 'ervandew/supertab'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all'  }
 Plug 'junegunn/fzf.vim'
+Plug 'yuki-ycino/fzf-preview.vim'
 Plug 'ryanoasis/vim-devicons'
 Plug 'matze/vim-move'
-Plug 't9md/vim-choosewin'
 Plug 'dominikduda/vim_current_word'
 Plug 'tpope/vim-repeat'
 Plug 'Konfekt/FastFold'
-Plug 'chrisbra/Colorizer'
 
 " Neoterm
 Plug 'kassio/neoterm'
 
 " Language Support
 Plug 'sheerun/vim-polyglot'
-Plug 'hail2u/vim-css3-syntax'
-Plug 'othree/javascript-libraries-syntax.vim'
-Plug 'ElmCast/elm-vim'
-Plug 'pangloss/vim-javascript'
-"Plug 'neoclide/vim-jsx-improve'
-Plug 'maxmellon/vim-jsx-pretty'
-Plug 'styled-components/vim-styled-components'
+Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
+Plug 'mxw/vim-jsx', { 'for': ['javascript.jsx'] }
+Plug 'pangloss/vim-javascript', { 'for': ['javascript', 'javascript.jsx'] }
+Plug 'styled-components/vim-styled-components', { 'for': ['javascript', 'javascript.jsx'] }
 Plug 'jparise/vim-graphql'
+Plug 'gabrielelana/vim-markdown'
+Plug 'reasonml-editor/vim-reason-plus', { 'for': 'reason' }
 
 " Autocomplete
 Plug 'roxma/nvim-completion-manager'
@@ -63,13 +65,9 @@ Plug 'autozimu/LanguageClient-neovim', {
       \ 'branch': 'next',
       \ 'do': 'bash install.sh',
       \ }
-Plug 'reasonml-editor/vim-reason-plus', { 'for': 'reason' }
-Plug 'Shougo/echodoc.vim'
 
 " Syntax
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
-Plug 'Valloric/MatchTagAlways'
-Plug 'plasticboy/vim-markdown'
 
 " Language Formatter
 Plug 'sbdchd/neoformat'
@@ -79,28 +77,23 @@ Plug 'editorconfig/editorconfig-vim'
 Plug 'w0rp/ale'
 
 " Quoting/parenthesizing
-"Plug 'tpope/vim-surround'
 Plug 'machakann/vim-sandwich'
 Plug 'jiangmiao/auto-pairs'
+
+" Matcher
+Plug 'andymass/vim-matchup'
 
 " Comments
 Plug 'scrooloose/nerdcommenter'
 
 " Git
 Plug 'airblade/vim-gitgutter'
-"Plug 'mhinz/vim-signify'
 Plug 'tpope/vim-fugitive'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'jreybert/vimagit'
 
 " Multiple Cursors
 Plug 'terryma/vim-multiple-cursors'
-
-" Emmet
-Plug 'mattn/emmet-vim'
-
-"Easymotion
-Plug 'easymotion/vim-easymotion'
 
 " Provides additional text objects
 Plug 'wellle/targets.vim'
@@ -128,10 +121,7 @@ set number
 set wildmode=longest:list,full        " command line completion
 set whichwrap=b,s,h,l,<,>,[,]         " backspace and cursor keys wrap too
 set showmatch                         " highlight matching parenthesis
-set updatetime=100                    " Update file each 250ms
-
-set foldmethod=syntax
-set foldlevel=99
+set updatetime=100                    " Update file each 100ms
 
 " searching
 set ignorecase                        " set case insensitive searching
@@ -153,6 +143,9 @@ set fileencoding=utf-8
 set fileencodings=utf-8
 
 set shortmess+=c
+
+set completeopt-=preview " hide preview function window"
+
 
 "*****************************************************************************
 "" Visual Settings
@@ -207,7 +200,7 @@ nnoremap <C-P> :FZF<CR>
 nnoremap <leader>ff :Files<cr>
 nnoremap <leader>fb :Buffers<cr>
 nnoremap <leader>fg :GFiles<cr>
-nnoremap <C-f> :Ag 
+nnoremap <C-f> :Ag<space>
 
 " search current word under cursor
 nnoremap <silent> <Leader>ag :Ag <C-R><C-W><CR>
@@ -243,8 +236,6 @@ nnoremap <Leader>n :ALENextWrap<CR>
 " Toggle the autoopening of lists
 nnoremap <silent><Leader>q :call ToggleAleAutoList()<CR>
 
-nmap <Leader>\ <Plug>(choosewin)
-
 nmap f <Plug>Sneak_f
 nmap F <Plug>Sneak_F
 xmap f <Plug>Sneak_f
@@ -271,6 +262,7 @@ noremap <leader>ev :tabe ~/.config/nvim/init.vim<CR>
 noremap <leader>s :source ~/.config/nvim/init.vim<CR>
 noremap <leader>et :tabe ~/.tmux.conf<CR>
 noremap <leader>eg :tabe ~/.gitconfig<CR>
+noremap <leader>ec :tabe ~/dotfiles/cheatsheets/vim-dirvish.md<CR>
 
 "*****************************************************************************
 "" Configs
@@ -301,21 +293,12 @@ let g:magit_show_magit_mapping='<leader>m'
 let g:jsx_ext_required = 0
 let g:javascript_plugin_flow = 1
 
-let g:vim_jsx_pretty_colorful_config = 1
-
-" Close Tag
-let g:closetag_filenames = "*.html,*.xhtml,*.phtml,*.php,*.js,*.jsx"
-
 " Git gutter
 let g:gitgutter_override_sign_column_highlight = 0
 highlight clear SignColumn
 
-" Javascript libs syntax
-let g:used_javascript_libs = 'react, ramda'
-
-set completeopt-=preview " hide preview function window"
-
 " NerdTree
+let g:NERDTreeHijackNetrw = 0
 let NERDTreeShowHidden=1
 let NERDTreeIgnore=['\.DS_Store', '\~$', '\.swp']
 let g:nerdtree_tabs_focus_on_files = 1
@@ -325,9 +308,6 @@ let g:nerdtree_tabs_focus_on_files = 1
 " <C-j>   Move current line/selections down
 let g:move_key_modifier = 'C'
 
-" MatchTagAlways
-let g:mta_filetypes = { 'javascript.jsx': 1, 'html' : 1,  'xhtml' : 1, 'xml' : 1, 'jinja' : 1, }
-
 " Supertab
 let g:SuperTabContextDefaultCompletionType = '<c-n>'
 let g:SuperTabDefaultCompletionType = '<C-n>'
@@ -336,20 +316,15 @@ let g:SuperTabDefaultCompletionType = '<C-n>'
 let g:elm_detailed_complete = 1
 let g:elm_format_autosave = 1
 
-" Choosewin
-let g:choosewin_overlay_enable = 1
-let g:choosewin_label = '123456789'
-let g:choosewin_tablabel = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-
 " Startify
 let g:startify_change_to_vcs_root = 1
 let g:startify_list_order = [
+      \ ['   These are my sessions:'],
+      \ 'sessions',
       \ ['   Recently used files in the current directory:'],
       \ 'dir',
       \ ['   Recently used files'],
       \ 'files',
-      \ ['   These are my sessions:'],
-      \ 'sessions',
       \ ['   These are my bookmarks:'],
       \ 'bookmarks',
       \ ['   These are my commands:'],
@@ -378,8 +353,9 @@ let g:polyglot_disabled = ['elm', 'javascript', 'jsx', 'css', 'markdown']
 let g:LanguageClient_serverCommands = {
       \ 'javascript': ['flow-language-server', '--stdio'],
       \ 'javascript.jsx': ['flow-language-server', '--stdio'],
-      \ 'reason': ['ocaml-language-server', '--stdio'],
-      \ 'ocaml': ['ocaml-language-server', '--stdio'],
+      \ 'typescript': ['javascript-typescript-stdio'],
+      \ 'reason': ['ocaml-language-server'],
+      \ 'ocaml': ['ocaml-language-server'],
       \ 'python': ['pyls'],
       \ }
 
@@ -423,3 +399,8 @@ fun! ToggleAleAutoList()
     wincmd p
   endif
 endfun
+
+" ----------------------------
+" ---- File type settings ----
+" ----------------------------
+autocmd BufNewFile,BufRead *.*rc set filetype=javascript
