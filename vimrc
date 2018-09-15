@@ -12,9 +12,11 @@ Plug 'pwntester/cobalt2.vim'
 Plug 'trevordmiller/nova-vim'
 Plug 'morhetz/gruvbox'
 Plug 'tyrannicaltoucan/vim-quantum'
-Plug 'dracula/vim'
+Plug 'dracula/vim', { 'as': 'dracula' }
+Plug 'haishanh/night-owl.vim'
 Plug 'ayu-theme/ayu-vim'
 Plug 'skielbasa/vim-material-monokai'
+Plug 'mhartington/oceanic-next'
 
 Plug 'mhinz/vim-startify'
 
@@ -22,7 +24,6 @@ Plug 'mhinz/vim-startify'
 Plug 'nelstrom/vim-visual-star-search'
 
 " Tree
-Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'justinmk/vim-dirvish'
 
 " Helpers for UNIX
@@ -39,8 +40,7 @@ Plug 'justinmk/vim-sneak'
 Plug 'ervandew/supertab'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all'  }
 Plug 'junegunn/fzf.vim'
-Plug 'yuki-ycino/fzf-preview.vim'
-Plug 'ryanoasis/vim-devicons'
+"Plug 'ryanoasis/vim-devicons'
 Plug 'matze/vim-move'
 Plug 'dominikduda/vim_current_word'
 Plug 'tpope/vim-repeat'
@@ -50,24 +50,33 @@ Plug 'Konfekt/FastFold'
 Plug 'kassio/neoterm'
 
 " Language Support
+Plug 'HerringtonDarkholme/yats.vim'
 Plug 'sheerun/vim-polyglot'
 Plug 'ElmCast/elm-vim', { 'for': ['elm'] }
-Plug 'mxw/vim-jsx', { 'for': ['javascript.jsx'] }
-Plug 'pangloss/vim-javascript', { 'for': ['javascript', 'javascript.jsx'] }
-Plug 'styled-components/vim-styled-components', { 'for': ['javascript', 'javascript.jsx'] }
+Plug 'pangloss/vim-javascript'
+Plug 'mxw/vim-jsx'
+Plug 'reasonml-editor/vim-reason-plus', { 'do': 'npm i -g ocaml-language-server' }
 Plug 'jparise/vim-graphql'
-Plug 'gabrielelana/vim-markdown'
-Plug 'reasonml-editor/vim-reason-plus', { 'for': 'reason' }
+Plug 'gabrielelana/vim-markdown', { 'for': ['markdown'] }
+Plug 'slashmili/alchemist.vim'
+" Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
+" Plug 'ap/vim-css-color'
 
-" Autocomplete
-Plug 'roxma/nvim-completion-manager'
-Plug 'autozimu/LanguageClient-neovim', {
-      \ 'branch': 'next',
-      \ 'do': 'bash install.sh',
-      \ }
-
-" Syntax
-Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+" Exclude when running Oni
+if !exists("g:gui_oni")
+  Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+  Plug 'ncm2/ncm2'
+  Plug 'roxma/nvim-yarp'
+  Plug 'ncm2/ncm2-tmux'
+  Plug 'ncm2/ncm2-path'
+  Plug 'ncm2/ncm2-bufword'
+  " Plug 'autozimu/LanguageClient-neovim', {
+  " \ 'branch': 'next',
+  " \ 'do': 'bash install.sh',
+  " \ }
+  Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+  Plug 'Xuyuanp/nerdtree-git-plugin'
+endif
 
 " Language Formatter
 Plug 'sbdchd/neoformat'
@@ -89,7 +98,6 @@ Plug 'scrooloose/nerdcommenter'
 " Git
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
-Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'jreybert/vimagit'
 
 " Multiple Cursors
@@ -133,6 +141,7 @@ set mouse=a                           " Set mouse support
 " background processes
 set clipboard=unnamed                 " use native clipboard
 set lazyredraw                        " no unneeded redraws
+set nolazyredraw
 set nobackup                          " don't save backups
 set noerrorbells                      " no error bells please
 set noswapfile                        " no swapfiles
@@ -145,7 +154,13 @@ set fileencodings=utf-8
 set shortmess+=c
 
 set completeopt-=preview " hide preview function window"
+" note that must keep noinsert in completeopt, the others is optional
+set completeopt=noinsert,menuone,noselect
 
+" Folds
+set foldmethod=syntax
+" set foldcolumn=1
+set foldlevelstart=99
 
 "*****************************************************************************
 "" Visual Settings
@@ -165,28 +180,47 @@ let ayucolor="mirage"
 set background=dark
 set t_ut=
 
-"colorscheme gruvbox
-"colorscheme PaperColor
-"colorscheme one
-"colorscheme neodark
-"colorscheme nova
-"colorscheme onedark
-"colorscheme cobalt2
-"colorscheme quantum
-"colorscheme ayu
-colorscheme material-monokai
-"colorscheme dracula
+" colorscheme gruvbox
+" colorscheme PaperColor
+" colorscheme one
+" colorscheme neodark
+" colorscheme nova
+" colorscheme onedark
+" colorscheme cobalt2
+" colorscheme quantum
+" colorscheme ayu
+" colorscheme material-monokai
+" colorscheme dracula
+colorscheme night-owl
+" colorscheme OceanicNext
 
-hi Comment   cterm=italic gui=italic
-hi htmlArg   cterm=italic gui=italic
-hi Type      cterm=italic gui=italic
-hi xmlAttrib cterm=italic gui=italic
-hi jsxAttrib cterm=italic gui=italic
+" hi Comment   cterm=italic gui=italic
+" hi Type      cterm=italic gui=italic
+" hi htmlArg   cterm=italic gui=italic
+" hi htmlAttrib cterm=italic gui=italic
+" hi xmlAttrib cterm=italic gui=italic
+" hi jsxAttrib cterm=italic gui=italic
+" hi tsxAttrib cterm=italic gui=italic
+" highlight link xmlEndTag xmlTag
 
 "*****************************************************************************
 "" Mappings
 "*****************************************************************************
-map <C-b> :NERDTreeToggle<CR>
+if !exists("g:gui_oni")
+  map <C-b> :NERDTreeToggle<CR>
+  nnoremap <C-p> :GitFiles<CR>
+  nnoremap <C-P> :FZF<CR>
+  nnoremap <leader>ff :Files<cr>
+  nnoremap <leader>fb :Buffers<cr>
+  nnoremap <leader>fg :GFiles<cr>
+  nnoremap <C-f> :Ag<space>
+  " LSP
+  nnoremap <silent> gh :ALEHover<CR>
+  nnoremap <silent> gd :ALEGoToDefinition<CR>
+  " nnoremap <silent> gh :call LanguageClient_textDocument_hover()<CR>
+  " nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
+  " nnoremap <silent> gf :call LanguageClient_textDocument_formatting()<CR>
+endif
 
 " search and replace
 nnoremap <leader>gs :Gstatus<cr>
@@ -195,12 +229,7 @@ nnoremap <leader>gd :Gdiff<cr>
 nnoremap <leader>gp :Gpull<cr>
 nnoremap <leader>gP :Gpush<cr>
 
-nnoremap <C-p> :GitFiles<CR>
-nnoremap <C-P> :FZF<CR>
-nnoremap <leader>ff :Files<cr>
-nnoremap <leader>fb :Buffers<cr>
-nnoremap <leader>fg :GFiles<cr>
-nnoremap <C-f> :Ag<space>
+inoremap jj <ESC>
 
 " search current word under cursor
 nnoremap <silent> <Leader>ag :Ag <C-R><C-W><CR>
@@ -212,11 +241,6 @@ nnoremap zC zM
 nnoremap zO zR
 
 nnoremap zz <C-w>|
-
-" LSP
-nnoremap <silent> gh :call LanguageClient_textDocument_hover()<CR>
-nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
-nnoremap <silent> gf :call LanguageClient_textDocument_formatting()<CR>
 
 " Have the indent commands re-highlight the last visual selection to make
 " multiple indentations easier
@@ -263,6 +287,15 @@ noremap <leader>s :source ~/.config/nvim/init.vim<CR>
 noremap <leader>et :tabe ~/.tmux.conf<CR>
 noremap <leader>eg :tabe ~/.gitconfig<CR>
 noremap <leader>ec :tabe ~/dotfiles/cheatsheets/vim-dirvish.md<CR>
+noremap <leader>ek :tabe ~/Library/Preferences/kitty/kitty.conf<CR>
+
+" neoterm
+if exists("g:gui_oni")
+  nnoremap <silent> <C-a>_ :vertical Topen<CR>
+  nnoremap <silent> <C-a>- :botright Topen<CR>
+  nnoremap <C-space> :TtoggleAll<CR>
+  tnoremap <ESC> <C-\><C-n>
+endif
 
 "*****************************************************************************
 "" Configs
@@ -270,12 +303,25 @@ noremap <leader>ec :tabe ~/dotfiles/cheatsheets/vim-dirvish.md<CR>
 
 " Neoterm
 let g:neoterm_window = '10new'
-let g:neoterm_autoinsert = 1
+let g:neoterm_autoinsert = 0
+let g:neoterm_default_mods = ':horizontal'
+
+" NerdCommenter
+let NERDSpaceDelims = 1
 
 " Neoformat
 let g:neoformat_basic_format_align = 1
 let g:neoformat_basic_format_retab = 1
 let g:neoformat_basic_format_trim = 1
+let g:standard_prettier_settings = {
+      \ 'exe': 'prettier',
+      \ 'args': ['--stdin', '--stdin-filepath', '%:p', '--single-quote'],
+      \ 'stdin': 1,
+      \ }
+let g:neoformat_typescript_prettier = g:standard_prettier_settings
+let g:neoformat_enabled_typescript = ['prettier']
+" let g:neoformat_typescriptreact_prettier = g:standard_prettier_settings
+" let g:neoformat_enabled_typescriptreact = ['prettier']
 
 " Vim multiple cursors
 let g:multi_cursor_next_key='<C-n>'
@@ -288,10 +334,6 @@ let g:sneak#s_next = 1
 
 " Magit
 let g:magit_show_magit_mapping='<leader>m'
-
-" JSX syntax in JS files
-let g:jsx_ext_required = 0
-let g:javascript_plugin_flow = 1
 
 " Git gutter
 let g:gitgutter_override_sign_column_highlight = 0
@@ -333,13 +375,19 @@ let g:startify_list_order = [
 
 " Ale
 let g:ale_sign_column_always = 1
+let g:ale_completion_enabled = 1
+let g:ale_fixers = {
+      \   'javascript': ['prettier'],
+      \   'typescript': ['prettier']
+      \}
+let g:ale_fix_on_save = 1
 
-" NCM
-let g:cm_refresh_default_min_word_len = [[1, 2]]
+" NCM2
+let g:ncm2#complete_length = 2
 
 " Airline
 let g:airline_section_z="%l/%c"
-let g:airline_theme='neodark'
+"let g:airline_theme='neodark'
 let g:airline#extensions#ale#enabled = 1
 
 " Disable git changes
@@ -347,22 +395,19 @@ let g:airline#extensions#hunks#enabled = 0
 let g:airline#extensions#branch#enabled = 0 " Disable branch
 
 " Polyglot
-let g:polyglot_disabled = ['elm', 'javascript', 'jsx', 'css', 'markdown']
+let g:polyglot_disabled = ['elm', 'typescript', 'tsx', 'javascript', 'jsx', 'css', 'markdown']
 
 " LanguageClient
-let g:LanguageClient_serverCommands = {
-      \ 'javascript': ['flow-language-server', '--stdio'],
-      \ 'javascript.jsx': ['flow-language-server', '--stdio'],
-      \ 'typescript': ['javascript-typescript-stdio'],
-      \ 'reason': ['ocaml-language-server'],
-      \ 'ocaml': ['ocaml-language-server'],
-      \ 'python': ['pyls'],
-      \ }
+" let g:LanguageClient_loadSettings = 1
+" let g:LanguageClient_serverCommands = {}
+" let g:LanguageClient_serverCommands['typescript'] = ['typescript-language-server', '--stdio']
+" let g:LanguageClient_serverCommands['typescript.tsx'] = ['typescript-language-server', '--stdio']
+" let g:LanguageClient_serverCommands['reason'] = ['ocaml-language-server']
+" let g:LanguageClient_serverCommands['ocam'] = ['ocaml-language-server']
+" let g:LanguageClient_serverCommands['python'] = ['pyls']
+" \ 'elixir': ['~/elixir/elixir-ls/language_server.sh']
 
-let g:LanguageClient_autoStart = 1
-
-let g:ale_linters = {'jsx': ['stylelint', 'eslint']}
-let g:ale_linter_aliases = {'jsx': 'css'}
+" let g:LanguageClient_autoStart = 1
 
 "FZF + ripgrep
 " --column: Show column number
@@ -376,6 +421,20 @@ let g:ale_linter_aliases = {'jsx': 'css'}
 " --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
 " --color: Search color options
 command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>), 1, <bang>0)
+
+let g:fzf_colors =
+      \ { 'fg':      ['fg', 'Normal'],
+      \ 'bg':      ['bg', 'Normal'],
+      \ 'hl':      ['fg', ''],
+      \ 'fg+':     ['fg', ''],
+      \ 'bg+':     ['bg', ''],
+      \ 'hl+':     ['fg', 'Statement'],
+      \ 'info':    ['fg', 'PreProc'],
+      \ 'prompt':  ['fg', 'Conditional'],
+      \ 'pointer': ['fg', 'Exception'],
+      \ 'marker':  ['fg', 'Keyword'],
+      \ 'spinner': ['fg', 'Label'],
+      \ 'header':  ['fg', 'Comment'] }
 
 " Toggles shows or hides the nonempty lists
 " and turns on Ales auto open
@@ -403,4 +462,9 @@ endfun
 " ----------------------------
 " ---- File type settings ----
 " ----------------------------
-autocmd BufNewFile,BufRead *.*rc set filetype=javascript
+autocmd BufNewFile,BufRead *.*rc set filetype=json
+autocmd BufNewFile,BufRead .env.* set filetype=sh
+if !exists("g:gui_oni")
+  " enable ncm2 for all buffer
+  autocmd BufEnter * call ncm2#enable_for_buffer()
+endif
