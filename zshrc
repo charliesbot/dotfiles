@@ -60,7 +60,7 @@ ZSH_THEME=""
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
 
-# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
+# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
@@ -123,8 +123,11 @@ export PATH="$PATH:/usr/local/opt/postgresql@9.5/bin"
 GITHUB_USERNAME=charliesbox
 
 # virtualenvwrapper
-VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
-source /usr/local/bin/virtualenvwrapper.sh
+# VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
+# source /usr/local/bin/virtualenvwrapper.sh
+
+# pipenv
+export PIP_CONFIG_FILE=~/.config/pip/pip.conf
 
 # pyenv
 eval "$(pyenv init -)"
