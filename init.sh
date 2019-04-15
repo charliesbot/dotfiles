@@ -18,12 +18,15 @@ pip3 install neovim
 rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.tmux ~/.tmux.conf ~/.config/nvim 2> /dev/null
 
 # Neovim expects some folders already exist
-mkdir -p ~/.config ~/.config/nvim
+mkdir -p ~/.config ~/.config/nvim ~/.config/nvim/config
 
 # Symlinking files
 ln -s ~/dotfiles/zshrc ~/.zshrc
 ln -s ~/dotfiles/tmux.conf ~/.tmux.conf
 ln -s ~/dotfiles/vimrc ~/.config/nvim/init.vim
+
+# Symlink vim config
+ln -s ~/dotfiles/config/* ~/.config/nvim/config
 
 # Writting vim will launch nvim
 alias vim="nvim"

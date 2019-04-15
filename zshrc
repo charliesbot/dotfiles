@@ -118,6 +118,8 @@ export PATH=$PATH:$GOROOT/bin
 export PATH="$HOME/.cargo/bin:$PATH"
 # postgresql@9.5
 export PATH="$PATH:/usr/local/opt/postgresql@9.5/bin"
+#Deno
+export PATH="${HOME}/.deno/bin:$PATH"
 
 # GitHub Credentials
 GITHUB_USERNAME=charliesbox
@@ -140,3 +142,4 @@ eval "$(pyenv init -)"
 # --follow: Follow symlinks
 # --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
 export FZF_DEFAULT_COMMAND='rg --files --fixed-strings --hidden --follow --glob "!.git/*"'
+export PATH="/usr/local/sbin:$PATH"
