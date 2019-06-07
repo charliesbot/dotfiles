@@ -34,8 +34,9 @@ set t_ut=
 " colorscheme quantum
 " colorscheme ayu
 " colorscheme material-monokai
-colorscheme dracula
-" colorscheme night-owl
+" colorscheme dracula
+" colorscheme nord
+colorscheme night-owl
 " colorscheme OceanicNext
 " colorscheme snow
 " colorscheme monokai_pro
@@ -44,11 +45,9 @@ colorscheme dracula
 "" Mappings
 "*****************************************************************************
 map <C-b> :NERDTreeToggle<CR>
-nnoremap <C-p> :GitFiles<CR>
-nnoremap <C-P> :FZF<CR>
-nnoremap <leader>ff :Files<cr>
-nnoremap <leader>fb :Buffers<cr>
-nnoremap <leader>fg :GFiles<cr>
+" noremap <C-b> :call Defx#toggle()<CR>
+" nnoremap <silent><buffer><expr> <CR>    defx#do_action('open')
+nnoremap <C-p> :Files<CR>
 nnoremap <C-f> :Find<space>
 " LSP
 nmap <silent> gd <Plug>(coc-definition)
@@ -58,6 +57,22 @@ nmap <silent> <Leader>n <Plug>(coc-diagnostic-next)
 " Highlight symbol under cursor on CursorHold
 autocmd CursorHold * silent call CocActionAsync('highlight')
 nmap <leader>rn <Plug>(coc-rename)
+
+" Use tab for trigger completion with characters ahead and navigate.
+" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Use <c-space> to trigger completion.
+inoremap <silent><expr> <c-space> coc#refresh()
 
 inoremap jj <ESC>
 
@@ -154,8 +169,8 @@ let g:nerdtree_tabs_focus_on_files = 1
 let g:move_key_modifier = 'C'
 
 " Supertab
-let g:SuperTabContextDefaultCompletionType = '<c-n>'
-let g:SuperTabDefaultCompletionType = '<C-n>'
+" let g:SuperTabContextDefaultCompletionType = '<c-n>'
+" let g:SuperTabDefaultCompletionType = '<C-n>'
 
 " Startify
 let g:startify_change_to_vcs_root = 1
@@ -181,7 +196,7 @@ let g:airline#extensions#hunks#enabled = 0
 let g:airline#extensions#branch#enabled = 0 " Disable branch
 
 " Polyglot
-let g:polyglot_disabled = ['typescript', 'tsx', 'css', 'markdown']
+let g:polyglot_disabled = ['typescript', 'tsx', 'css', 'markdown', 'graphql']
 
 "FZF + ripgrep
 " --column: Show column number
@@ -195,6 +210,9 @@ let g:polyglot_disabled = ['typescript', 'tsx', 'css', 'markdown']
 " --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
 " --color: Search color options
 command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>), 1, <bang>0)
+
+command! -bang -nargs=? -complete=dir Files
+  \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
 
 let g:fzf_colors =
       \ { 'fg':      ['fg', 'Normal'],
@@ -216,4 +234,5 @@ let g:fzf_colors =
 autocmd BufNewFile,BufRead *.*rc set filetype=json
 autocmd BufNewFile,BufRead .env.* set filetype=sh
 
-autocmd FileType python let b:coc_root_patterns = ['.git', '.env']
+" autocmd FileType python let b:coc_root_patterns = ['Pipfile', '.env', '.git']
+autocmd FileType python let b:coc_root_patterns = ['Pipfile']

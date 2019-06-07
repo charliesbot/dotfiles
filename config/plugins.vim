@@ -18,6 +18,7 @@ Plug 'skielbasa/vim-material-monokai'
 Plug 'mhartington/oceanic-next'
 Plug 'haishanh/night-owl.vim'
 Plug 'nightsense/snow'
+Plug 'arcticicestudio/nord-vim'
 Plug 'phanviet/vim-monokai-pro'
 
 Plug 'mhinz/vim-startify'
@@ -52,10 +53,11 @@ Plug 'metakirby5/codi.vim'
 Plug 'hail2u/vim-css3-syntax'
 Plug 'sheerun/vim-polyglot'
 Plug 'HerringtonDarkholme/yats.vim', { 'for': ['typescript', 'typescript.tsx'] }
-" Plug 'jxnblk/vim-mdx-js'
+Plug 'jxnblk/vim-mdx-js'
 Plug 'reasonml-editor/vim-reason-plus', { 'do': 'npm i -g ocaml-language-server' }
 Plug 'jparise/vim-graphql'
 Plug 'gabrielelana/vim-markdown', { 'for': ['markdown'] }
+Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'Xuyuanp/nerdtree-git-plugin'
 
@@ -81,8 +83,9 @@ Plug 'wellle/targets.vim'
 " Highlight White Space
 Plug 'ntpeters/vim-better-whitespace'
 
-Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
-Plug 'ervandew/supertab'
+Plug 'neoclide/coc.nvim', {'do': './install.sh nightly'}
+Plug 'liuchengxu/vista.vim'
+" Plug 'ervandew/supertab'
 
 call plug#end()
 
