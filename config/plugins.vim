@@ -20,6 +20,8 @@ Plug 'haishanh/night-owl.vim'
 Plug 'nightsense/snow'
 Plug 'arcticicestudio/nord-vim'
 Plug 'phanviet/vim-monokai-pro'
+Plug 'Rigellute/shades-of-purple.vim'
+Plug 'sonph/onehalf', {'rtp': 'vim/'}
 
 Plug 'mhinz/vim-startify'
 
@@ -52,7 +54,7 @@ Plug 'metakirby5/codi.vim'
 " Language Support
 Plug 'hail2u/vim-css3-syntax'
 Plug 'sheerun/vim-polyglot'
-Plug 'HerringtonDarkholme/yats.vim', { 'for': ['typescript', 'typescript.tsx'] }
+" Plug 'HerringtonDarkholme/yats.vim', { 'for': ['typescript', 'typescript.tsx'] }
 Plug 'jxnblk/vim-mdx-js'
 Plug 'reasonml-editor/vim-reason-plus', { 'do': 'npm i -g ocaml-language-server' }
 Plug 'jparise/vim-graphql'

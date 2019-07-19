@@ -1,10 +1,98 @@
-if exists('veonim')
-  source ~/.config/nvim/veonim.vim
-  finish
-endif
+"*****************************************************************************
+"" Plugins
+"*****************************************************************************
+call plug#begin('~/.vim/plugged')
 
-source ~/.config/nvim/config/plugins.vim
+" Theme
+Plug 'NLKNguyen/papercolor-theme'
+Plug 'joshdick/onedark.vim'
+Plug 'rakr/vim-one'
+Plug 'KeitaNakamura/neodark.vim'
+Plug 'pwntester/cobalt2.vim'
+Plug 'trevordmiller/nova-vim'
+Plug 'morhetz/gruvbox'
+Plug 'tyrannicaltoucan/vim-quantum'
+Plug 'dracula/vim', { 'as': 'dracula' }
+Plug 'ayu-theme/ayu-vim'
+Plug 'skielbasa/vim-material-monokai'
+Plug 'mhartington/oceanic-next'
+Plug 'haishanh/night-owl.vim'
+Plug 'nightsense/snow'
+Plug 'arcticicestudio/nord-vim'
+Plug 'phanviet/vim-monokai-pro'
+Plug 'sonph/onehalf', {'rtp': 'vim/'}
+
+Plug 'mhinz/vim-startify'
+
+" Search
+Plug 'nelstrom/vim-visual-star-search'
+
+" Tree
+Plug 'justinmk/vim-dirvish'
+
+" Helpers for UNIX
+Plug 'tpope/vim-eunuch'
+
+" Visual tab {bottom}
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+
+" Efficient moving
+Plug 'justinmk/vim-sneak'
+
+" General
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all'  }
+Plug 'junegunn/fzf.vim'
+" Plug 'ryanoasis/vim-devicons'
+Plug 'matze/vim-move'
+Plug 'dominikduda/vim_current_word'
+Plug 'tpope/vim-repeat'
+Plug 'Konfekt/FastFold'
+Plug 'metakirby5/codi.vim'
+
+" Language Support
+Plug 'hail2u/vim-css3-syntax'
+" Plug 'sheerun/vim-polyglot'
+Plug 'HerringtonDarkholme/yats.vim', { 'for': ['typescript', 'typescript.tsx'] }
+Plug 'jxnblk/vim-mdx-js'
+Plug 'reasonml-editor/vim-reason-plus', { 'do': 'npm i -g ocaml-language-server' }
+Plug 'jparise/vim-graphql'
+Plug 'gabrielelana/vim-markdown', { 'for': ['markdown'] }
+" Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'Xuyuanp/nerdtree-git-plugin'
+
+" Language Formatter
+Plug 'sbdchd/neoformat'
+
+" Quoting/parenthesizing
+Plug 'machakann/vim-sandwich'
+Plug 'jiangmiao/auto-pairs'
+
+" Comments
+Plug 'scrooloose/nerdcommenter'
+
+" Git
+Plug 'airblade/vim-gitgutter'
+
+" Multiple Cursors
+Plug 'terryma/vim-multiple-cursors'
+
+" Provides additional text objects
+Plug 'wellle/targets.vim'
+
+" Highlight White Space
+Plug 'ntpeters/vim-better-whitespace'
+
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Plug 'liuchengxu/vista.vim'
+
+call plug#end()
+
+" *** Settings
 source ~/.config/nvim/config/settings.vim
+" ********
+
 
 "*****************************************************************************
 "" Visual Settings
@@ -33,10 +121,12 @@ set t_ut=
 " colorscheme cobalt2
 " colorscheme quantum
 " colorscheme ayu
+" colorscheme onehalfdark
 " colorscheme material-monokai
 " colorscheme dracula
 " colorscheme nord
 colorscheme night-owl
+" colorscheme shades_of_purple
 " colorscheme OceanicNext
 " colorscheme snow
 " colorscheme monokai_pro
@@ -48,7 +138,7 @@ map <C-b> :NERDTreeToggle<CR>
 " noremap <C-b> :call Defx#toggle()<CR>
 " nnoremap <silent><buffer><expr> <CR>    defx#do_action('open')
 nnoremap <C-p> :Files<CR>
-nnoremap <C-f> :Find<space>
+nnoremap <C-f> :Find<CR>
 " LSP
 nmap <silent> gd <Plug>(coc-definition)
 nnoremap <silent> gh :call CocAction('doHover')<CR>
@@ -196,7 +286,7 @@ let g:airline#extensions#hunks#enabled = 0
 let g:airline#extensions#branch#enabled = 0 " Disable branch
 
 " Polyglot
-let g:polyglot_disabled = ['typescript', 'tsx', 'css', 'markdown', 'graphql']
+let g:polyglot_disabled = ['css', 'markdown', 'graphql']
 
 "FZF + ripgrep
 " --column: Show column number
@@ -209,7 +299,13 @@ let g:polyglot_disabled = ['typescript', 'tsx', 'css', 'markdown', 'graphql']
 " --follow: Follow symlinks
 " --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
 " --color: Search color options
-command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>), 1, <bang>0)
+" command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>), 1, <bang>0)
+
+command! -bang -nargs=* Find
+  \ call fzf#vim#grep(
+  \ "rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1,
+  \ {'options': '--delimiter : --nth 4..'},
+  \ <bang>0)
 
 command! -bang -nargs=? -complete=dir Files
   \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
