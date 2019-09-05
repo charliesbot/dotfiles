@@ -45,7 +45,7 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all'  }
 Plug 'junegunn/fzf.vim'
 " Plug 'ryanoasis/vim-devicons'
 Plug 'matze/vim-move'
-Plug 'dominikduda/vim_current_word'
+" Plug 'dominikduda/vim_current_word'
 Plug 'tpope/vim-repeat'
 Plug 'Konfekt/FastFold'
 Plug 'metakirby5/codi.vim'
@@ -126,7 +126,6 @@ set t_ut=
 " colorscheme dracula
 " colorscheme nord
 colorscheme night-owl
-" colorscheme shades_of_purple
 " colorscheme OceanicNext
 " colorscheme snow
 " colorscheme monokai_pro
