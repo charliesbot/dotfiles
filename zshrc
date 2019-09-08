@@ -1,21 +1,22 @@
-# zplug
-source ~/.zplug/init.zsh
+# Initialize zplugin
+source "${HOME}/.zplugin/bin/zplugin.zsh"
+autoload -Uz _zplugin
+(( ${+_comps} )) && _comps[zplugin]=_zplugin
 
-zplug "mafredri/zsh-async", from:github, defer:0
-zplug "sindresorhus/pure", use:pure.zsh, from:github, as:theme
-zplug "zsh-users/zsh-autosuggestions"
-zplug "zsh-users/zsh-syntax-highlighting", defer:2
+# Initialize completion
+autoload -zU compinit
+compinit
 
-if ! zplug check ; then
-  zplug install
-fi
+zplugin light zsh-users/zsh-autosuggestions
+zplugin light zdharma/fast-syntax-highlighting
+zplugin ice pick"async.zsh" src"pure.zsh"
+zplugin light sindresorhus/pure
 
-zplug load
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH=/Users/charliesbox/.oh-my-zsh
+export ZSH=/Users/charlie/.oh-my-zsh
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -126,7 +127,7 @@ export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
 # GitHub Credentials
-GITHUB_USERNAME=charliesbox
+GITHUB_USERNAME=charliesbot
 
 # virtualenvwrapper
 # VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
@@ -134,9 +135,6 @@ GITHUB_USERNAME=charliesbox
 
 # pipenv
 export PIP_CONFIG_FILE=~/.config/pip/pip.conf
-
-# pyenv
-eval "$(pyenv init -)"
 
 # FZF Sugar
 
