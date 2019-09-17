@@ -102,6 +102,10 @@ export EDITOR='nvim'
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+# alias
+alias python=/usr/local/bin/python3
+alias pip=pip3
+
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # Paths
@@ -129,10 +133,6 @@ export LANG=en_US.UTF-8
 # GitHub Credentials
 GITHUB_USERNAME=charliesbot
 
-# virtualenvwrapper
-# VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
-# source /usr/local/bin/virtualenvwrapper.sh
-
 # pipenv
 export PIP_CONFIG_FILE=~/.config/pip/pip.conf
 
@@ -143,7 +143,8 @@ export PIP_CONFIG_FILE=~/.config/pip/pip.conf
 # --hidden: Search hidden files and folders
 # --follow: Follow symlinks
 # --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
-export FZF_DEFAULT_COMMAND='rg --files --fixed-strings --hidden --follow --glob "!.git/*"'
+# export FZF_DEFAULT_COMMAND='rg --files --fixed-strings --hidden --follow --glob "!.git/*"'
+
 export PATH="/usr/local/sbin:$PATH"
 
 # tabtab source for serverless package

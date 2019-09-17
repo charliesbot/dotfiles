@@ -41,24 +41,21 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'justinmk/vim-sneak'
 
 " General
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all'  }
+Plug '/usr/local/opt/fzf'
 Plug 'junegunn/fzf.vim'
 " Plug 'ryanoasis/vim-devicons'
 Plug 'matze/vim-move'
-" Plug 'dominikduda/vim_current_word'
+Plug 'dominikduda/vim_current_word'
 Plug 'tpope/vim-repeat'
 Plug 'Konfekt/FastFold'
 Plug 'metakirby5/codi.vim'
 
 " Language Support
 Plug 'hail2u/vim-css3-syntax'
-" Plug 'sheerun/vim-polyglot'
-Plug 'HerringtonDarkholme/yats.vim', { 'for': ['typescript', 'typescript.tsx'] }
-Plug 'jxnblk/vim-mdx-js'
+Plug 'sheerun/vim-polyglot'
+" Plug 'HerringtonDarkholme/yats.vim', { 'for': ['typescript', 'typescript.tsx'] }
 Plug 'reasonml-editor/vim-reason-plus', { 'do': 'npm i -g ocaml-language-server' }
-Plug 'jparise/vim-graphql'
 Plug 'gabrielelana/vim-markdown', { 'for': ['markdown'] }
-" Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'Xuyuanp/nerdtree-git-plugin'
 
@@ -120,12 +117,12 @@ set t_ut=
 " colorscheme onedark
 " colorscheme cobalt2
 " colorscheme quantum
-" colorscheme ayu
+colorscheme ayu
 " colorscheme onehalfdark
 " colorscheme material-monokai
 " colorscheme dracula
 " colorscheme nord
-colorscheme night-owl
+" colorscheme night-owl
 " colorscheme OceanicNext
 " colorscheme snow
 " colorscheme monokai_pro
@@ -134,8 +131,6 @@ colorscheme night-owl
 "" Mappings
 "*****************************************************************************
 map <C-b> :NERDTreeToggle<CR>
-" noremap <C-b> :call Defx#toggle()<CR>
-" nnoremap <silent><buffer><expr> <CR>    defx#do_action('open')
 nnoremap <C-p> :Files<CR>
 nnoremap <C-f> :Find<CR>
 " LSP
@@ -285,7 +280,7 @@ let g:airline#extensions#hunks#enabled = 0
 let g:airline#extensions#branch#enabled = 0 " Disable branch
 
 " Polyglot
-let g:polyglot_disabled = ['css', 'markdown', 'graphql']
+let g:polyglot_disabled = ['css', 'markdown']
 
 "FZF + ripgrep
 " --column: Show column number
@@ -326,7 +321,6 @@ let g:fzf_colors =
 " ----------------------------
 " ---- File type settings ----
 " ----------------------------
-autocmd BufNewFile,BufRead *.*rc set filetype=json
 autocmd BufNewFile,BufRead .env.* set filetype=sh
 
 " autocmd FileType python let b:coc_root_patterns = ['Pipfile', '.env', '.git']
