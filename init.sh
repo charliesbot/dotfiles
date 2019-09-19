@@ -1,12 +1,18 @@
-brew install zsh tmux neovim/neovim/neovim python3 ag reattach-to-user-namespace
 brew tap caskroom/cask
 brew tap caskroom/versions
 brew tap caskroom/fonts
+
 # main important thing - node
+brew install zsh
+brew install tmux
+brew install neovim
+brew install python3
+brew install ag
+brew install reattach-to-user-namespace
 brew install node
 brew install fzf
 brew cask install iterm2-beta
-brew cask install font-fira-code
+brew install bat
 
 # install Plug - Neovim Plugin Manager
 curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
