@@ -16,7 +16,8 @@ Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'ayu-theme/ayu-vim'
 Plug 'skielbasa/vim-material-monokai'
 Plug 'mhartington/oceanic-next'
-Plug 'haishanh/night-owl.vim'
+" Plug 'haishanh/night-owl.vim'
+Plug 'PierreCapo/night-owl'
 Plug 'nightsense/snow'
 Plug 'arcticicestudio/nord-vim'
 Plug 'phanviet/vim-monokai-pro'
@@ -117,10 +118,10 @@ set t_ut=
 " colorscheme onedark
 " colorscheme cobalt2
 " colorscheme quantum
-colorscheme ayu
+" colorscheme ayu
 " colorscheme onehalfdark
 " colorscheme material-monokai
-" colorscheme dracula
+colorscheme dracula
 " colorscheme nord
 " colorscheme night-owl
 " colorscheme OceanicNext
