@@ -1,0 +1,13 @@
+{
+    "workbench.colorTheme": "Ayu Mirage",
+    "editor.fontSize": 14,
+    "editor.fontLigatures": true,
+    "editor.fontFamily": "Dank Mono, Menlo, Monaco, 'Courier New', monospace",
+    "eslint.autoFixOnSave": true,
+    "editor.formatOnSave": true,
+    "editor.minimap.enabled": false,
+    "python.formatting.provider": "black",
+    "python.jediEnabled": false,
+    "python.linting.mypyEnabled": true,
+    "python.linting.flake8Enabled": true
+}
