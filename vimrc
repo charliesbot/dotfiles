@@ -16,8 +16,8 @@ Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'ayu-theme/ayu-vim'
 Plug 'skielbasa/vim-material-monokai'
 Plug 'mhartington/oceanic-next'
-" Plug 'haishanh/night-owl.vim'
-Plug 'PierreCapo/night-owl'
+Plug 'haishanh/night-owl.vim'
+" Plug 'PierreCapo/night-owl'
 Plug 'nightsense/snow'
 Plug 'arcticicestudio/nord-vim'
 Plug 'phanviet/vim-monokai-pro'
@@ -121,9 +121,9 @@ set t_ut=
 " colorscheme ayu
 " colorscheme onehalfdark
 " colorscheme material-monokai
-colorscheme dracula
+" colorscheme dracula
 " colorscheme nord
-" colorscheme night-owl
+colorscheme night-owl
 " colorscheme OceanicNext
 " colorscheme snow
 " colorscheme monokai_pro
@@ -132,7 +132,11 @@ colorscheme dracula
 "" Mappings
 "*****************************************************************************
 map <C-b> :NERDTreeToggle<CR>
-nnoremap <C-p> :Files<CR>
+" nnoremap <C-p> :Files<CR>
+" fzf file fuzzy search that respects .gitignore
+" If in git directory, show only files that are committed, staged, or unstaged
+" else use regular :Files
+nnoremap <expr> <C-p> (len(system('git rev-parse')) ? ':Files' : ':GFiles --exclude-standard --others --cached')."\<cr>"
 nnoremap <C-f> :Find<CR>
 " LSP
 nmap <silent> gd <Plug>(coc-definition)
@@ -210,6 +214,9 @@ noremap <leader>et :tabe ~/.tmux.conf<CR>
 noremap <leader>eg :tabe ~/.gitconfig<CR>
 noremap <leader>ec :tabe ~/dotfiles/cheatsheets/vim-dirvish.md<CR>
 noremap <leader>ek :tabe ~/Library/Preferences/kitty/kitty.conf<CR>
+
+map gcc <plug>NERDCommenterToggle
+map gcm <plug>NERDCommenterMinimal
 
 "*****************************************************************************
 "" Configs
@@ -305,6 +312,7 @@ command! -bang -nargs=* Find
 command! -bang -nargs=? -complete=dir Files
   \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
 
+
 let g:fzf_colors =
       \ { 'fg':      ['fg', 'Normal'],
       \ 'bg':      ['bg', 'Normal'],
@@ -325,4 +333,4 @@ let g:fzf_colors =
 autocmd BufNewFile,BufRead .env.* set filetype=sh
 
 " autocmd FileType python let b:coc_root_patterns = ['Pipfile', '.env', '.git']
-autocmd FileType python let b:coc_root_patterns = ['Pipfile']
+" autocmd FileType python let b:coc_root_patterns = ['Pipfile']

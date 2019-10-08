@@ -1,6 +1,7 @@
 brew tap caskroom/cask
 brew tap caskroom/versions
-brew tap caskroom/fonts
+brew tap homebrew/cask-fonts
+# brew tap caskroom/fonts
 
 # main important thing - node
 brew install zsh
@@ -11,8 +12,12 @@ brew install ag
 brew install reattach-to-user-namespace
 brew install node
 brew install fzf
-brew cask install iterm2-beta
 brew install bat
+brew install thefuck
+brew cask install iterm2-beta
+brew cask install kitty
+brew cask install font-fira-code
+brew cask install font-cascadia
 
 # install Plug - Neovim Plugin Manager
 curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \

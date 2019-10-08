@@ -102,8 +102,11 @@ export EDITOR='nvim'
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+# Pyenv
+eval "$(pyenv init -)"
+
 # alias
-alias python=/usr/local/bin/python3
+# alias python=/usr/local/bin/python3
 alias pip=pip3
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
