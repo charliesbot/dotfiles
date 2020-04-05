@@ -44,6 +44,7 @@ Plug 'justinmk/vim-sneak'
 Plug '/usr/local/opt/fzf'
 Plug 'junegunn/fzf.vim'
 " Plug 'ryanoasis/vim-devicons'
+" Plug 'liuchengxu/vim-clap', { 'do': ':Clap install-binary' }
 Plug 'matze/vim-move'
 Plug 'dominikduda/vim_current_word'
 Plug 'tpope/vim-repeat'
@@ -53,14 +54,10 @@ Plug 'metakirby5/codi.vim'
 " Language Support
 Plug 'hail2u/vim-css3-syntax'
 Plug 'sheerun/vim-polyglot'
-" Plug 'HerringtonDarkholme/yats.vim', { 'for': ['typescript', 'typescript.tsx'] }
 Plug 'reasonml-editor/vim-reason-plus', { 'do': 'npm i -g ocaml-language-server' }
 Plug 'gabrielelana/vim-markdown', { 'for': ['markdown'] }
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'Xuyuanp/nerdtree-git-plugin'
-
-" Language Formatter
-Plug 'sbdchd/neoformat'
 
 " Quoting/parenthesizing
 Plug 'machakann/vim-sandwich'
@@ -131,11 +128,10 @@ colorscheme night-owl
 "" Mappings
 "*****************************************************************************
 map <C-b> :NERDTreeToggle<CR>
-" nnoremap <C-p> :Files<CR>
-" fzf file fuzzy search that respects .gitignore
-" If in git directory, show only files that are committed, staged, or unstaged
-" else use regular :Files
-nnoremap <expr> <C-p> (len(system('git rev-parse')) ? ':Files' : ':GFiles --exclude-standard --others --cached')."\<cr>"
+" nnoremap <C-p> :Clap filer<CR>
+" autocmd FileType clap_input inoremap <silent> <buffer> <C-n> <C-R>=clap#navigation#linewise('down')<CR>
+" autocmd FileType clap_input inoremap <silent> <buffer> <C-p> <C-R>=clap#navigation#linewise('up')<CR>
+nnoremap <C-p> :Files<CR>
 nnoremap <C-f> :Find<CR>
 " LSP
 nmap <silent> gd <Plug>(coc-definition)
@@ -185,8 +181,6 @@ inoremap <expr> <CR> pumvisible() ? "\<C-Y>" : "\<CR>"
 " Clear search highlight
 nnoremap <esc> :noh<return><esc>
 
-noremap <Leader>f :Neoformat<CR>
-
 nmap f <Plug>Sneak_f
 nmap F <Plug>Sneak_F
 xmap f <Plug>Sneak_f
@@ -223,13 +217,6 @@ map gcm <plug>NERDCommenterMinimal
 
 " NerdCommenter
 let NERDSpaceDelims = 1
-
-" Neoformat
-let g:neoformat_basic_format_align = 1
-let g:neoformat_basic_format_retab = 1
-let g:neoformat_basic_format_trim = 1
-let g:neoformat_enabled_typescript = ['prettier']
-let g:neoformat_enabled_python = ['black']
 
 " Vim multiple cursors
 let g:multi_cursor_next_key='<C-n>'
