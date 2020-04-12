@@ -28,7 +28,9 @@ curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
 pip3 install neovim
 
 # remove files if they already exist
+rm -rf ~/.config/nvim/coc-settings.json
 rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.tmux ~/.tmux.conf ~/.config/nvim 2> /dev/null
+
 
 # Neovim expects some folders already exist
 mkdir -p ~/.config ~/.config/nvim ~/.config/nvim/config
@@ -37,6 +39,7 @@ mkdir -p ~/.config ~/.config/nvim ~/.config/nvim/config
 ln -s ~/dotfiles/zshrc ~/.zshrc
 ln -s ~/dotfiles/tmux.conf ~/.tmux.conf
 ln -s ~/dotfiles/vimrc ~/.config/nvim/init.vim
+ln -s ~/dotfiles/coc-settings.json ~/.config/nvim/coc-settings.json
 
 # Symlink vim config
 ln -s ~/dotfiles/config/* ~/.config/nvim/config
