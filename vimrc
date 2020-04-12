@@ -161,7 +161,7 @@ inoremap <silent><expr> <c-space> coc#refresh()
 inoremap jj <ESC>
 
 " search current word under cursor
-nnoremap <silent> <Leader>ag :Find <C-R><C-W><CR>
+nnoremap <silent> <Leader>f :Find <C-R><C-W><CR>
 
 " replace text under cursor
 nnoremap <silent><Leader>r :%s/<C-R><C-W>/
