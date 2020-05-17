@@ -11,11 +11,11 @@ Plug 'KeitaNakamura/neodark.vim'
 Plug 'pwntester/cobalt2.vim'
 Plug 'trevordmiller/nova-vim'
 Plug 'morhetz/gruvbox'
+Plug 'sainnhe/gruvbox-material'
 Plug 'tyrannicaltoucan/vim-quantum'
 Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'ayu-theme/ayu-vim'
 Plug 'skielbasa/vim-material-monokai'
-Plug 'mhartington/oceanic-next'
 Plug 'haishanh/night-owl.vim'
 Plug 'nightsense/snow'
 Plug 'arcticicestudio/nord-vim'
@@ -100,8 +100,11 @@ let g:one_allow_italics = 1
 let g:oceanic_next_terminal_bold = 1
 let g:oceanic_next_terminal_italic = 1
 let g:gruvbox_italic = 1
+let g:gruvbox_material_background = 'hard'
+let g:gruvbox_material_enable_italic = 1
 let g:neodark#solid_vertsplit = 1
 let g:materialmonokai_italic = 1
+let g:dracula_italic = 1
 let ayucolor="mirage"
 set background=dark
 set t_ut=
@@ -117,24 +120,25 @@ set t_ut=
 " colorscheme ayu
 " colorscheme onehalfdark
 " colorscheme material-monokai
-" colorscheme dracula
+colorscheme dracula
+" colorscheme gruvbox-material
 " colorscheme nord
-colorscheme night-owl
-" colorscheme OceanicNext
+" colorscheme night-owl
 " colorscheme snow
 " colorscheme monokai_pro
-
 "*****************************************************************************
 "" Mappings
 "*****************************************************************************
 map <C-b> :NERDTreeToggle<CR>
-" nnoremap <C-p> :Clap filer<CR>
-" autocmd FileType clap_input inoremap <silent> <buffer> <C-n> <C-R>=clap#navigation#linewise('down')<CR>
-" autocmd FileType clap_input inoremap <silent> <buffer> <C-p> <C-R>=clap#navigation#linewise('up')<CR>
-nnoremap <C-p> :Files<CR>
+" fzf file fuzzy search that respects .gitignore
+" If in git directory, show only files that are committed, staged, or unstaged
+" else use regular :Files
+nnoremap <expr> <C-p> (len(system('git rev-parse')) ? ':Files' : ':GFiles --exclude-standard --others --cached')."\<cr>"
+" nnoremap <C-p> :Files<CR>
 nnoremap <C-f> :Find<CR>
 " LSP
 nmap <silent> gd <Plug>(coc-definition)
+nnoremap <silent> gD :call CocAction('jumpDefinition', 'vsplit')<CR>
 nnoremap <silent> gh :call CocAction('doHover')<CR>
 nmap <silent> <Leader>m <Plug>(coc-diagnostic-prev)
 nmap <silent> <Leader>n <Plug>(coc-diagnostic-next)

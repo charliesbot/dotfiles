@@ -8,6 +8,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 brew tap homebrew/cask-fonts
 brew install ripgrep
 brew install tmux
+brew install deno
 brew install neovim
 brew install python3
 brew install ag
