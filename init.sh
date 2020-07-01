@@ -47,7 +47,3 @@ ln -s ~/dotfiles/config/* ~/.config/nvim/config
 
 # Writting vim will launch nvim
 alias vim="nvim"
-
-# Install vim plug
-curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
