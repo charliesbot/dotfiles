@@ -116,6 +116,7 @@ eval "$(pyenv init -)"
 # alias python=/usr/local/bin/python3
 alias pip=pip3
 alias gst='git status'
+alias gco='git checkout'
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
