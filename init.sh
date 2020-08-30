@@ -76,6 +76,9 @@ brew install fzf
 brew install bat
 brew install thefuck
 
+# FZF shortcuts
+$(brew --prefix)/opt/fzf/install
+
 # install fnm
 curl -fsSL https://github.com/Schniz/fnm/raw/master/.ci/install.sh | bash
 
