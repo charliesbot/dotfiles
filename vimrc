@@ -41,7 +41,7 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'justinmk/vim-sneak'
 
 " General
-Plug '/usr/local/opt/fzf'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 " Plug 'ryanoasis/vim-devicons'
 " Plug 'liuchengxu/vim-clap', { 'do': ':Clap install-binary' }

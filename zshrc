@@ -19,7 +19,11 @@ export PATH=$HOME/bin:/usr/local/bin:$PATH
 export ZSH=/Users/charlie/.oh-my-zsh
 
 # fnm
-eval "$(fnm env --multi)"
+export PATH=/home/charlie/.fnm:$PATH
+eval "`fnm env --multi`"
+
+# fuck!
+eval $(thefuck --alias)
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -183,3 +187,4 @@ zinit light-mode for \
     zinit-zsh/z-a-bin-gem-node
 
 ### End of Zinit's installer chunk
+
