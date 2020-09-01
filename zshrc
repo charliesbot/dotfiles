@@ -16,7 +16,7 @@ zinit light sindresorhus/pure
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH=/Users/charlie/.oh-my-zsh
+export ZSH=~/.oh-my-zsh
 
 # fnm
 export PATH=/home/charlie/.fnm:$PATH
@@ -115,8 +115,6 @@ eval "$(pyenv init -)"
 # alias
 # alias python=/usr/local/bin/python3
 alias pip=pip3
-alias gst='git status'
-alias gco='git checkout'
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
