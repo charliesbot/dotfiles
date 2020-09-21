@@ -1,3 +1,6 @@
+" Polyglot ignore must exists before plugins
+let g:polyglot_disabled = ['css', 'markdown']
+
 "*****************************************************************************
 "" Plugins
 "*****************************************************************************
@@ -277,8 +280,6 @@ let g:airline_section_z="%l/%c"
 let g:airline#extensions#hunks#enabled = 0
 let g:airline#extensions#branch#enabled = 0 " Disable branch
 
-" Polyglot
-let g:polyglot_disabled = ['css', 'markdown']
 
 "FZF + ripgrep
 " --column: Show column number
