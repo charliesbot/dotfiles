@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-UNAME=$( command -v uname) 
+UNAME=$( command -v uname)
 UNAME=$( "${UNAME}" | tr '[:upper:]' '[:lower:]')
 
 case "${UNAME}" in

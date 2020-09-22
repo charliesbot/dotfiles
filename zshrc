@@ -9,14 +9,16 @@ compinit
 
 zinit light zsh-users/zsh-autosuggestions
 zinit light zdharma/fast-syntax-highlighting
-zinit ice pick"async.zsh" src"pure.zsh"
+zinit ice compile'(pure|async).zsh' pick'async.zsh' src'pure.zsh'
 zinit light sindresorhus/pure
-
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH=~/.oh-my-zsh
+
+# This fixes prompt error from Pure
+fpath+=('/home/charlie/.fnm/node-versions/v12.18.4/installation/lib/node_modules/pure-prompt/functions')
 
 # fnm
 export PATH=/home/charlie/.fnm:$PATH
@@ -77,8 +79,6 @@ plugins=(git)
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
-autoload -U promptinit; promptinit
-prompt pure
 
 export EDITOR='nvim'
 
@@ -110,7 +110,9 @@ export EDITOR='nvim'
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # Pyenv
+export PATH="/home/charlie/.pyenv/bin:$PATH"
 eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
 
 # alias
 # alias python=/usr/local/bin/python3
@@ -126,7 +128,6 @@ export PATH=$PATH:$ANDROID_HOME/tools/bin
 export PATH=$PATH:$ANDROID_HOME/platform-tools
 
 export PATH=~/.local/bin:$PATH
-
 #Cargo
 export PATH="$HOME/.cargo/bin:$PATH"
 # postgresql@9.5
@@ -186,5 +187,8 @@ zinit light-mode for \
     zinit-zsh/z-a-as-monitor \
     zinit-zsh/z-a-bin-gem-node
 
-### End of Zinit's installer chunk
+# Pure theme
+autoload -U promptinit; promptinit
+prompt pure
 
+### End of Zinit's installer chunk
