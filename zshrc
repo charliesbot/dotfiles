@@ -191,4 +191,5 @@ zinit light-mode for \
 autoload -U promptinit; promptinit
 prompt pure
 
+<<<<<<< Updated upstream
 ### End of Zinit's installer chunk

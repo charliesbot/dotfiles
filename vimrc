@@ -1,4 +1,4 @@
-" Polyglot ignore must exists before plugins
+" vim-polyglot needs to be before plug#begin
 let g:polyglot_disabled = ['css', 'markdown']
 
 "*****************************************************************************
@@ -317,6 +317,15 @@ let g:fzf_colors =
       \ 'marker':  ['fg', 'Keyword'],
       \ 'spinner': ['fg', 'Label'],
       \ 'header':  ['fg', 'Comment'] }
+
+" WSL Clipboard Support
+let s:clip = '/mnt/c/Windows/System32/clip.exe'  " change this path according to your mount point
+if executable(s:clip)
+  augroup WSLYank
+    autocmd!
+    autocmd TextYankPost * if v:event.operator ==# 'y' | call system(s:clip, @0) | endif
+  augroup END
+endif
 
 " ----------------------------
 " ---- File type settings ----
