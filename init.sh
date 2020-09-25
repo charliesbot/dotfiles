@@ -49,6 +49,9 @@ echo "Installing brew"
 case "${UNAME}" in
   linux*)
 	  echo "Linux detected. Using Linux config..."
+	  echo "Installing JetBrains Mono"
+	  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/JetBrains/JetBrainsMono/master/install_manual.sh)"
+
     ;;
   darwin*)
 	echo "Mac detected. Using Mac config..."
