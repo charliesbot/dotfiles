@@ -22,7 +22,7 @@ fpath+=('/home/charlie/.fnm/node-versions/v12.18.4/installation/lib/node_modules
 
 # fnm
 export PATH=/home/charlie/.fnm:$PATH
-eval "`fnm env --multi`"
+eval "`fnm env`"
 
 # fuck!
 eval $(thefuck --alias)
