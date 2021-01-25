@@ -61,6 +61,8 @@ case "${UNAME}" in
 	brew install --cask font-fira-code
 	brew install --cask font-cascadia
 	brew install --cask font-jetbrains-mono
+	brew install --cask font-iosevka
+
 	# deno brew formula only works with mac
 	brew install deno
 	brew install reattach-to-user-namespace
