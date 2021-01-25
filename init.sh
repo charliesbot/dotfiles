@@ -57,10 +57,10 @@ case "${UNAME}" in
 	echo "Mac detected. Using Mac config..."
 	# casks only work in mac
 	brew tap homebrew/cask-fonts
-	brew cask install kitty
-	brew cask install font-fira-code
-	brew cask install font-cascadia
-	brew cask install font-jetbrains-mono
+	brew install --cask kitty
+	brew install --cask font-fira-code
+	brew install --cask font-cascadia
+	brew install --cask font-jetbrains-mono
 	# deno brew formula only works with mac
 	brew install deno
 	brew install reattach-to-user-namespace

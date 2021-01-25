@@ -18,11 +18,14 @@ export PATH=$HOME/bin:/usr/local/bin:$PATH
 export ZSH=~/.oh-my-zsh
 
 # This fixes prompt error from Pure
-fpath+=('/home/charlie/.fnm/node-versions/v12.18.4/installation/lib/node_modules/pure-prompt/functions')
+fpath+=('~/.fnm/node-versions/v14.15.4/installation/lib/node_modules/pure-prompt/functions')
 
 # fnm
-export PATH=/home/charlie/.fnm:$PATH
+export PATH=~/.fnm:$PATH
 eval "`fnm env`"
+
+# export PATH=/Users/charlie/.fnm:$PATH
+# eval "`fnm env`"
 
 # fuck!
 eval $(thefuck --alias)
