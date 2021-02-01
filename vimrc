@@ -1,5 +1,5 @@
 " vim-polyglot needs to be before plug#begin
-let g:polyglot_disabled = ['css', 'markdown']
+" let g:polyglot_disabled = ['css', 'markdown']
 
 "*****************************************************************************
 "" Plugins
@@ -25,13 +25,12 @@ Plug 'arcticicestudio/nord-vim'
 Plug 'phanviet/vim-monokai-pro'
 Plug 'sonph/onehalf', {'rtp': 'vim/'}
 
-Plug 'mhinz/vim-startify'
-
 " Search
 Plug 'nelstrom/vim-visual-star-search'
 
 " Tree
 Plug 'justinmk/vim-dirvish'
+Plug 'mhinz/vim-startify'
 
 " Helpers for UNIX
 Plug 'tpope/vim-eunuch'
@@ -46,8 +45,6 @@ Plug 'justinmk/vim-sneak'
 " General
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-" Plug 'ryanoasis/vim-devicons'
-" Plug 'liuchengxu/vim-clap', { 'do': ':Clap install-binary' }
 Plug 'matze/vim-move'
 Plug 'dominikduda/vim_current_word'
 Plug 'tpope/vim-repeat'
@@ -55,10 +52,11 @@ Plug 'Konfekt/FastFold'
 Plug 'metakirby5/codi.vim'
 
 " Language Support
-Plug 'hail2u/vim-css3-syntax'
-Plug 'sheerun/vim-polyglot'
-Plug 'reasonml-editor/vim-reason-plus', { 'do': 'npm i -g ocaml-language-server' }
-Plug 'gabrielelana/vim-markdown', { 'for': ['markdown'] }
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+" Plug 'sheerun/vim-polyglot'
+" Plug 'gabrielelana/vim-markdown', { 'for': ['markdown'] }
+
+" Tree
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'Xuyuanp/nerdtree-git-plugin'
 
@@ -82,7 +80,6 @@ Plug 'wellle/targets.vim'
 Plug 'ntpeters/vim-better-whitespace'
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-" Plug 'liuchengxu/vista.vim'
 
 call plug#end()
 
@@ -129,25 +126,15 @@ colorscheme dracula
 " colorscheme night-owl
 " colorscheme snow
 " colorscheme monokai_pro
-"*****************************************************************************
-"" Mappings
-"*****************************************************************************
-map <C-b> :NERDTreeToggle<CR>
-" fzf file fuzzy search that respects .gitignore
-" If in git directory, show only files that are committed, staged, or unstaged
-" else use regular :Files
-nnoremap <expr> <C-p> (len(system('git rev-parse')) ? ':Files' : ':GFiles --exclude-standard --others --cached')."\<cr>"
-" nnoremap <C-p> :Files<CR>
-nnoremap <C-f> :Find<CR>
 " LSP
-nmap <silent> gd <Plug>(coc-definition)
-nnoremap <silent> gD :call CocAction('jumpDefinition', 'vsplit')<CR>
-nnoremap <silent> gh :call CocAction('doHover')<CR>
-nmap <silent> <Leader>m <Plug>(coc-diagnostic-prev)
-nmap <silent> <Leader>n <Plug>(coc-diagnostic-next)
-" Highlight symbol under cursor on CursorHold
-autocmd CursorHold * silent call CocActionAsync('highlight')
-nmap <leader>rn <Plug>(coc-rename)
+" nmap <silent> gd <Plug>(coc-definition)
+" nnoremap <silent> gD :call CocAction('jumpDefinition', 'vsplit')<CR>
+" nnoremap <silent> gh :call CocAction('doHover')<CR>
+" nmap <silent> <Leader>m <Plug>(coc-diagnostic-prev)
+" nmap <silent> <Leader>n <Plug>(coc-diagnostic-next)
+" " Highlight symbol under cursor on CursorHold
+" autocmd CursorHold * silent call CocActionAsync('highlight')
+" nmap <leader>rn <Plug>(coc-rename)
 
 " Use tab for trigger completion with characters ahead and navigate.
 " Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
@@ -234,9 +221,6 @@ let g:multi_cursor_quit_key='<Esc>'
 " Vim-Sneak
 let g:sneak#s_next = 1
 let g:sneak#label = 1
-
-" Magit
-let g:magit_show_magit_mapping='<leader>m'
 
 " Git gutter
 let g:gitgutter_override_sign_column_highlight = 0
@@ -330,7 +314,7 @@ endif
 " ----------------------------
 " ---- File type settings ----
 " ----------------------------
-autocmd BufNewFile,BufRead .env.* set filetype=sh
+" autocmd BufNewFile,BufRead .env.* set filetype=sh
 
 " autocmd FileType python let b:coc_root_patterns = ['Pipfile', '.env', '.git']
 " autocmd FileType python let b:coc_root_patterns = ['Pipfile']
