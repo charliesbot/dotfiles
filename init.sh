@@ -37,10 +37,13 @@ mkdir -p ~/.config ~/.config/nvim ~/.config/nvim/config
 # Symlinking files
 ln -s ~/dotfiles/zshrc ~/.zshrc
 ln -s ~/dotfiles/tmux.conf ~/.tmux.conf
-ln -s ~/dotfiles/vimrc ~/.config/nvim/init.vim
+ln -s ~/dotfiles/init.lua ~/.config/nvim/init.lua
+ln -s ~/dotfiles/lua/* ~/.config/nvim/lua
 ln -s ~/dotfiles/coc-settings.json ~/.config/nvim/coc-settings.json
 ln -s ~/dotfiles/config/* ~/.config/nvim/config
 
+# Italics and true color profile for tmux
+tic -x tmux.terminfo
 
 echo "Installing brew"
 # install brew

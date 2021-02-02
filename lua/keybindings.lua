@@ -73,7 +73,7 @@ keymap('o', 'F', '<Plug>Sneak_F', { silent = true })
 -- *****************************************************************************
 -- Open Configs
 -- *****************************************************************************
-keymap('n', '<leader>ev', ':tabe ~/.config/nvim/init.vim<CR>', { noremap = true, silent = true })
+keymap('n', '<leader>ev', ':tabe ~/.config/nvim/init.lua<CR>', { noremap = true, silent = true })
 keymap('n', '<leader>es', ':tabe ~/.config/nvim/coc-settings.json<CR>', { noremap = true, silent = true })
 keymap('n', '<leader>et', ':tabe ~/.tmux.conf<CR>', { noremap = true, silent = true })
 keymap('n', '<leader>eg', ':tabe ~/.gitconfig<CR>', { noremap = true, silent = true })

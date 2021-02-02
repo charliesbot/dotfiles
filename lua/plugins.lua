@@ -48,6 +48,7 @@ paq {'metakirby5/codi.vim'}
 
 -- Language Support
 paq {'nvim-treesitter/nvim-treesitter'}
+paq {'nvim-treesitter/playground'}
 
 -- Quoting/parenthesizing
 paq {'machakann/vim-sandwich'}
