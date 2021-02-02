@@ -32,7 +32,6 @@ vim.cmd("set inccommand=split")
 vim.cmd("set mouse=a")
 
 -- use native clipboard
-vim.cmd("set clipboard=unnamed")
 vim.cmd("set clipboard^=unnamedplus")
 
 vim.cmd("set nobackup")

@@ -1,6 +1,16 @@
 require('settings')
 require('plugins')
-require('pluginsConfig')
+
+-- packages config
+
+require('plugins.smallConfigs')
+require('plugins.fzf')
+require('plugins.startify')
+require('plugins.treesitter')
+require('plugins.multiCursor')
+
+-- end packages config
+
 require('keybindings')
 require('colors')
 require('customFunctions')
