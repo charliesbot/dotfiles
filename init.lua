@@ -15,8 +15,6 @@ require('keybindings')
 require('colors')
 require('customFunctions')
 
--- Map leader to space
-
 local colorSchemes = {
   gruvbox = 'gruvbox',
   paperColor = 'PaperColor',
@@ -36,4 +34,4 @@ local colorSchemes = {
   monoKaiProp = 'monokai_pro'
 }
 
-vim.cmd(string.format('colorscheme %s', colorSchemes.dracula))
+vim.cmd(string.format('colorscheme ' .. colorSchemes.dracula))

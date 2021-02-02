@@ -65,6 +65,9 @@ paq {'terryma/vim-multiple-cursors'}
 -- Provides additional text objects
 paq {'wellle/targets.vim'}
 
+-- Term
+paq {'voldikss/vim-floaterm'}
+
 -- Highlight White Space
 paq {'ntpeters/vim-better-whitespace'}
 
