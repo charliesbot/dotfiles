@@ -38,6 +38,9 @@ paq {'vim-airline/vim-airline-themes'}
 -- Efficient moving
 paq {'justinmk/vim-sneak'}
 
+-- UI Widgets
+paq {'skywind3000/vim-quickui'}
+
 paq {'junegunn/fzf', hook = vim.fn['fzf#install']}
 paq {'junegunn/fzf.vim'}
 paq {'matze/vim-move'}
@@ -47,6 +50,7 @@ paq {'Konfekt/FastFold'}
 paq {'metakirby5/codi.vim'}
 
 -- Language Support
+-- paq {'sheerun/vim-polyglot'}
 paq {'nvim-treesitter/nvim-treesitter'}
 paq {'nvim-treesitter/playground'}
 

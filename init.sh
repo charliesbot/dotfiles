@@ -32,7 +32,7 @@ rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.tmux ~/.tmux.conf ~/.config/nvim 2> /dev/null
 
 echo "Creating symlinks"
 # Neovim expects some folders already exist
-mkdir -p ~/.config ~/.config/nvim ~/.config/nvim/config
+mkdir -p ~/.config ~/.config/nvim ~/.config/nvim/lua
 
 # Symlinking files
 ln -s ~/dotfiles/zshrc ~/.zshrc
@@ -40,7 +40,6 @@ ln -s ~/dotfiles/tmux.conf ~/.tmux.conf
 ln -s ~/dotfiles/init.lua ~/.config/nvim/init.lua
 ln -s ~/dotfiles/lua/* ~/.config/nvim/lua
 ln -s ~/dotfiles/coc-settings.json ~/.config/nvim/coc-settings.json
-ln -s ~/dotfiles/config/* ~/.config/nvim/config
 
 # Italics and true color profile for tmux
 tic -x tmux.terminfo
@@ -51,9 +50,9 @@ echo "Installing brew"
 
 case "${UNAME}" in
   linux*)
-	  echo "Linux detected. Using Linux config..."
-	  echo "Installing JetBrains Mono"
-	  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/JetBrains/JetBrainsMono/master/install_manual.sh)"
+    echo "Linux detected. Using Linux config..."
+    echo "Installing JetBrains Mono"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/JetBrains/JetBrainsMono/master/install_manual.sh)"
 
     ;;
   darwin*)
@@ -89,10 +88,6 @@ $(brew --prefix)/opt/fzf/install
 
 # install fnm
 curl -fsSL https://github.com/Schniz/fnm/raw/master/.ci/install.sh | bash
-
-# install Plug - Neovim Plugin Manager
-#curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
-#  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
 # install Paq - Neovim Plugin Manager
 git clone https://github.com/savq/paq-nvim.git \

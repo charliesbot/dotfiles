@@ -1,10 +1,12 @@
-require('settings')
 require('plugins')
+require('settings')
 
 -- packages config
 
 require('plugins.smallConfigs')
+require('plugins.codi')
 require('plugins.fzf')
+require('plugins.quickUI')
 require('plugins.startify')
 require('plugins.treesitter')
 require('plugins.multiCursor')
