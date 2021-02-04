@@ -30,6 +30,7 @@ ln -s ~/dotfiles/tmux.conf ~/.tmux.conf
 ln -s ~/dotfiles/init.lua ~/.config/nvim/init.lua
 ln -s ~/dotfiles/lua/* ~/.config/nvim/lua
 ln -s ~/dotfiles/coc-settings.json ~/.config/nvim/coc-settings.json
+ln -s ~/dotfiles/wezterm.lua ~/.wezterm.lua
 
 # Italics and true color profile for tmux
 tic -x tmux.terminfo
@@ -56,17 +57,19 @@ fi
 
 if [[ `uname` == "Darwin"   ]]; then
   echo "Mac detected. Using Mac config..."
-  # casks only work in mac
   brew tap homebrew/cask-fonts
+  brew tap wez/wezterm
+
+  brew install wezterm
+  # casks only work in mac
   brew install --cask kitty
   brew install --cask font-fira-code
   brew install --cask font-cascadia
   brew install --cask font-jetbrains-mono
   brew install --cask font-iosevka
 
-  # deno brew formula only works with mac
   brew install pyenv
-  brew install deno
+  brew install deno # deno brew formula only works with mac
   brew install reattach-to-user-namespace
 fi
 
