@@ -60,14 +60,22 @@ if [[ `uname` == "Darwin"   ]]; then
   brew tap homebrew/cask-fonts
   brew tap wez/wezterm
 
-  brew install wezterm
   # casks only work in mac
   brew install --cask kitty
   brew install --cask font-fira-code
   brew install --cask font-cascadia
   brew install --cask font-jetbrains-mono
   brew install --cask font-iosevka
+  brew install --cask spotify
+  brew install --cask alfred
+  brew install --cask visual-studio-code-insiders
+  brew install --cask discord
+  brew install --cask telegram-desktop
+  brew install --cask grammarly
+  brew install --cask google-chrome
+  brew install --logitech-options
 
+  brew install wezterm
   brew install pyenv
   brew install deno # deno brew formula only works with mac
   brew install reattach-to-user-namespace
