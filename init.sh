@@ -41,7 +41,7 @@ echo "Installing brew"
 
 brew install ripgrep
 brew install tmux
-brew install neovim
+brew install --HEAD neovim # until nvim 0.5 becomes stable
 brew install ag
 brew install fzf
 brew install bat
