@@ -73,7 +73,7 @@ if [[ `uname` == "Darwin"   ]]; then
   brew install --cask telegram-desktop
   brew install --cask grammarly
   brew install --cask google-chrome
-  brew install --logitech-options
+  brew install --cask logitech-options
   brew install --cask dash
 
   brew install wezterm
