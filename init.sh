@@ -76,9 +76,10 @@ if [[ `uname` == "Darwin"   ]]; then
   brew install --cask 1password
   brew install --cask rectangle
   brew install --cask dash
+  brew install --cask soundsource
 
-  brew install wezterm
   brew install pyenv
+  brew install wezterm
   brew install deno # deno brew formula only works with mac
   brew install reattach-to-user-namespace
 fi
