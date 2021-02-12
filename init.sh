@@ -74,6 +74,8 @@ if [[ `uname` == "Darwin"   ]]; then
   brew install --cask grammarly
   brew install --cask google-chrome
   brew install --cask 1password
+  brew install --cask rectangle
+  brew install --cask dash
 
   brew install wezterm
   brew install pyenv
@@ -97,6 +99,10 @@ git clone https://github.com/savq/paq-nvim.git \
     "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/pack/paqs/opt/paq-nvim
 
 pip3 install pynvim
+
+# pure prompt manual config
+mkdir -p "$HOME/.zsh"
+git clone https://github.com/sindresorhus/pure.git "$HOME/.zsh/pure"
 
 # Writting vim will launch nvim
 alias vim="nvim"
