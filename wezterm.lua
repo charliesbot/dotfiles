@@ -6,4 +6,3 @@ return {
   font = wezterm.font("MonoLisa"),
   font_size = 14.0,
 }
-

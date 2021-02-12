@@ -73,6 +73,7 @@ if [[ `uname` == "Darwin"   ]]; then
   brew install --cask telegram-desktop
   brew install --cask grammarly
   brew install --cask google-chrome
+  brew install --cask 1password
 
   brew install wezterm
   brew install pyenv
