@@ -57,6 +57,10 @@ fi
 
 if [[ `uname` == "Darwin"   ]]; then
   echo "Mac detected. Using Mac config..."
+
+  # disable key repeat
+  defaults write -g ApplePressAndHoldEnabled -bool false
+
   brew tap homebrew/cask-fonts
   brew tap wez/wezterm
 
