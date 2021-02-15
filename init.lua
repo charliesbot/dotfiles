@@ -18,22 +18,23 @@ require('colors')
 require('customFunctions')
 
 local colorSchemes = {
-  gruvbox = 'gruvbox',
-  paperColor = 'PaperColor',
-  one = 'one',
-  nova = 'nova',
-  oneDark = 'onedark',
-  cobalt = 'cobalt2',
-  quantum = 'quantum',
   ayu = 'ayu',
-  oneHalfDark='onehalfdark',
-  materialMonokai = 'material-monokai',
+  cobalt = 'cobalt2',
   dracula = 'dracula',
+  draculaPro = 'dracula_pro',
+  gruvbox = 'gruvbox',
   gruvboxMaterial = 'gruvbox-material',
-  nord = 'nord',
+  materialMonokai = 'material-monokai',
+  monokaiPrp = 'monokai_pro',
   nightOwl = 'night-owl',
+  nord = 'nord',
+  nova = 'nova',
+  one = 'one',
+  oneDark = 'onedark',
+  oneHalfDark='onehalfdark',
+  paperColor = 'PaperColor',
+  quantum = 'quantum',
   snow = 'snow',
-  monoKaiProp = 'monokai_pro'
 }
 
-vim.cmd(string.format('colorscheme ' .. colorSchemes.dracula))
+vim.cmd(string.format('colorscheme ' .. colorSchemes.draculaPro))
