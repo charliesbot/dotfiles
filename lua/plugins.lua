@@ -1,79 +1,98 @@
-vim.cmd 'packadd paq-nvim'         -- Load package
-local paq = require'paq-nvim'.paq  -- Import module and bind `paq` function
-paq {'savq/paq-nvim', opt=true}     -- Let Paq manage itself
+local install_path = vim.fn.stdpath "data" .. "/site/pack/packer/start/packer.nvim"
 
--- My Packages
+if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
+  vim.cmd("!git clone https://github.com/wbthomason/packer.nvim " .. install_path)
+end
 
--- Themes
-paq {'NLKNguyen/papercolor-theme'}
-paq {'joshdick/onedark.vim'}
-paq {'rakr/vim-one'}
-paq {'KeitaNakamura/neodark.vim'}
-paq {'trevordmiller/nova-vim'}
-paq {'morhetz/gruvbox'}
-paq {'tyrannicaltoucan/vim-quantum'}
-paq {'dracula/vim', as='dracula'}
-paq {'ayu-theme/ayu-vim'}
-paq {'skielbasa/vim-material-monokai'}
-paq {'haishanh/night-owl.vim'}
-paq {'nightsense/snow'}
-paq {'arcticicestudio/nord-vim'}
-paq {'phanviet/vim-monokai-pro'}
+return require "packer".startup(
+  function(use)
+    -- My Packages
 
-paq {'mhinz/vim-startify'}
-paq {'scrooloose/nerdtree'}
-paq {'Xuyuanp/nerdtree-git-plugin'}
+    -- Themes
+    use {'NLKNguyen/papercolor-theme'}
+    use {'joshdick/onedark.vim'}
+    use {'rakr/vim-one'}
+    use {'KeitaNakamura/neodark.vim'}
+    use {'trevordmiller/nova-vim'}
+    use {'morhetz/gruvbox'}
+    use {'tyrannicaltoucan/vim-quantum'}
+    use {'dracula/vim', as='dracula'}
+    use {'ayu-theme/ayu-vim'}
+    use {'skielbasa/vim-material-monokai'}
+    use {'haishanh/night-owl.vim'}
+    use {'nightsense/snow'}
+    use {'arcticicestudio/nord-vim'}
+    use {'phanviet/vim-monokai-pro'}
+    use '~/dracula_pro'
 
-paq {'nelstrom/vim-visual-star-search'}
+    use {'mhinz/vim-startify'}
+    use {'scrooloose/nerdtree'}
+    use {'Xuyuanp/nerdtree-git-plugin'}
 
-paq {'justinmk/vim-dirvish'}
+    use {'nelstrom/vim-visual-star-search'}
 
--- Helpers for UNIX
-paq {'tpope/vim-eunuch'}
+    use {'justinmk/vim-dirvish'}
 
--- Visual tab {bottom}
-paq {'vim-airline/vim-airline'}
-paq {'vim-airline/vim-airline-themes'}
+    -- Helpers for UNIX
+    use {'tpope/vim-eunuch'}
 
--- Efficient moving
-paq {'justinmk/vim-sneak'}
+    -- Visual tab {bottom}
+    use {'vim-airline/vim-airline'}
+    use {'vim-airline/vim-airline-themes'}
 
--- UI Widgets
-paq {'skywind3000/vim-quickui'}
+    -- Efficient moving
+    use {'justinmk/vim-sneak'}
 
-paq {'junegunn/fzf', hook = vim.fn['fzf#install']}
-paq {'junegunn/fzf.vim'}
-paq {'matze/vim-move'}
-paq {'dominikduda/vim_current_word'}
-paq {'tpope/vim-repeat'}
-paq {'Konfekt/FastFold'}
-paq {'metakirby5/codi.vim'}
+    -- UI Widgets
+    use {'skywind3000/vim-quickui'}
+    use {
+      "junegunn/fzf.vim",
+      requires = {"junegunn/fzf"}
+    }
+    use {'matze/vim-move'}
+    use {'dominikduda/vim_current_word'}
+    use {'tpope/vim-repeat'}
+    use {'Konfekt/FastFold'}
+    use {'metakirby5/codi.vim'}
 
--- Language Support
--- paq {'sheerun/vim-polyglot'}
-paq {'nvim-treesitter/nvim-treesitter'}
-paq {'nvim-treesitter/playground'}
+    -- Language Support
+    use {'sheerun/vim-polyglot'}
 
--- Quoting/parenthesizing
-paq {'machakann/vim-sandwich'}
-paq {'jiangmiao/auto-pairs'}
+    -- Quoting/parenthesizing
+    use {'machakann/vim-sandwich'}
+    use {'jiangmiao/auto-pairs'}
 
--- Comments
-paq {'scrooloose/nerdcommenter'}
+    -- Comments
+    use {'scrooloose/nerdcommenter'}
 
--- Git
-paq {'airblade/vim-gitgutter'}
+    -- Git
+    use {
+      'lewis6991/gitsigns.nvim',
+      requires = {
+        'nvim-lua/plenary.nvim'
+      }
+    }
 
--- Multiple Cursors
-paq {'terryma/vim-multiple-cursors'}
+    -- Multiple Cursors
+    use {'terryma/vim-multiple-cursors'}
 
--- Provides additional text objects
-paq {'wellle/targets.vim'}
+    -- Provides additional text objects
+    use {'wellle/targets.vim'}
 
--- Term
-paq {'voldikss/vim-floaterm'}
+    -- Term
+    use {'voldikss/vim-floaterm'}
 
--- Highlight White Space
-paq {'ntpeters/vim-better-whitespace'}
+    -- Highlight White Space
+    use {'ntpeters/vim-better-whitespace'}
 
-paq {'neoclide/coc.nvim', branch='release'}
+    -- LSP
+    use {'neoclide/coc.nvim', branch='release'}
+  end
+)
+
+
+-- Neovim 0.5
+-- use {'neovim/nvim-lspconfig'}
+-- use {'hrsh7th/nvim-compe'}
+-- use {'nvim-treesitter/nvim-treesitter'}
+-- use {'nvim-treesitter/playground'}

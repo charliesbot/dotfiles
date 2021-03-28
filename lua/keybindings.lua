@@ -10,19 +10,15 @@ keymap('n', '<leader>V', ':vsplit<CR>', { noremap = true, silent = true })
 -- Clear search highlight
 keymap('n', '<esc>', ':noh<return><esc>', { noremap = true, silent = true })
 
--- *****************************************************************************
--- LSP
--- *****************************************************************************
+keymap('n', '<C-p>', ':Files<CR>', { noremap = true, silent = true })
+keymap('n', '<C-f>', ':Find<CR>', { noremap = true, silent = true })
 
 vim.cmd("command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)")
-
 vim.cmd([[
 command! -bang -nargs=? -complete=dir Files
 call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
 ]])
 
-keymap('n', '<C-p>', ':Files<CR>', { noremap = true, silent = true })
-keymap('n', '<C-f>', ':Find<CR>', { noremap = true, silent = true })
 
 -- *****************************************************************************
 -- LSP
@@ -38,7 +34,7 @@ keymap('i', '<C-Space>', 'coc#refresh()', { noremap = true, silent = true, expr 
 vim.fn.nvim_set_keymap('i', '<Tab>', [[pumvisible() ? "\<C-n>" : "\<Tab>"]], { noremap = true, expr = true })
 vim.fn.nvim_set_keymap('i', '<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]], { noremap = true, expr = true })
 -- Highlight symbol under cursor on CursorHold
---autocmd CursorHold * silent call CocActionAsync('highlight')
+vim.cmd("autocmd CursorHold * silent call CocActionAsync('highlight')")
 
 -- *****************************************************************************
 -- Fold
@@ -74,7 +70,7 @@ keymap('o', 'F', '<Plug>Sneak_F', { silent = true })
 -- Open Configs
 -- *****************************************************************************
 keymap('n', '<leader>ev', ':tabe ~/.config/nvim/init.lua<CR>', { noremap = true, silent = true })
-keymap('n', '<leader>es', ':tabe ~/.config/nvim/coc-settings.json<CR>', { noremap = true, silent = true })
+-- keymap('n', '<leader>es', ':tabe ~/.config/nvim/coc-settings.json<CR>', { noremap = true, silent = true })
 keymap('n', '<leader>et', ':tabe ~/.tmux.conf<CR>', { noremap = true, silent = true })
 keymap('n', '<leader>eg', ':tabe ~/.gitconfig<CR>', { noremap = true, silent = true })
 keymap('n', '<leader>ec', ':tabe ~/dotfiles/cheatsheets/vim-dirvish.md<CR>', { noremap = true, silent = true })

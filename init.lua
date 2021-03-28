@@ -8,8 +8,11 @@ require('plugins.codi')
 require('plugins.fzf')
 require('plugins.quickUI')
 require('plugins.startify')
-require('plugins.treesitter')
 require('plugins.multiCursor')
+-- Neovim 0.5
+-- require('plugins.lsp_config')
+-- require('plugins.compe')
+-- require('plugins.treesitter')
 
 -- end packages config
 

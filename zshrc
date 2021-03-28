@@ -123,6 +123,9 @@ export PATH=$PATH:$ANDROID_HOME/tools
 export PATH=$PATH:$ANDROID_HOME/tools/bin
 export PATH=$PATH:$ANDROID_HOME/platform-tools
 
+# Flutter
+export PATH="$PATH:`pwd`/flutter/bin"
+
 export PATH=~/.local/bin:$PATH
 #Cargo
 export PATH="$HOME/.cargo/bin:$PATH"
