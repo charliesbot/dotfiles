@@ -23,7 +23,6 @@ command! -bang -nargs=? -complete=dir Files call fzf#vim#files(<q-args>, fzf#vim
 -- *****************************************************************************
 -- LSP
 -- *****************************************************************************
-
 keymap('n', 'gd', '<Plug>(coc-definition)', {silent = true})
 keymap('n', 'gh', ":call CocAction('doHover')<CR>", {noremap = true, silent = true})
 keymap('n', 'gD', ":call CocAction('jumpDefinition', 'vsplit')<CR>", {silent = true})
@@ -39,6 +38,16 @@ keymap('i', '<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]],
 -- Highlight symbol under cursor on CursorHold
 vim.cmd("autocmd CursorHold * silent call CocActionAsync('highlight')")
 
+
+ -- vim.fn.nvim_set_keymap('i', '<Tab>', [[pumvisible() ? "\<C-n>" : "\<Tab>"]], { noremap = true, expr = true })
+ -- vim.fn.nvim_set_keymap('i', '<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]], { noremap = true, expr = true })
+-- Native LSP Bindings
+keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+keymap('n', 'gD', '<Cmd>vsplit | lua vim.lsp.buf.definition()<CR>', opts)
+keymap('n', 'gh', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
+keymap('n', '<space>m', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+keymap('n', '<space>n', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+keymap('n', '<space>p', '<Cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 -- *****************************************************************************
 -- Fold
 -- *****************************************************************************
