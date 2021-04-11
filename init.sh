@@ -46,6 +46,7 @@ brew install ag
 brew install fzf
 brew install bat
 brew install thefuck
+brew install go
 
 if [[ `uname` == "Linux"   ]]; then
   echo "Linux detected. Using Linux config..."
@@ -108,6 +109,9 @@ pip3 install pynvim
 # pure prompt manual config
 mkdir -p "$HOME/.zsh"
 git clone https://github.com/sindresorhus/pure.git "$HOME/.zsh/pure"
+
+# Go setup
+mkdir -p $HOME/go/{bin,src,pkg}
 
 # Writting vim will launch nvim
 alias vim="nvim"

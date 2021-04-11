@@ -125,16 +125,17 @@ export PATH=$PATH:$ANDROID_HOME/platform-tools
 
 # Flutter
 export PATH="$PATH:`pwd`/flutter/bin"
-
 export PATH=~/.local/bin:$PATH
-#Cargo
+# Cargo
 export PATH="$HOME/.cargo/bin:$PATH"
-# postgresql@9.5
-export PATH="$PATH:/usr/local/opt/postgresql@9.5/bin"
-#Deno
+# Deno
 export PATH="${HOME}/.deno/bin:$PATH"
+# Go
+export GOPATH=$HOME/go
+export GOROOT="$(brew --prefix golang)/libexec"
+export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"
 
-#Lang
+# Lang
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 

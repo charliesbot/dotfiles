@@ -4,6 +4,7 @@
   "python.linting.mypyEnabled": true,
   "python.formatting.provider": "black",
   "coc.preferences.formatOnSaveFiletypes": [
+    "lua",
     "css",
     "javascript",
     "typescript",
@@ -23,10 +24,9 @@
   ],
   "eslint.autoFixOnSave": true,
   "languageserver": {
-    "ocaml": {
-      "command": "ocaml-language-server",
-      "args": ["--stdio"],
-      "filetypes": ["ocaml", "reason"]
+    "lua": {
+      "command": "lua-lsp",
+      "filetypes": ["lua"]
     }
   }
 }

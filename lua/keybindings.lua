@@ -1,5 +1,6 @@
 -- keymap mode, shortcut, action, config
 local keymap = vim.api.nvim_set_keymap
+local opts = { noremap=true, silent=true }
 
 -- *****************************************************************************
 -- Mappings
@@ -19,23 +20,32 @@ command! -bang -nargs=? -complete=dir Files
 call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
 ]])
 
-
 -- *****************************************************************************
 -- LSP
 -- *****************************************************************************
-keymap('n', 'gd', '<Plug>(coc-definition)', { silent = true })
-keymap('n', 'gh', ":call CocAction('doHover')<CR>", { noremap = true, silent = true })
-keymap('n', 'gD', ":call CocAction('jumpDefinition', 'vsplit')<CR>", { silent = true })
-keymap('n', '<leader>m', '<Plug>(coc-diagnostic-next)', { silent = true })
-keymap('n', '<leader>n', '<Plug>(coc-diagnostic-next)', { silent = true })
-keymap('n', '<leader>rn', '<Plug>(coc-rename)', { silent = true })
--- Use <c-space> to trigger completion.
-keymap('i', '<C-Space>', 'coc#refresh()', { noremap = true, silent = true, expr = true })
-vim.fn.nvim_set_keymap('i', '<Tab>', [[pumvisible() ? "\<C-n>" : "\<Tab>"]], { noremap = true, expr = true })
-vim.fn.nvim_set_keymap('i', '<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]], { noremap = true, expr = true })
--- Highlight symbol under cursor on CursorHold
-vim.cmd("autocmd CursorHold * silent call CocActionAsync('highlight')")
+keymap('i', '<Tab>', [[pumvisible() ? "\<C-n>" : "\<Tab>"]], { noremap = true, expr = true })
+keymap('i', '<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]], { noremap = true, expr = true })
 
+-- keymap('n', 'gd', '<Plug>(coc-definition)', { silent = true })
+-- keymap('n', 'gh', ":call CocAction('doHover')<CR>", { noremap = true, silent = true })
+-- keymap('n', 'gD', ":call CocAction('jumpDefinition', 'vsplit')<CR>", { silent = true })
+-- keymap('n', '<leader>m', '<Plug>(coc-diagnostic-next)', { silent = true })
+-- keymap('n', '<leader>n', '<Plug>(coc-diagnostic-next)', { silent = true })
+-- keymap('n', '<leader>rn', '<Plug>(coc-rename)', { silent = true })
+-- -- Use <c-space> to trigger completion.
+-- keymap('i', '<C-Space>', 'coc#refresh()', { noremap = true, silent = true, expr = true })
+-- -- Highlight symbol under cursor on CursorHold
+-- vim.cmd("autocmd CursorHold * silent call CocActionAsync('highlight')")
+
+ -- vim.fn.nvim_set_keymap('i', '<Tab>', [[pumvisible() ? "\<C-n>" : "\<Tab>"]], { noremap = true, expr = true })
+ -- vim.fn.nvim_set_keymap('i', '<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]], { noremap = true, expr = true })
+-- Native LSP Bindings
+keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+keymap('n', 'gD', '<Cmd>vsplit | lua vim.lsp.buf.definition()<CR>', opts)
+keymap('n', 'gh', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
+keymap('n', '<space>m', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+keymap('n', '<space>n', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+keymap('n', '<space>p', '<Cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 -- *****************************************************************************
 -- Fold
 -- *****************************************************************************
@@ -70,7 +80,7 @@ keymap('o', 'F', '<Plug>Sneak_F', { silent = true })
 -- Open Configs
 -- *****************************************************************************
 keymap('n', '<leader>ev', ':tabe ~/.config/nvim/init.lua<CR>', { noremap = true, silent = true })
--- keymap('n', '<leader>es', ':tabe ~/.config/nvim/coc-settings.json<CR>', { noremap = true, silent = true })
+keymap('n', '<leader>es', ':tabe ~/.config/nvim/coc-settings.json<CR>', { noremap = true, silent = true })
 keymap('n', '<leader>et', ':tabe ~/.tmux.conf<CR>', { noremap = true, silent = true })
 keymap('n', '<leader>eg', ':tabe ~/.gitconfig<CR>', { noremap = true, silent = true })
 keymap('n', '<leader>ec', ':tabe ~/dotfiles/cheatsheets/vim-dirvish.md<CR>', { noremap = true, silent = true })

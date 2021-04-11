@@ -6,7 +6,8 @@ end
 
 return require "packer".startup(
   function(use)
-    -- My Packages
+    -- Local Packages
+    use '~/dracula_pro'
 
     -- Themes
     use {'NLKNguyen/papercolor-theme'}
@@ -23,7 +24,6 @@ return require "packer".startup(
     use {'nightsense/snow'}
     use {'arcticicestudio/nord-vim'}
     use {'phanviet/vim-monokai-pro'}
-    use '~/dracula_pro'
 
     use {'mhinz/vim-startify'}
     use {'scrooloose/nerdtree'}
@@ -56,7 +56,21 @@ return require "packer".startup(
     use {'metakirby5/codi.vim'}
 
     -- Language Support
-    use {'sheerun/vim-polyglot'}
+    --use {'sheerun/vim-polyglot'}
+
+    use {'nvim-treesitter/nvim-treesitter'}
+    use {'nvim-treesitter/playground'}
+
+    -- LSP
+    --use {'neoclide/coc.nvim', branch='release'}
+
+    use {'neovim/nvim-lspconfig'}
+    use {'kabouzeid/nvim-lspinstall'}
+    use {'hrsh7th/nvim-compe'}
+
+    -- Flutter
+    use {'dart-lang/dart-vim-plugin'}
+    use {'thosakwe/vim-flutter'}
 
     -- Quoting/parenthesizing
     use {'machakann/vim-sandwich'}
@@ -73,26 +87,17 @@ return require "packer".startup(
       }
     }
 
+    -- Indent Lines
+    use{'lukas-reineke/indent-blankline.nvim', branch = 'lua'}
+
     -- Multiple Cursors
     use {'terryma/vim-multiple-cursors'}
 
     -- Provides additional text objects
     use {'wellle/targets.vim'}
 
-    -- Term
-    use {'voldikss/vim-floaterm'}
-
     -- Highlight White Space
     use {'ntpeters/vim-better-whitespace'}
 
-    -- LSP
-    use {'neoclide/coc.nvim', branch='release'}
   end
 )
-
-
--- Neovim 0.5
--- use {'neovim/nvim-lspconfig'}
--- use {'hrsh7th/nvim-compe'}
--- use {'nvim-treesitter/nvim-treesitter'}
--- use {'nvim-treesitter/playground'}

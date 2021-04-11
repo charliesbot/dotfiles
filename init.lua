@@ -3,16 +3,21 @@ require('settings')
 
 -- packages config
 
+--require('plugins.treesitter')
 require('plugins.smallConfigs')
 require('plugins.codi')
 require('plugins.fzf')
 require('plugins.quickUI')
 require('plugins.startify')
 require('plugins.multiCursor')
--- Neovim 0.5
--- require('plugins.lsp_config')
--- require('plugins.compe')
--- require('plugins.treesitter')
+require('plugins.indentLines')
+
+-- LSP
+require('lsp')
+require('lsp.setup-ls')
+
+require('plugins.compe')
+require('plugins.lspConfig')
 
 -- end packages config
 
