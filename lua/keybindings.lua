@@ -37,8 +37,6 @@ keymap('i', '<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]],
                        {noremap = true, expr = true})
 -- Highlight symbol under cursor on CursorHold
 vim.cmd("autocmd CursorHold * silent call CocActionAsync('highlight')")
-keymap('i', '<Tab>', [[pumvisible() ? "\<C-n>" : "\<Tab>"]], {noremap = true, expr = true})
-keymap('i', '<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]], {noremap = true, expr = true})
 -- *****************************************************************************
 -- Fold
 -- *****************************************************************************
