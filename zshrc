@@ -21,8 +21,8 @@ export ZSH=~/.oh-my-zsh
 fpath+=$HOME/.zsh/pure
 
 # fnm
-#export PATH=~/.fnm:$PATH
-#eval "`fnm env`"
+export PATH=/Users/charlie/.fnm:$PATH
+eval "`fnm env`"
 
 # fuck!
 eval $(thefuck --alias)
@@ -134,6 +134,10 @@ export PATH="${HOME}/.deno/bin:$PATH"
 export GOPATH=$HOME/go
 export GOROOT="$(brew --prefix golang)/libexec"
 export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"
+# CPP
+export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
+export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 
 # Lang
 export LC_ALL=en_US.UTF-8

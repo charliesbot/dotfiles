@@ -19,15 +19,16 @@ end
 -- *****************************************************************************
 -- DART
 -- *****************************************************************************
-require'lspconfig'.dartls.setup{
-    init_options = {documentFormatting = true},
-}
+require'lspconfig'.dartls.setup {init_options = {documentFormatting = true}}
 
 -- *****************************************************************************
 -- TYPESCRIPT
 -- *****************************************************************************
 require'lspconfig'.tsserver.setup {
-    cmd = {DATA_PATH .. "/lspinstall/typescript/node_modules/.bin/typescript-language-server", "--stdio"},
+    cmd = {
+        DATA_PATH .. "/lspinstall/typescript/node_modules/.bin/typescript-language-server",
+        "--stdio"
+    },
     on_attach = documentHighlight,
     -- This makes sure tsserver is not used for formatting (I prefer prettier)
     -- on_attach = require'lsp'.common_on_attach,
@@ -57,7 +58,10 @@ require'lspconfig'.sumneko_lua.setup {
             },
             workspace = {
                 -- Make the server aware of Neovim runtime files
-                library = {[vim.fn.expand('$VIMRUNTIME/lua')] = true, [vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true},
+                library = {
+                    [vim.fn.expand('$VIMRUNTIME/lua')] = true,
+                    [vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true
+                },
                 maxPreload = 10000
             }
         }
@@ -66,29 +70,27 @@ require'lspconfig'.sumneko_lua.setup {
 
 -- *****************************************************************************
 -- EFM
--- *****************************************************************************
-local lua_efm = {
-    formatCommand = "lua-format -i --no-keep-simple-function-one-line --column-limit=120",
+
+local efm_prettier = {
+    formatCommand = "./node_modules/.bin/prettier --stdin-filepath ${INPUT}",
     formatStdin = true
 }
-
-local efm_prettier = {formatCommand = "./node_modules/.bin/prettier --stdin-filepath ${INPUT}", formatStdin = true}
 -- local prettier = require "efm/prettier"
 -- local eslint = require "efm/eslint"
 
 local languages = {
-  lua = {lua_efm},
-  css = {efm_prettier},
-  html = {efm_prettier},
-  javascript = {efm_prettier},
-  javascriptreact = {efm_prettier},
-  typescript = {efm_prettier},
-  typescriptreact = {efm_prettier},
-  json = {efm_prettier},
+    lua = {lua_efm},
+    css = {efm_prettier},
+    html = {efm_prettier},
+    javascript = {efm_prettier},
+    javascriptreact = {efm_prettier},
+    typescript = {efm_prettier},
+    typescriptreact = {efm_prettier},
+    json = {efm_prettier}
 }
 
 local on_eft_attach = function(client)
-  if client.resolved_capabilities.document_formatting then
+    if client.resolved_capabilities.document_formatting then
         print("Hi")
         vim.api.nvim_exec([[
          augroup LspAutocommands
@@ -99,31 +101,10 @@ local on_eft_attach = function(client)
     end
 end
 
-languages['javascript.jsx'] = {efm_prettier}
-languages['typescript.tsx'] = {efm_prettier}
-
-vim.cmd("command! LspFormatting lua vim.lsp.buf.formatting()")
-
-require"lspconfig".efm.setup {
-  init_options = {documentFormatting = true, codeAction = false},
-  on_attach = on_eft_attach,
-  cmd = {
-    DATA_PATH .. "/lspinstall/efm/efm-langserver"
-  },
-  filetypes = vim.tbl_keys(languages),
-  settings = {
-    rootMarkers = {".git"},
-    languages = languages, log_level = 1
-  },
-}
-
-vim.api.nvim_exec([[
- autocmd BufWritePre *.ts lua vim.lsp.buf.formatting_sync(nil, 100)
- autocmd BufWritePre *.js lua vim.lsp.buf.formatting_sync(nil, 100)
- autocmd BufWritePre *.json lua vim.lsp.buf.formatting_sync(nil, 100)
- autocmd BufWritePre *.jsx lua vim.lsp.buf.formatting_sync(nil, 100)
- autocmd BufWritePre *.html lua vim.lsp.buf.formatting_sync(nil, 100)
- autocmd BufWritePre *.css lua vim.lsp.buf.formatting_sync(nil, 100)
- autocmd BufWritePre *.php lua vim.lsp.buf.formatting_sync(nil, 100)
- autocmd BufWritePre *.ts lua vim.lsp.buf.formatting_sync(nil, 100)
-]], true)
+-- require"lspconfig".efm.setup {
+-- init_options = {documentFormatting = true, codeAction = false},
+-- on_attach = on_eft_attach,
+-- cmd = {DATA_PATH .. "/lspinstall/efm/efm-langserver"},
+-- filetypes = vim.tbl_keys(languages),
+-- settings = {rootMarkers = {".git"}, languages = languages, log_level = 1}
+-- }

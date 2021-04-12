@@ -1,1 +1,1 @@
---require'lspinstall'.setup()
+-- require'lspinstall'.setup()

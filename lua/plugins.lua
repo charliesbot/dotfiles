@@ -1,11 +1,10 @@
 local install_path = vim.fn.stdpath "data" .. "/site/pack/packer/start/packer.nvim"
 
 if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
-  vim.cmd("!git clone https://github.com/wbthomason/packer.nvim " .. install_path)
+    vim.cmd("!git clone https://github.com/wbthomason/packer.nvim " .. install_path)
 end
 
-return require "packer".startup(
-  function(use)
+return require"packer".startup(function(use)
     -- Local Packages
     use '~/dracula_pro'
 
@@ -17,7 +16,7 @@ return require "packer".startup(
     use {'trevordmiller/nova-vim'}
     use {'morhetz/gruvbox'}
     use {'tyrannicaltoucan/vim-quantum'}
-    use {'dracula/vim', as='dracula'}
+    use {'dracula/vim', as = 'dracula'}
     use {'ayu-theme/ayu-vim'}
     use {'skielbasa/vim-material-monokai'}
     use {'haishanh/night-owl.vim'}
@@ -45,10 +44,7 @@ return require "packer".startup(
 
     -- UI Widgets
     use {'skywind3000/vim-quickui'}
-    use {
-      "junegunn/fzf.vim",
-      requires = {"junegunn/fzf"}
-    }
+    use {"junegunn/fzf.vim", requires = {"junegunn/fzf"}}
     use {'matze/vim-move'}
     use {'dominikduda/vim_current_word'}
     use {'tpope/vim-repeat'}
@@ -56,17 +52,19 @@ return require "packer".startup(
     use {'metakirby5/codi.vim'}
 
     -- Language Support
-    --use {'sheerun/vim-polyglot'}
+    -- use {'sheerun/vim-polyglot'}
 
     use {'nvim-treesitter/nvim-treesitter'}
     use {'nvim-treesitter/playground'}
 
     -- LSP
-    --use {'neoclide/coc.nvim', branch='release'}
+    -- use {'neoclide/coc.nvim', branch='release'}
 
     use {'neovim/nvim-lspconfig'}
     use {'kabouzeid/nvim-lspinstall'}
     use {'hrsh7th/nvim-compe'}
+    use {'mhartington/formatter.nvim'}
+    use {'glepnir/lspsaga.nvim'}
 
     -- Flutter
     use {'dart-lang/dart-vim-plugin'}
@@ -80,15 +78,10 @@ return require "packer".startup(
     use {'scrooloose/nerdcommenter'}
 
     -- Git
-    use {
-      'lewis6991/gitsigns.nvim',
-      requires = {
-        'nvim-lua/plenary.nvim'
-      }
-    }
+    use {'lewis6991/gitsigns.nvim', requires = {'nvim-lua/plenary.nvim'}}
 
     -- Indent Lines
-    use{'lukas-reineke/indent-blankline.nvim', branch = 'lua'}
+    use {'lukas-reineke/indent-blankline.nvim', branch = 'lua'}
 
     -- Multiple Cursors
     use {'terryma/vim-multiple-cursors'}
@@ -99,5 +92,4 @@ return require "packer".startup(
     -- Highlight White Space
     use {'ntpeters/vim-better-whitespace'}
 
-  end
-)
+end)
