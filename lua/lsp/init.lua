@@ -14,8 +14,7 @@ saga.init_lsp_saga()
 --
 -- FORMATTER
 --
-
-function luaFormatter()
+function luaFormat()
     return {
         exe = "lua-format",
         args = {'--no-keep-simple-function-one-line', '--column-limit=100'},
@@ -42,15 +41,13 @@ require('formatter').setup({
         javascript = {prettierFormatter},
         javascriptreact = {prettierFormatter},
         typescriptreact = {prettierFormatter},
-        lua = {luaFormatter},
         cpp = {cFormatter}
+        lua = {luaFormat}
     }
 })
 
 vim.api.nvim_exec([[
 augroup FormatAutogroup
-  autocmd!
   autocmd BufWritePost *.js,*.rs,*.lua,*.ts,*.tsx,*.cpp,*.rs,*.cc FormatWrite
 augroup END
 ]], true)
-=======

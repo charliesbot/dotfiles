@@ -53,17 +53,13 @@ return require"packer".startup(function(use)
     use {'metakirby5/codi.vim'}
 
     -- Language Support
-    --use {'sheerun/vim-polyglot'}
+    -- use {'sheerun/vim-polyglot'}
 
     use {'nvim-treesitter/nvim-treesitter'}
     use {'nvim-treesitter/playground'}
 
     -- LSP
     use {'neoclide/coc.nvim', branch = 'release'}
-
-    -- use {'neovim/nvim-lspconfig'}
-    -- use {'kabouzeid/nvim-lspinstall'}
-    -- use {'hrsh7th/nvim-compe'}
 
     -- Flutter
     use {'dart-lang/dart-vim-plugin'}
@@ -83,7 +79,7 @@ return require"packer".startup(function(use)
     use {'lukas-reineke/indent-blankline.nvim', branch = 'lua'}
 
     -- Indent Lines
-    use{'lukas-reineke/indent-blankline.nvim', branch = 'lua'}
+    use {'lukas-reineke/indent-blankline.nvim', branch = 'lua'}
 
     -- Multiple Cursors
     use {'terryma/vim-multiple-cursors'}
