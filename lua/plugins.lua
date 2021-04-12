@@ -77,7 +77,7 @@ return require"packer".startup(function(use)
     use {'lukas-reineke/indent-blankline.nvim', branch = 'lua'}
 
     -- Indent Lines
-    use{'lukas-reineke/indent-blankline.nvim', branch = 'lua'}
+    use {'lukas-reineke/indent-blankline.nvim', branch = 'lua'}
 
     -- Multiple Cursors
     use {'terryma/vim-multiple-cursors'}

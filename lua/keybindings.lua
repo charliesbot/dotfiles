@@ -39,8 +39,8 @@ keymap('i', '<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]],
 -- Highlight symbol under cursor on CursorHold
 vim.cmd("autocmd CursorHold * silent call CocActionAsync('highlight')")
 
- -- vim.fn.nvim_set_keymap('i', '<Tab>', [[pumvisible() ? "\<C-n>" : "\<Tab>"]], { noremap = true, expr = true })
- -- vim.fn.nvim_set_keymap('i', '<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]], { noremap = true, expr = true })
+-- vim.fn.nvim_set_keymap('i', '<Tab>', [[pumvisible() ? "\<C-n>" : "\<Tab>"]], { noremap = true, expr = true })
+-- vim.fn.nvim_set_keymap('i', '<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]], { noremap = true, expr = true })
 -- Native LSP Bindings
 keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
 keymap('n', 'gD', '<Cmd>vsplit | lua vim.lsp.buf.definition()<CR>', opts)
@@ -51,9 +51,15 @@ keymap('n', '<space>p', '<Cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 -- *****************************************************************************
 -- Fold
 -- *****************************************************************************
+<<<<<<< HEAD
 keymap('n', 'zC', 'zM', opts)
 keymap('n', 'zO', 'zR', opts)
 keymap('n', 'zz', '<C-w>|', opts)
+=======
+keymap('n', 'zC', 'zM', {noremap = true, silent = true})
+keymap('n', 'zO', 'zR', {noremap = true, silent = true})
+keymap('n', 'zz', '<C-w>|', {noremap = true, silent = true})
+>>>>>>> 178f39e (run format)
 
 -- *****************************************************************************
 -- Comments
@@ -82,6 +88,7 @@ keymap('o', 'F', '<Plug>Sneak_F', {silent = true})
 -- Open Configs
 -- *****************************************************************************
 <<<<<<< HEAD
+<<<<<<< HEAD
 keymap('n', '<leader>ev', ':tabe ~/.config/nvim/init.lua<CR>', opts)
 keymap('n', '<leader>es', ':tabe ~/.config/nvim/coc-settings.json<CR>', opts)
 keymap('n', '<leader>et', ':tabe ~/.tmux.conf<CR>', opts)
@@ -94,8 +101,21 @@ keymap('n', '<leader>et', ':tabe ~/.tmux.conf<CR>', { noremap = true, silent = t
 keymap('n', '<leader>eg', ':tabe ~/.gitconfig<CR>', { noremap = true, silent = true })
 keymap('n', '<leader>ec', ':tabe ~/dotfiles/cheatsheets/vim-dirvish.md<CR>', { noremap = true, silent = true })
 >>>>>>> 94c1409 (full migration)
+=======
+keymap('n', '<leader>ev', ':tabe ~/.config/nvim/init.lua<CR>', {noremap = true, silent = true})
+keymap('n', '<leader>es', ':tabe ~/.config/nvim/coc-settings.json<CR>',
+       {noremap = true, silent = true})
+keymap('n', '<leader>et', ':tabe ~/.tmux.conf<CR>', {noremap = true, silent = true})
+keymap('n', '<leader>eg', ':tabe ~/.gitconfig<CR>', {noremap = true, silent = true})
+keymap('n', '<leader>ec', ':tabe ~/dotfiles/cheatsheets/vim-dirvish.md<CR>',
+       {noremap = true, silent = true})
+>>>>>>> 178f39e (run format)
 
 -- *****************************************************************************
 -- Git
 -- *****************************************************************************
+<<<<<<< HEAD
 keymap('n', '<leader>c', "<ESC>/\v^[<=>]{7}( .*|$)<CR>", opts)
+=======
+keymap('n', '<leader>c', "<ESC>/\v^[<=>]{7}( .*|$)<CR>", {noremap = true, silent = true})
+>>>>>>> 178f39e (run format)

@@ -31,10 +31,13 @@ function prettierFormatter()
     }
 end
 
+<<<<<<< HEAD
 function cFormatter()
     return {exe = "clang-format", args = {}, stdin = true}
 end
 
+=======
+>>>>>>> 178f39e (run format)
 require('formatter').setup({
     logging = false,
     filetype = {
@@ -42,14 +45,22 @@ require('formatter').setup({
         javascript = {prettierFormatter},
         javascriptreact = {prettierFormatter},
         typescriptreact = {prettierFormatter},
+<<<<<<< HEAD
         lua = {luaFormatter},
         cpp = {cFormatter}
+=======
+        lua = {luaFormat}
+>>>>>>> 178f39e (run format)
     }
 })
 
 vim.api.nvim_exec([[
 augroup FormatAutogroup
   autocmd!
+<<<<<<< HEAD
   autocmd BufWritePost *.js,*.rs,*.lua,*.ts,*.tsx,*.cpp,*.rs,*.cc FormatWrite
+=======
+  autocmd BufWritePost *.js,*.rs,*.lua,*.ts,*.tsx FormatWrite
+>>>>>>> 178f39e (run format)
 augroup END
 ]], true)
