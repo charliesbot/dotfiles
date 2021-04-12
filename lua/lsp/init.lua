@@ -6,6 +6,12 @@ vim.fn.sign_define("LspDiagnosticsSignInformation", {text = "•"})
 vim.fn.sign_define("LspDiagnosticsSignHint", {text = "•"})
 
 --
+-- SAGA
+--
+local saga = require 'lspsaga'
+saga.init_lsp_saga()
+
+--
 -- FORMATTER
 --
 
