@@ -36,10 +36,6 @@ require'lspconfig'.clangd.setup {
 -- DART
 -- *****************************************************************************
 require'lspconfig'.dartls.setup {init_options = {documentFormatting = true}}
-=======
--- DART
--- *****************************************************************************
-require'lspconfig'.dartls.setup {init_options = {documentFormatting = true}}
 
 -- *****************************************************************************
 -- TYPESCRIPT

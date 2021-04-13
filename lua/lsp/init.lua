@@ -7,15 +7,6 @@ vim.fn.sign_define("LspDiagnosticsSignHint", {text = "•"})
 
 --
 -- SAGA
-<<<<<<< HEAD
-=======
---
-local saga = require 'lspsaga'
-saga.init_lsp_saga()
-
---
--- FORMATTER
->>>>>>> a812a09 (add saga)
 --
 local saga = require 'lspsaga'
 saga.init_lsp_saga()
@@ -23,7 +14,7 @@ saga.init_lsp_saga()
 --
 -- FORMATTER
 --
-function luaFormat()
+function luaFormatter()
     return {
         exe = "lua-format",
         args = {'--no-keep-simple-function-one-line', '--column-limit=100'},
@@ -51,7 +42,8 @@ require('formatter').setup({
         javascriptreact = {prettierFormatter},
         typescriptreact = {prettierFormatter},
         cpp = {cFormatter}
-        lua = {luaFormat}
+        lua = {luaFormatter},
+        cpp = {cFormatter}
     }
 })
 
