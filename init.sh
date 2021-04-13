@@ -24,6 +24,14 @@ echo "Creating symlinks"
 # Neovim expects some folders already exist
 mkdir -p ~/.config ~/.config/nvim ~/.config/nvim/lua
 
+echo "Installing PyEnv"
+curl https://pyenv.run | bash
+
+echo "Installing Python 3"
+# install python 3
+pyenv install 3.9.2 #latest
+pyenv global 3.9.2
+
 # Symlinking files
 ln -s ~/dotfiles/zshrc ~/.zshrc
 ln -s ~/dotfiles/tmux.conf ~/.tmux.conf
@@ -48,12 +56,15 @@ brew install bat
 brew install thefuck
 brew install go
 
+# FORMATTERS
+brew install shfmt
+brew install clang-format
+
 if [[ `uname` == "Linux"   ]]; then
   echo "Linux detected. Using Linux config..."
   echo "Installing JetBrains Mono"
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/JetBrains/JetBrainsMono/master/install_manual.sh)"
   echo "Installing pyenv"
-  curl https://pyenv.run | bash
 fi
 
 if [[ `uname` == "Darwin"   ]]; then
@@ -75,7 +86,6 @@ if [[ `uname` == "Darwin"   ]]; then
   brew install --cask alfred
   brew install --cask visual-studio-code-insiders
   brew install --cask discord
-  brew install --cask telegram-desktop
   brew install --cask grammarly
   brew install --cask google-chrome
   brew install --cask 1password
@@ -83,8 +93,6 @@ if [[ `uname` == "Darwin"   ]]; then
   brew install --cask dash
   brew install --cask soundsource
 
-  brew install pyenv
-  brew install wezterm
   brew install deno # deno brew formula only works with mac
   brew install reattach-to-user-namespace
 fi
@@ -92,10 +100,6 @@ fi
 
 # FZF shortcuts
 $(brew --prefix)/opt/fzf/install
-
-# install python 3
-pyenv install 3.9.1 #latest
-pyenv global 3.9.1
 
 # install fnm
 curl -fsSL https://github.com/Schniz/fnm/raw/master/.ci/install.sh | bash

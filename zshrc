@@ -186,7 +186,6 @@ autoload -U promptinit; promptinit
 prompt pure
 
 # Pyenv
-
 if [[ $OSTYPE = (linux)* ]]; then
   export PATH="/home/charlie/.pyenv/bin:$PATH"
   eval "$(pyenv init -)"
@@ -194,6 +193,10 @@ if [[ $OSTYPE = (linux)* ]]; then
 fi
 
 if [[ $OSTYPE = (darwin)* ]]; then
+  export PATH="/Users/charlie/.pyenv/bin:$PATH"
+  eval "$(pyenv init -)"
+  eval "$(pyenv virtualenv-init -)"
+
   PATH=$(pyenv root)/shims:$PATH
 fi
 

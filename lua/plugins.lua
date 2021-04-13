@@ -52,14 +52,10 @@ return require"packer".startup(function(use)
     use {'metakirby5/codi.vim'}
 
     -- Language Support
-    -- use {'sheerun/vim-polyglot'}
-
     use {'nvim-treesitter/nvim-treesitter'}
     use {'nvim-treesitter/playground'}
 
     -- LSP
-    -- use {'neoclide/coc.nvim', branch='release'}
-
     use {'neovim/nvim-lspconfig'}
     use {'kabouzeid/nvim-lspinstall'}
     use {'hrsh7th/nvim-compe'}
