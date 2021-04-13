@@ -24,8 +24,8 @@ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
 -- *****************************************************************************
 -- LSP
 -- *****************************************************************************
-keymap('i', '<Tab>', [[pumvisible() ? "\<C-n>" : "\<Tab>"]], opts)
-keymap('i', '<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]], opts)
+keymap('i', '<Tab>', [[pumvisible() ? "\<C-n>" : "\<Tab>"]], {expr = true})
+keymap('i', '<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]], {expr = true})
 keymap('n', 'gp', ':Lspsaga preview_definition<CR>', opts)
 keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
 keymap('n', 'gD', '<Cmd>vsplit | lua vim.lsp.buf.definition()<CR>', opts)

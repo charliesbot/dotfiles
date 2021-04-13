@@ -17,6 +17,14 @@ local function documentHighlight(client, bufnr)
 end
 
 -- *****************************************************************************
+-- CPP
+-- *****************************************************************************
+require'lspconfig'.clangd.setup {
+    cmd = {DATA_PATH .. "/lspinstall/cpp/clangd/bin/clangd", "--background-index"},
+    filetypes = {"c", "cpp", "objc", "objcpp"}
+}
+
+-- *****************************************************************************
 -- DART
 -- *****************************************************************************
 require'lspconfig'.dartls.setup {init_options = {documentFormatting = true}}
