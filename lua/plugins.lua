@@ -53,8 +53,6 @@ return require"packer".startup(function(use)
     use {'metakirby5/codi.vim'}
 
     -- Language Support
-    -- use {'sheerun/vim-polyglot'}
-
     use {'nvim-treesitter/nvim-treesitter'}
     use {'nvim-treesitter/playground'}
 
