@@ -64,6 +64,10 @@ brew install gdb
 brew install shfmt
 brew install clang-format
 
+# FORMATTERS
+brew install shfmt
+brew install clang-format
+
 if [[ `uname` == "Linux"   ]]; then
   echo "Linux detected. Using Linux config..."
   echo "Installing JetBrains Mono"

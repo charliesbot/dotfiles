@@ -57,7 +57,11 @@ return require"packer".startup(function(use)
     use {'nvim-treesitter/playground'}
 
     -- LSP
-    use {'neoclide/coc.nvim', branch = 'release'}
+    use {'neovim/nvim-lspconfig'}
+    use {'kabouzeid/nvim-lspinstall'}
+    use {'hrsh7th/nvim-compe'}
+    use {'mhartington/formatter.nvim'}
+    use {'glepnir/lspsaga.nvim'}
 
     -- Flutter
     use {'dart-lang/dart-vim-plugin'}
