@@ -59,11 +59,6 @@ brew install llvm
 brew install gcc
 brew install gdb
 
-
-# FORMATTERS
-brew install shfmt
-brew install clang-format
-
 # FORMATTERS
 brew install shfmt
 brew install clang-format
