@@ -80,7 +80,7 @@ source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
-export EDITOR='nvim'
+#export EDITOR='nvim'
 
 # export MANPATH="/usr/local/man:$MANPATH"
 
