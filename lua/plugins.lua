@@ -9,6 +9,7 @@ return require"packer".startup(function(use)
     use '~/dracula_pro'
 
     -- Themes
+    use 'folke/tokyonight.nvim'
     use {'NLKNguyen/papercolor-theme'}
     use {'joshdick/onedark.vim'}
     use {'rakr/vim-one'}
