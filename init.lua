@@ -3,7 +3,7 @@ require('settings')
 
 -- packages config
 
--- require('plugins.treesitter')
+require('plugins.treesitter')
 require('plugins.smallConfigs')
 require('plugins.codi')
 require('plugins.fzf')
