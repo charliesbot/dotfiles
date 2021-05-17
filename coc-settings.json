@@ -4,6 +4,8 @@
   "python.linting.mypyEnabled": true,
   "python.formatting.provider": "black",
   "coc.preferences.formatOnSaveFiletypes": [
+    "cpp",
+    "lua",
     "css",
     "javascript",
     "typescript",
@@ -22,11 +24,14 @@
     "typescriptreact"
   ],
   "eslint.autoFixOnSave": true,
-  "languageserver": {
-    "ocaml": {
-      "command": "ocaml-language-server",
-      "args": ["--stdio"],
-      "filetypes": ["ocaml", "reason"]
+  "Lua": {
+    "workspace.library": {
+      "/usr/share/nvim/runtime/lua": true,
+      "/usr/share/nvim/runtime/lua/vim": true,
+      "/usr/share/nvim/runtime/lua/vim/lsp": true
+    },
+    "diagnostics": {
+      "globals": ["vim"]
     }
   }
 }

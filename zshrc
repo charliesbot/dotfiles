@@ -21,8 +21,8 @@ export ZSH=~/.oh-my-zsh
 fpath+=$HOME/.zsh/pure
 
 # fnm
-#export PATH=~/.fnm:$PATH
-#eval "`fnm env`"
+export PATH=/Users/charlie/.fnm:$PATH
+eval "`fnm env`"
 
 # fuck!
 eval $(thefuck --alias)
@@ -125,16 +125,21 @@ export PATH=$PATH:$ANDROID_HOME/platform-tools
 
 # Flutter
 export PATH="$PATH:`pwd`/flutter/bin"
-
 export PATH=~/.local/bin:$PATH
-#Cargo
+# Cargo
 export PATH="$HOME/.cargo/bin:$PATH"
-# postgresql@9.5
-export PATH="$PATH:/usr/local/opt/postgresql@9.5/bin"
-#Deno
+# Deno
 export PATH="${HOME}/.deno/bin:$PATH"
+# Go
+export GOPATH=$HOME/go
+export GOROOT="$(brew --prefix golang)/libexec"
+export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"
+# CPP
+export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
+export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 
-#Lang
+# Lang
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
@@ -181,7 +186,6 @@ autoload -U promptinit; promptinit
 prompt pure
 
 # Pyenv
-
 if [[ $OSTYPE = (linux)* ]]; then
   export PATH="/home/charlie/.pyenv/bin:$PATH"
   eval "$(pyenv init -)"
@@ -189,6 +193,10 @@ if [[ $OSTYPE = (linux)* ]]; then
 fi
 
 if [[ $OSTYPE = (darwin)* ]]; then
+  export PATH="/Users/charlie/.pyenv/bin:$PATH"
+  eval "$(pyenv init -)"
+  eval "$(pyenv virtualenv-init -)"
+
   PATH=$(pyenv root)/shims:$PATH
 fi
 

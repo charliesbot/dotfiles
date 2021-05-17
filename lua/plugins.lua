@@ -1,14 +1,15 @@
 local install_path = vim.fn.stdpath "data" .. "/site/pack/packer/start/packer.nvim"
 
 if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
-  vim.cmd("!git clone https://github.com/wbthomason/packer.nvim " .. install_path)
+    vim.cmd("!git clone https://github.com/wbthomason/packer.nvim " .. install_path)
 end
 
-return require "packer".startup(
-  function(use)
-    -- My Packages
+return require"packer".startup(function(use)
+    -- Local Packages
+    use '~/dracula_pro'
 
     -- Themes
+    use 'folke/tokyonight.nvim'
     use {'NLKNguyen/papercolor-theme'}
     use {'joshdick/onedark.vim'}
     use {'rakr/vim-one'}
@@ -16,14 +17,13 @@ return require "packer".startup(
     use {'trevordmiller/nova-vim'}
     use {'morhetz/gruvbox'}
     use {'tyrannicaltoucan/vim-quantum'}
-    use {'dracula/vim', as='dracula'}
+    use {'dracula/vim', as = 'dracula'}
     use {'ayu-theme/ayu-vim'}
     use {'skielbasa/vim-material-monokai'}
     use {'haishanh/night-owl.vim'}
     use {'nightsense/snow'}
     use {'arcticicestudio/nord-vim'}
     use {'phanviet/vim-monokai-pro'}
-    use '~/dracula_pro'
 
     use {'mhinz/vim-startify'}
     use {'scrooloose/nerdtree'}
@@ -45,10 +45,7 @@ return require "packer".startup(
 
     -- UI Widgets
     use {'skywind3000/vim-quickui'}
-    use {
-      "junegunn/fzf.vim",
-      requires = {"junegunn/fzf"}
-    }
+    use {"junegunn/fzf.vim", requires = {"junegunn/fzf"}}
     use {'matze/vim-move'}
     use {'dominikduda/vim_current_word'}
     use {'tpope/vim-repeat'}
@@ -56,7 +53,15 @@ return require "packer".startup(
     use {'metakirby5/codi.vim'}
 
     -- Language Support
-    use {'sheerun/vim-polyglot'}
+    use {'nvim-treesitter/nvim-treesitter'}
+    use {'nvim-treesitter/playground'}
+
+    -- LSP
+    use {'neoclide/coc.nvim', branch = 'release'}
+
+    -- Flutter
+    use {'dart-lang/dart-vim-plugin'}
+    use {'thosakwe/vim-flutter'}
 
     -- Quoting/parenthesizing
     use {'machakann/vim-sandwich'}
@@ -66,12 +71,10 @@ return require "packer".startup(
     use {'scrooloose/nerdcommenter'}
 
     -- Git
-    use {
-      'lewis6991/gitsigns.nvim',
-      requires = {
-        'nvim-lua/plenary.nvim'
-      }
-    }
+    use {'lewis6991/gitsigns.nvim', requires = {'nvim-lua/plenary.nvim'}}
+
+    -- Indent Lines
+    use {'lukas-reineke/indent-blankline.nvim', branch = 'lua'}
 
     -- Multiple Cursors
     use {'terryma/vim-multiple-cursors'}
@@ -79,20 +82,7 @@ return require "packer".startup(
     -- Provides additional text objects
     use {'wellle/targets.vim'}
 
-    -- Term
-    use {'voldikss/vim-floaterm'}
-
     -- Highlight White Space
     use {'ntpeters/vim-better-whitespace'}
 
-    -- LSP
-    use {'neoclide/coc.nvim', branch='release'}
-  end
-)
-
-
--- Neovim 0.5
--- use {'neovim/nvim-lspconfig'}
--- use {'hrsh7th/nvim-compe'}
--- use {'nvim-treesitter/nvim-treesitter'}
--- use {'nvim-treesitter/playground'}
+end)

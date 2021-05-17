@@ -1,12 +1,12 @@
 -- Leader
 vim.cmd('let mapleader=" "')
 
-vim.cmd("set termguicolors" )
-vim.cmd("set hidden" )
-vim.cmd("set nopaste" )
+vim.cmd("set termguicolors")
+vim.cmd("set hidden")
+vim.cmd("set nopaste")
 
 -- Indentation
-vim.cmd("set expandtab" )
+vim.cmd("set expandtab")
 vim.cmd("set softtabstop=2")
 vim.cmd("set shiftwidth=2")
 
