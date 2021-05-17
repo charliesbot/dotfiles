@@ -23,16 +23,21 @@ command! -bang -nargs=? -complete=dir Files call fzf#vim#files(<q-args>, fzf#vim
 -- *****************************************************************************
 -- LSP
 -- *****************************************************************************
-keymap('i', '<Tab>', [[pumvisible() ? "\<C-n>" : "\<Tab>"]], {expr = true})
-keymap('i', '<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]], {expr = true})
-keymap('n', 'gp', ':Lspsaga preview_definition<CR>', opts)
-keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-keymap('n', 'gD', '<Cmd>vsplit | lua vim.lsp.buf.definition()<CR>', opts)
-keymap('n', 'gh', ':Lspsaga hover_doc<CR>', opts)
--- keymap('n', 'gh', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
-keymap('n', '<space>m', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-keymap('n', '<space>n', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-keymap('n', '<space>p', '<Cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+
+keymap('n', 'gd', '<Plug>(coc-definition)', {silent = true})
+keymap('n', 'gh', ":call CocAction('doHover')<CR>", {noremap = true, silent = true})
+keymap('n', 'gD', ":call CocAction('jumpDefinition', 'vsplit')<CR>", {silent = true})
+keymap('n', '<leader>m', '<Plug>(coc-diagnostic-next)', {silent = true})
+keymap('n', '<leader>n', '<Plug>(coc-diagnostic-next)', {silent = true})
+keymap('n', '<leader>rn', '<Plug>(coc-rename)', {silent = true})
+-- Use <c-space> to trigger completion.
+keymap('i', '<C-Space>', 'coc#refresh()', {noremap = true, silent = true, expr = true})
+keymap('i', '<Tab>', [[pumvisible() ? "\<C-n>" : "\<Tab>"]],
+                       {noremap = true, expr = true})
+keymap('i', '<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]],
+                       {noremap = true, expr = true})
+-- Highlight symbol under cursor on CursorHold
+vim.cmd("autocmd CursorHold * silent call CocActionAsync('highlight')")
 
 -- *****************************************************************************
 -- Fold
