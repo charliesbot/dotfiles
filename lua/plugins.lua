@@ -6,7 +6,7 @@ end
 
 return require"packer".startup(function(use)
     -- Local Packages
-    use '~/dracula_pro'
+    -- use '~/dracula_pro'
 
     -- Themes
     use 'folke/tokyonight.nvim'
