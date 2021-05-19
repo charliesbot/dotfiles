@@ -1,4 +1,6 @@
 local DATA_PATH = vim.fn.stdpath('data')
+local lspconfig = require 'lspconfig'
+local lspconfigs = require 'lspconfig/configs'
 
 local function documentHighlight(client, bufnr)
     -- Set autocommands conditional on server_capabilities
@@ -27,10 +29,10 @@ require'lspconfig'.bashls.setup {
 -- *****************************************************************************
 -- CPP
 -- *****************************************************************************
-require'lspconfig'.clangd.setup {
-    cmd = {DATA_PATH .. "/lspinstall/cpp/clangd/bin/clangd", "--background-index"},
-    filetypes = {"c", "cpp", "objc", "objcpp"}
-}
+-- require'lspconfig'.clangd.setup {
+-- cmd = {DATA_PATH .. "/lspinstall/cpp/clangd/bin/clangd", "--background-index"},
+-- filetypes = {"c", "cpp", "objc", "objcpp"}
+-- }
 
 -- *****************************************************************************
 -- DART
@@ -50,6 +52,32 @@ require'lspconfig'.tsserver.setup {
     -- on_attach = require'lsp'.common_on_attach,
     settings = {documentFormatting = false}
 }
+
+-- *****************************************************************************
+-- CIDER
+-- *****************************************************************************
+lspconfigs.ciderlsp = {
+    default_config = {
+        cmd = {'ciderlsp', '--tooltag=nvim-lsp', '--noforward_sync_responses'},
+        filetypes = {'bzl', 'c', 'cpp', 'go', 'java', 'python', 'proto', 'sql', 'textproto'},
+        root_dir = lspconfig.util.root_pattern('BUILD'),
+        settings = {}
+    }
+}
+
+if vim.fn.executable('ciderlsp') == 1 then
+    print("funciona")
+else
+    print("nada!!!")
+end
+
+lspconfig.ciderlsp.setup {on_attach = documentHighlight}
+
+vim.api.nvim_exec([[
+autocmd Filetype java set omnifunc=v:lua.vim.lsp.omnifunc
+autocmd Filetype proto set omnifunc=v:lua.vim.lsp.omnifunc
+autocmd Filetype cpp set omnifunc=v:lua.vim.lsp.omnifunc
+         ]], true)
 
 -- *****************************************************************************
 -- LUA

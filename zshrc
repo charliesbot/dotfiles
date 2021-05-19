@@ -194,7 +194,6 @@ if [[ $OSTYPE = (linux)* ]]; then
   export PATH="/usr/local/google/home/charliesbot/homebrew/sbin:$PATH"
   export CHROME_REMOTE_DESKTOP_DEFAULT_DESKTOP_SIZES="2880x1800,3072x1920,3840x2160"
   export epg_server=/google/src/head/depot/google3/video/youtube/utils/elements/tools/playground/epg_server
-  alias nvim="nvim.appimage"
   LDFLAGS="-L/usr/local/opt/zlib/lib -L/usr/local/opt/sqlite/lib"
   CPPFLAGS="-I/usr/local/opt/zlib/include -I/usr/local/opt/sqlite/include"
   # end glinux

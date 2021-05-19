@@ -20,7 +20,7 @@ vim.cmd("let NERDTreeIgnore=['\\.DS_Store', '\\~$', '\\.swp']")
 vim.g.move_key_modifier = 'C'
 
 -- Airline
-vim.g.airline_section_z = "%l/%c"
+-- vim.g.airline_section_z = "%l/%c"
 -- Disable git changes
 -- vim.g['airline#extensions#hunks#enabled'] = 0
 -- vim.g['airline#extensions#branch#enabled'] = 0 -- Disable branch

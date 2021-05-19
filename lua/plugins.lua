@@ -37,8 +37,8 @@ return require"packer".startup(function(use)
     use {'tpope/vim-eunuch'}
 
     -- Visual tab {bottom}
-    use {'vim-airline/vim-airline'}
-    use {'vim-airline/vim-airline-themes'}
+    -- use {'vim-airline/vim-airline'}
+    -- use {'vim-airline/vim-airline-themes'}
 
     -- Efficient moving
     use {'justinmk/vim-sneak'}
