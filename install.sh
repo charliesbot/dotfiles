@@ -57,7 +57,7 @@ brew install go
 brew install llvm
 brew install gcc
 brew install gdb
-
+brew install bazel
 
 # FORMATTERS
 brew install shfmt
