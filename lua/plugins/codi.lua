@@ -2,7 +2,7 @@ vim.g['codi#width'] = 50.0
 -- vim.g['codi#virtual_text'] = 0
 vim.g['codi#rightalign'] = 0
 
-local languages = {'javascript', 'python', 'lua'}
+local languages = {'cpp', 'javascript', 'python', 'lua'}
 
 function _G.fullScreenScratch(fileType)
     -- store filetype and bufnr of current buffer
@@ -36,7 +36,7 @@ vim.cmd([[
   endfunc
 ]])
 
-vim.cmd("let content = ['Typescript', 'Python', 'Lua']")
+vim.cmd("let content = ['C++','Typescript', 'Python', 'Lua']")
 vim.cmd(
     "let opts = {'title': 'Playground', 'w': 30, 'callback': 'SelectScratchpad', 'index':g:quickui#listbox#cursor }")
 -- vim.cmd("call quickui#listbox#open(content, opts)")

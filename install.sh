@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 if [[ `uname` == "Linux"   ]]; then
   echo "Linux detected. Using Linux config..."
   echo "Installing zsh..."
