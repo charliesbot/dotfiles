@@ -130,10 +130,6 @@ export PATH=~/.local/bin:$PATH
 export PATH="$HOME/.cargo/bin:$PATH"
 # Deno
 export PATH="${HOME}/.deno/bin:$PATH"
-# Go
-export GOPATH=$HOME/go
-export GOROOT="$(brew --prefix golang)/libexec"
-export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"
 # CPP
 export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
 export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
@@ -190,14 +186,6 @@ if [[ $OSTYPE = (linux)* ]]; then
   export PATH="/home/charlie/.pyenv/bin:$PATH"
   eval "$(pyenv init -)"
   eval "$(pyenv virtualenv-init -)"
-fi
-
-if [[ $OSTYPE = (darwin)* ]]; then
-  export PATH="/Users/charlie/.pyenv/bin:$PATH"
-  eval "$(pyenv init -)"
-  eval "$(pyenv virtualenv-init -)"
-
-  PATH=$(pyenv root)/shims:$PATH
 fi
 
 ### End of Zinit's installer chunk

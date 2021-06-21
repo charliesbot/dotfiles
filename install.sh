@@ -9,6 +9,8 @@ if [[ `uname` == "Linux"   ]]; then
   # Adding homebrew to zprofile
   echo 'eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >> /home/charlie/.zprofile
   eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+  echo "Installing PyEnv"
+  curl https://pyenv.run | bash
 fi
 
 echo "Installing Oh my zsh"
@@ -22,9 +24,6 @@ rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.tmux ~/.tmux.conf ~/.config/nvim 2> /dev/null
 echo "Creating symlinks"
 # Neovim expects some folders already exist
 mkdir -p ~/.config ~/.config/nvim ~/.config/nvim/lua
-
-echo "Installing PyEnv"
-curl https://pyenv.run | bash
 
 echo "Installing Python 3"
 # install python 3
@@ -72,12 +71,12 @@ fi
 
 if [[ `uname` == "Darwin"   ]]; then
   echo "Mac detected. Using Mac config..."
+  brew install pyenv
 
   # disable key repeat
   defaults write -g ApplePressAndHoldEnabled -bool false
 
   brew tap homebrew/cask-fonts
-  brew tap wez/wezterm
 
   # casks only work in mac
   brew install --cask kitty
