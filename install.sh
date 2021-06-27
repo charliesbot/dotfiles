@@ -27,8 +27,8 @@ mkdir -p ~/.config ~/.config/nvim ~/.config/nvim/lua
 
 echo "Installing Python 3"
 # install python 3
-pyenv install 3.9.2 #latest
-pyenv global 3.9.2
+pyenv install 3.9.5 #latest
+pyenv global 3.9.5
 
 # Symlinking files
 ln -s ~/dotfiles/zshrc ~/.zshrc

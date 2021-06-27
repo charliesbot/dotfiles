@@ -131,9 +131,10 @@ export PATH="$HOME/.cargo/bin:$PATH"
 # Deno
 export PATH="${HOME}/.deno/bin:$PATH"
 # CPP
-export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
-export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
-export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+export LDFLAGS="-L/usr/local/opt/llvm/lib"
+export CPPFLAGS="-I/usr/local/opt/llvm/include"
+#export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+export PATH="/usr/local/opt/llvm/bin:$PATH"
 
 # Lang
 export LC_ALL=en_US.UTF-8
