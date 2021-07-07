@@ -50,6 +50,7 @@
         "java",
         "proto",
         "python",
+        "eml",
         "textproto"
        ]
     }
