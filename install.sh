@@ -84,16 +84,7 @@ if [[ `uname` == "Darwin"   ]]; then
   brew install --cask font-cascadia
   brew install --cask font-jetbrains-mono
   brew install --cask font-iosevka
-  brew install --cask spotify
-  brew install --cask alfred
-  brew install --cask visual-studio-code-insiders
-  brew install --cask discord
-  brew install --cask grammarly
-  brew install --cask google-chrome
-  brew install --cask 1password
   brew install --cask rectangle
-  brew install --cask dash
-  brew install --cask soundsource
 
   brew install deno # deno brew formula only works with mac
   brew install reattach-to-user-namespace
