@@ -74,7 +74,7 @@ return require"packer".startup(function(use)
     use {'lewis6991/gitsigns.nvim', requires = {'nvim-lua/plenary.nvim'}}
 
     -- Indent Lines
-    use {'lukas-reineke/indent-blankline.nvim', branch = 'lua'}
+    use {'lukas-reineke/indent-blankline.nvim'}
 
     -- Multiple Cursors
     use {'terryma/vim-multiple-cursors'}
