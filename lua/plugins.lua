@@ -6,7 +6,7 @@ end
 
 return require"packer".startup(function(use)
     -- Local Packages
-    use '~/dracula_pro'
+    -- use '~/dracula_pro'
 
     -- Themes
     use 'folke/tokyonight.nvim'
@@ -55,9 +55,10 @@ return require"packer".startup(function(use)
     -- Language Support
     use {'nvim-treesitter/nvim-treesitter'}
     use {'nvim-treesitter/playground'}
+    use 'bfrg/vim-cpp-modern'
 
     -- LSP
-    use {'neoclide/coc.nvim', branch = 'release'}
+    -- use {'neoclide/coc.nvim', branch = 'release'}
 
     -- Flutter
     use {'dart-lang/dart-vim-plugin'}

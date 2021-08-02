@@ -22,7 +22,7 @@ fpath+=$HOME/.zsh/pure
 
 # fnm
 export PATH=/Users/charlie/.fnm:$PATH
-eval "`fnm env`"
+#eval "`fnm env`"
 
 # fuck!
 eval $(thefuck --alias)
@@ -189,3 +189,7 @@ if [[ $OSTYPE = (linux)* ]]; then
 fi
 
 ### End of Zinit's installer chunk
+
+# fnm
+export PATH=/home/charlie/.fnm:$PATH
+eval "`fnm env`"
