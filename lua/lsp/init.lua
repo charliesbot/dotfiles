@@ -24,9 +24,13 @@ function luaFormatter()
 end
 
 function prettierFormatter()
+    -- check if there is a local prettier exe or use the global one
+    local prettier_exe = "./node_modules/.bin/prettier"
+    if vim.fn.executable(prettier_exe) ~= 1 then prettier_exe = "npx prettier" end
+
     return {
-        exe = "npx prettier",
-        args = {"--stdin-filepath", vim.api.nvim_buf_get_name(0)},
+        exe = prettier_exe,
+        args = {"--stdin-filepath", vim.fn.fnameescape(vim.api.nvim_buf_get_name(0))},
         stdin = true
     }
 end
@@ -38,18 +42,32 @@ end
 require('formatter').setup({
     logging = false,
     filetype = {
-        typescript = {prettierFormatter},
+        cpp = {cFormatter},
+        css = {prettierFormatter},
+        html = {prettierFormatter},
         javascript = {prettierFormatter},
         javascriptreact = {prettierFormatter},
-        typescriptreact = {prettierFormatter},
+        json = {prettierFormatter},
         lua = {luaFormatter},
-        cpp = {cFormatter}
+        markdown = {prettierFormatter},
+        svelte = {prettierFormatter},
+        typescript = {prettierFormatter},
+        typescriptreact = {prettierFormatter}
     }
 })
 
 vim.api.nvim_exec([[
 augroup FormatAutogroup
   autocmd!
-  autocmd BufWritePost *.js,*.rs,*.lua,*.ts,*.tsx,*.cpp,*.rs,*.cc FormatWrite
+  autocmd FileType cpp autocmd BufWritePost <buffer> FormatWrite
+  autocmd FileType html autocmd BufWritePost <buffer> FormatWrite
+  autocmd FileType css autocmd BufWritePost <buffer> FormatWrite
+  autocmd FileType javascript autocmd BufWritePost <buffer> FormatWrite
+  autocmd FileType typescript autocmd BufWritePost <buffer> FormatWrite
+  autocmd FileType typescriptreact autocmd BufWritePost <buffer> FormatWrite
+  autocmd FileType svelte autocmd BufWritePost <buffer> FormatWrite
+  autocmd FileType lua autocmd BufWritePost <buffer> FormatWrite
+  autocmd FileType markdown autocmd BufWritePost <buffer> FormatWrite
+  autocmd FileType rust autocmd BufWritePost <buffer> FormatWrite
 augroup END
 ]], true)

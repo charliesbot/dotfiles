@@ -23,21 +23,25 @@ command! -bang -nargs=? -complete=dir Files call fzf#vim#files(<q-args>, fzf#vim
 -- *****************************************************************************
 -- LSP
 -- *****************************************************************************
+keymap("n", "gd", ":Lspsaga preview_definition<CR>", {silent = true})
+keymap("n", "gh", ":Lspsaga hover_doc<CR>", {silent = true})
+keymap("n", "<leader>m", ":Lspsaga diagnostic_jump_prev<CR>", {silent = true})
+keymap("n", "<leader>n", ":Lspsaga diagnostic_jump_next<CR>", {silent = true})
 
-keymap('n', 'gd', '<Plug>(coc-definition)', {silent = true})
-keymap('n', 'gh', ":call CocAction('doHover')<CR>", {noremap = true, silent = true})
-keymap('n', 'gD', ":call CocAction('jumpDefinition', 'vsplit')<CR>", {silent = true})
-keymap('n', '<leader>m', '<Plug>(coc-diagnostic-next)', {silent = true})
-keymap('n', '<leader>n', '<Plug>(coc-diagnostic-next)', {silent = true})
-keymap('n', '<leader>rn', '<Plug>(coc-rename)', {silent = true})
--- Use <c-space> to trigger completion.
-keymap('i', '<C-Space>', 'coc#refresh()', {noremap = true, silent = true, expr = true})
-keymap('i', '<Tab>', [[pumvisible() ? "\<C-n>" : "\<Tab>"]],
-                       {noremap = true, expr = true})
-keymap('i', '<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]],
-                       {noremap = true, expr = true})
--- Highlight symbol under cursor on CursorHold
-vim.cmd("autocmd CursorHold * silent call CocActionAsync('highlight')")
+-- keymap('n', 'gd', '<Plug>(coc-definition)', {silent = true})
+-- keymap('n', 'gh', ":call CocAction('doHover')<CR>", {noremap = true, silent = true})
+-- keymap('n', 'gD', ":call CocAction('jumpDefinition', 'vsplit')<CR>", {silent = true})
+-- keymap('n', '<leader>m', '<Plug>(coc-diagnostic-next)', {silent = true})
+-- keymap('n', '<leader>n', '<Plug>(coc-diagnostic-next)', {silent = true})
+-- keymap('n', '<leader>rn', '<Plug>(coc-rename)', {silent = true})
+-- -- Use <c-space> to trigger completion.
+-- keymap('i', '<C-Space>', 'coc#refresh()', {noremap = true, silent = true, expr = true})
+-- keymap('i', '<Tab>', [[pumvisible() ? "\<C-n>" : "\<Tab>"]],
+                       -- {noremap = true, expr = true})
+-- keymap('i', '<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]],
+                       -- {noremap = true, expr = true})
+-- -- Highlight symbol under cursor on CursorHold
+-- vim.cmd("autocmd CursorHold * silent call CocActionAsync('highlight')")
 
 -- *****************************************************************************
 -- Fold

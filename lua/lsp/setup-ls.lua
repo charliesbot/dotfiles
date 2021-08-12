@@ -38,6 +38,16 @@ require'lspconfig'.clangd.setup {
 require'lspconfig'.dartls.setup {init_options = {documentFormatting = true}}
 
 -- *****************************************************************************
+-- SVELTE
+-- *****************************************************************************
+require('lspconfig').svelte.setup {
+    cmd = {DATA_PATH .. "/lspinstall/svelte/node_modules/.bin/svelteserver", "--stdio"},
+    filetypes = {"svelte"},
+    root_dir = require("lspconfig.util").root_pattern("package.json", ".git"),
+    on_attach = documentHighlight
+}
+
+-- *****************************************************************************
 -- TYPESCRIPT
 -- *****************************************************************************
 require'lspconfig'.tsserver.setup {
@@ -83,44 +93,3 @@ require'lspconfig'.sumneko_lua.setup {
         }
     }
 }
-
--- *****************************************************************************
--- EFM
-
-local efm_prettier = {
-    formatCommand = "./node_modules/.bin/prettier --stdin-filepath ${INPUT}",
-    formatStdin = true
-}
--- local prettier = require "efm/prettier"
--- local eslint = require "efm/eslint"
-
-local languages = {
-    lua = {lua_efm},
-    css = {efm_prettier},
-    html = {efm_prettier},
-    javascript = {efm_prettier},
-    javascriptreact = {efm_prettier},
-    typescript = {efm_prettier},
-    typescriptreact = {efm_prettier},
-    json = {efm_prettier}
-}
-
-local on_eft_attach = function(client)
-    if client.resolved_capabilities.document_formatting then
-        print("Hi")
-        vim.api.nvim_exec([[
-         augroup LspAutocommands
-             autocmd! * <buffer>
-             autocmd BufWritePre <buffer> LspFormatting
-         augroup END
-         ]], true)
-    end
-end
-
--- require"lspconfig".efm.setup {
--- init_options = {documentFormatting = true, codeAction = false},
--- on_attach = on_eft_attach,
--- cmd = {DATA_PATH .. "/lspinstall/efm/efm-langserver"},
--- filetypes = vim.tbl_keys(languages),
--- settings = {rootMarkers = {".git"}, languages = languages, log_level = 1}
--- }

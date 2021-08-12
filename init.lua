@@ -3,7 +3,7 @@ require('settings')
 
 -- packages config
 
--- require('plugins.treesitter')
+require('plugins.treesitter')
 require('plugins.smallConfigs')
 require('plugins.codi')
 require('plugins.fzf')
@@ -13,11 +13,11 @@ require('plugins.multiCursor')
 require('plugins.indentLines')
 
 -- LSP
--- require('lsp')
--- require('lsp.setup-ls')
+require('lsp')
+require('lsp.setup-ls')
 
--- require('plugins.compe')
--- require('plugins.lspConfig')
+require('plugins.compe')
+require('plugins.lspConfig')
 
 -- end packages config
 
