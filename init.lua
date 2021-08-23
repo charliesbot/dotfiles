@@ -17,6 +17,7 @@ require('lsp')
 require('lsp.setup-ls')
 
 require('plugins.compe')
+-- require('plugins.coq')
 require('plugins.lspConfig')
 
 -- end packages config

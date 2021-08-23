@@ -37,7 +37,7 @@ return require"packer".startup(function(use)
     use {'tpope/vim-eunuch'}
 
     -- Visual tab {bottom}
-    use {'hoob3rt/lualine.nvim', requires = {'kyazdani42/nvim-web-devicons', opt = true}}
+    use {'hoob3rt/lualine.nvim'}
 
     -- Efficient moving
     use {'justinmk/vim-sneak'}
@@ -58,6 +58,7 @@ return require"packer".startup(function(use)
 
     -- LSP
     use "hrsh7th/nvim-compe"
+    -- use {'ms-jpq/coq_nvim', branch = 'coq'}
     use "mhartington/formatter.nvim"
     use "neovim/nvim-lspconfig"
     use "glepnir/lspsaga.nvim"

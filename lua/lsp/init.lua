@@ -9,7 +9,15 @@ vim.fn.sign_define("LspDiagnosticsSignHint", {text = "•"})
 -- SAGA
 --
 local saga = require 'lspsaga'
-saga.init_lsp_saga()
+saga.init_lsp_saga {
+    dianostic_header_icon = ' ● ',
+    code_action_icon = '💡',
+    error_sign = '🚨',
+    warn_sign = '⚠',
+    hint_sign = "⚡",
+    infor_sign = 'I',
+    border_style = "round"
+}
 
 --
 -- FORMATTER
@@ -62,6 +70,7 @@ augroup FormatAutogroup
   autocmd FileType cpp autocmd BufWritePost <buffer> FormatWrite
   autocmd FileType html autocmd BufWritePost <buffer> FormatWrite
   autocmd FileType css autocmd BufWritePost <buffer> FormatWrite
+  autocmd FileType json autocmd BufWritePost <buffer> FormatWrite
   autocmd FileType javascript autocmd BufWritePost <buffer> FormatWrite
   autocmd FileType typescript autocmd BufWritePost <buffer> FormatWrite
   autocmd FileType typescriptreact autocmd BufWritePost <buffer> FormatWrite
