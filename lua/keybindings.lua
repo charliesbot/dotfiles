@@ -27,7 +27,7 @@ keymap("n", "gd", ":Lspsaga preview_definition<CR>", {silent = true})
 keymap("n", "gh", ":Lspsaga hover_doc<CR>", {silent = true})
 keymap("n", "<leader>m", ":Lspsaga diagnostic_jump_prev<CR>", {silent = true})
 keymap("n", "<leader>n", ":Lspsaga diagnostic_jump_next<CR>", {silent = true})
-keymap("n", "ca", ":Lspsaga code_action<CR>", {silent = true})
+keymap("n", "<leader>ca", ":Lspsaga code_action<CR>", {silent = true})
 -- *****************************************************************************
 -- Fold
 -- *****************************************************************************
