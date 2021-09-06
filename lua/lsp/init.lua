@@ -47,6 +47,10 @@ function cFormatter()
     return {exe = "clang-format", args = {}, stdin = true}
 end
 
+function rustFormatter()
+    return {exe = "rustfmt", args = {}, stdin = true}
+end
+
 require('formatter').setup({
     logging = false,
     filetype = {
@@ -60,7 +64,8 @@ require('formatter').setup({
         markdown = {prettierFormatter},
         svelte = {prettierFormatter},
         typescript = {prettierFormatter},
-        typescriptreact = {prettierFormatter}
+        typescriptreact = {prettierFormatter},
+        rust = {rustFormatter}
     }
 })
 

@@ -62,6 +62,15 @@ require'lspconfig'.tsserver.setup {
 }
 
 -- *****************************************************************************
+-- RUST
+-- *****************************************************************************
+require'lspconfig'.rust_analyzer.setup {
+    cmd = {DATA_PATH .. "/lspinstall/rust/rust-analyzer"},
+    on_attach = documentHighlight,
+    settings = {documentFormatting = false}
+}
+
+-- *****************************************************************************
 -- LUA
 -- *****************************************************************************
 -- https://github.com/sumneko/lua-language-server/wiki/Build-and-Run-(Standalone)
