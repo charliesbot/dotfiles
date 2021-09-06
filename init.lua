@@ -16,8 +16,9 @@ require('plugins.indentLines')
 require('lsp')
 require('lsp.setup-ls')
 
-require('plugins.compe')
+-- require('plugins.compe')
 -- require('plugins.coq')
+require('plugins.cmp')
 require('plugins.lspConfig')
 
 -- end packages config

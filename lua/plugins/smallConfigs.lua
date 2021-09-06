@@ -21,6 +21,6 @@ require('gitsigns').setup()
 
 -- Lualine
 require'lualine'.setup {
-    options = {},
+    options = {theme = 'tokyonight'},
     sections = {lualine_a = {{'mode', lower = false}}, lualine_b = {}}
 }

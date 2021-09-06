@@ -10,20 +10,20 @@ return require"packer".startup(function(use)
 
     -- Themes
     use 'folke/tokyonight.nvim'
-    use {'NLKNguyen/papercolor-theme'}
-    use {'joshdick/onedark.vim'}
-    use {'rakr/vim-one'}
-    use {'KeitaNakamura/neodark.vim'}
-    use {'trevordmiller/nova-vim'}
-    use {'morhetz/gruvbox'}
-    use {'tyrannicaltoucan/vim-quantum'}
+    use 'NLKNguyen/papercolor-theme'
+    use 'joshdick/onedark.vim'
+    use 'rakr/vim-one'
+    use 'KeitaNakamura/neodark.vim'
+    use 'trevordmiller/nova-vim'
+    use 'morhetz/gruvbox'
+    use 'tyrannicaltoucan/vim-quantum'
     use {'dracula/vim', as = 'dracula'}
-    use {'ayu-theme/ayu-vim'}
-    use {'skielbasa/vim-material-monokai'}
-    use {'haishanh/night-owl.vim'}
-    use {'nightsense/snow'}
-    use {'arcticicestudio/nord-vim'}
-    use {'phanviet/vim-monokai-pro'}
+    use 'ayu-theme/ayu-vim'
+    use 'skielbasa/vim-material-monokai'
+    use 'haishanh/night-owl.vim'
+    use 'nightsense/snow'
+    use 'arcticicestudio/nord-vim'
+    use 'phanviet/vim-monokai-pro'
 
     use {'mhinz/vim-startify'}
     use {'scrooloose/nerdtree'}
@@ -54,10 +54,13 @@ return require"packer".startup(function(use)
     -- Language Support
     use {'nvim-treesitter/nvim-treesitter'}
     use {'nvim-treesitter/playground'}
+    use {'p00f/nvim-ts-rainbow'}
+    use {'windwp/nvim-ts-autotag'}
     use 'bfrg/vim-cpp-modern'
 
     -- LSP
-    use "hrsh7th/nvim-compe"
+    use 'hrsh7th/nvim-cmp' -- Autocompletion plugin
+    use 'hrsh7th/cmp-nvim-lsp'
     -- use {'ms-jpq/coq_nvim', branch = 'coq'}
     use "mhartington/formatter.nvim"
     use "neovim/nvim-lspconfig"
@@ -69,11 +72,12 @@ return require"packer".startup(function(use)
     use {'thosakwe/vim-flutter'}
 
     -- Quoting/parenthesizing
-    use {'machakann/vim-sandwich'}
-    use {'jiangmiao/auto-pairs'}
+    use {"machakann/vim-sandwich"}
+    use {"jiangmiao/auto-pairs"}
 
     -- Comments
-    use {'scrooloose/nerdcommenter'}
+    -- use {'scrooloose/nerdcommenter'}
+    use "b3nj5m1n/kommentary"
 
     -- Git
     use {'lewis6991/gitsigns.nvim', requires = {'nvim-lua/plenary.nvim'}}

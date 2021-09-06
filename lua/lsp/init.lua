@@ -16,7 +16,9 @@ saga.init_lsp_saga {
     warn_sign = '⚠',
     hint_sign = "⚡",
     infor_sign = 'I',
-    border_style = "round"
+    border_style = "round",
+    code_action_keys = {quit = "<ESC>"},
+    rename_action_keys = {quit = "<ESC>"}
 }
 
 --
