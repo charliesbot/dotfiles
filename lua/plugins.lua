@@ -26,8 +26,9 @@ return require"packer".startup(function(use)
     use 'phanviet/vim-monokai-pro'
 
     use {'mhinz/vim-startify'}
-    use {'scrooloose/nerdtree'}
-    use {'Xuyuanp/nerdtree-git-plugin'}
+    use {'ms-jpq/chadtree', branch = 'chad', run = 'python3 -m chadtree deps'}
+    --[[ use {'scrooloose/nerdtree'}
+    use {'Xuyuanp/nerdtree-git-plugin'} ]]
 
     use {'nelstrom/vim-visual-star-search'}
 

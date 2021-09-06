@@ -1,15 +1,16 @@
--- Nerd Commenter
-vim.cmd('let NERDSpaceDelims = 1')
-
 -- Vim Sneak
 vim.g['sneak#s_next'] = 1
 vim.g['sneak#label'] = 1
 
 -- NerdTree
-vim.g.NERDTreeHijackNetrw = 0
-vim.g.nerdtree_tabs_focus_on_files = 1
-vim.cmd('let NERDTreeShowHidden=1')
-vim.cmd("let NERDTreeIgnore=['\\.DS_Store', '\\~$', '\\.swp']")
+-- vim.cmd("let NERDTreeIgnore=['\\.DS_Store', '\\~$', '\\.swp']") ]]
+local chadtree_settings = {
+    ["theme.text_colour_set"] = "env",
+    ['theme.icon_glyph_set'] = 'ascii',
+    ["options.show_hidden"] = true,
+    ["ignore.name_exact"] = {".DS_Store", "thumbs.db"}
+}
+vim.api.nvim_set_var("chadtree_settings", chadtree_settings)
 
 -- Vim Move
 -- <C-k>   Move current line/selections up

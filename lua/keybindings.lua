@@ -5,7 +5,7 @@ local opts = {noremap = true, silent = true}
 -- *****************************************************************************
 -- Mappings
 -- *****************************************************************************
-keymap('', '<C-b>', ':NERDTreeToggle<CR>', opts)
+keymap("n", "<C-b>", "<Cmd>CHADopen<CR>", opts)
 keymap('i', 'jj', '<ESC>', opts)
 keymap('n', '<leader>V', ':vsplit<CR>', opts)
 -- Clear search highlight
