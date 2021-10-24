@@ -10,12 +10,12 @@ vim.fn.sign_define("LspDiagnosticsSignHint", {text = "•"})
 --
 local saga = require 'lspsaga'
 saga.init_lsp_saga {
-    dianostic_header_icon = ' ● ',
+    --[[ dianostic_header_icon = ' ● ',
     code_action_icon = '💡',
     error_sign = '🚨',
     warn_sign = '⚠',
     hint_sign = "⚡",
-    infor_sign = 'I',
+    infor_sign = 'I', ]]
     border_style = "round",
     code_action_keys = {quit = "<ESC>"},
     rename_action_keys = {quit = "<ESC>"}
