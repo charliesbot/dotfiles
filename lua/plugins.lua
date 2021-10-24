@@ -11,7 +11,6 @@ return require"packer".startup(function(use)
     -- Themes
     use 'folke/tokyonight.nvim'
     use 'NLKNguyen/papercolor-theme'
-    use 'joshdick/onedark.vim'
     use 'rakr/vim-one'
     use 'KeitaNakamura/neodark.vim'
     use 'trevordmiller/nova-vim'
@@ -21,14 +20,11 @@ return require"packer".startup(function(use)
     use 'ayu-theme/ayu-vim'
     use 'skielbasa/vim-material-monokai'
     use 'haishanh/night-owl.vim'
-    use 'nightsense/snow'
     use 'arcticicestudio/nord-vim'
     use 'phanviet/vim-monokai-pro'
 
     use {'mhinz/vim-startify'}
     use {'ms-jpq/chadtree', branch = 'chad', run = 'python3 -m chadtree deps'}
-    --[[ use {'scrooloose/nerdtree'}
-    use {'Xuyuanp/nerdtree-git-plugin'} ]]
 
     use {'nelstrom/vim-visual-star-search'}
 
@@ -38,7 +34,7 @@ return require"packer".startup(function(use)
     use {'tpope/vim-eunuch'}
 
     -- Visual tab {bottom}
-    use {'hoob3rt/lualine.nvim'}
+    use {'nvim-lualine/lualine.nvim'}
 
     -- Efficient moving
     use {'justinmk/vim-sneak'}
@@ -46,27 +42,28 @@ return require"packer".startup(function(use)
     -- UI Widgets
     use {'skywind3000/vim-quickui'}
     use {"junegunn/fzf.vim", requires = {"junegunn/fzf"}}
-    use {'matze/vim-move'}
-    use {'dominikduda/vim_current_word'}
-    use {'tpope/vim-repeat'}
-    use {'Konfekt/FastFold'}
-    use {'metakirby5/codi.vim'}
+    use {"matze/vim-move"}
+    use {"dominikduda/vim_current_word"}
+    use {"tpope/vim-repeat"}
+    use {"Konfekt/FastFold"}
+    use {"metakirby5/codi.vim"}
 
     -- Language Support
-    use {'nvim-treesitter/nvim-treesitter'}
-    use {'nvim-treesitter/playground'}
-    use {'p00f/nvim-ts-rainbow'}
+    use {"nvim-treesitter/nvim-treesitter"}
+    use {"nvim-treesitter/playground"}
+    use {"p00f/nvim-ts-rainbow"}
     use {'windwp/nvim-ts-autotag'}
     use 'bfrg/vim-cpp-modern'
 
     -- LSP
-    use 'hrsh7th/nvim-cmp' -- Autocompletion plugin
-    use 'hrsh7th/cmp-nvim-lsp'
-    -- use {'ms-jpq/coq_nvim', branch = 'coq'}
+    use "hrsh7th/nvim-cmp" -- Autocompletion plugin
+    use "hrsh7th/cmp-nvim-lsp"
+    use "hrsh7th/cmp-vsnip"
+    use "hrsh7th/vim-vsnip"
     use "mhartington/formatter.nvim"
     use "neovim/nvim-lspconfig"
     use "glepnir/lspsaga.nvim"
-    use "kabouzeid/nvim-lspinstall"
+    use "williamboman/nvim-lsp-installer"
 
     -- Flutter
     use {'dart-lang/dart-vim-plugin'}
@@ -81,7 +78,11 @@ return require"packer".startup(function(use)
     use "b3nj5m1n/kommentary"
 
     -- Git
-    use {'lewis6991/gitsigns.nvim', requires = {'nvim-lua/plenary.nvim'}}
+    use {
+        'lewis6991/gitsigns.nvim',
+        requires = {'nvim-lua/plenary.nvim'}
+        -- tag = 'release' -- To use the latest release
+    }
 
     -- Indent Lines
     use {'lukas-reineke/indent-blankline.nvim'}

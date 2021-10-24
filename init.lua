@@ -14,10 +14,8 @@ require('plugins.indentLines')
 
 -- LSP
 require('lsp')
-require('lsp.setup-ls')
+require('lsp.setup')
 
--- require('plugins.compe')
--- require('plugins.coq')
 require('plugins.cmp')
 require('plugins.lspConfig')
 
@@ -40,11 +38,9 @@ local colorSchemes = {
     nord = 'nord',
     nova = 'nova',
     one = 'one',
-    oneDark = 'onedark',
     oneHalfDark = 'onehalfdark',
     paperColor = 'PaperColor',
     quantum = 'quantum',
-    snow = 'snow',
     tokyoNight = 'tokyonight'
 }
 
