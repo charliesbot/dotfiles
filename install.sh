@@ -16,9 +16,14 @@ fi
 echo "Installing Oh my zsh"
 sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
+echo "Installing zInit"
+sh -c "$(curl -fsSL https://git.io/zinit-install)"
+
+echo "Installing Kitty Snazzy Theme"
+curl -o ~/.config/kitty/snazzy.conf https://raw.githubusercontent.com/connorholyday/kitty-snazzy/master/snazzy.conf
+
 echo "Removing existing dotfiles"
 # remove files if they already exist
-rm -rf ~/.config/nvim/coc-settings.json
 rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.tmux ~/.tmux.conf ~/.config/nvim 2> /dev/null
 
 echo "Creating symlinks"
