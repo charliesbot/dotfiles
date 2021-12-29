@@ -7,5 +7,5 @@ Steps
 
 Further reading
 
-This post by Joe L. Wroten is amazing. Take a look if you want to know by I decided to have a repo with my dotfiles.
+This post by Joe L. Wroten is amazing. Take a look if you want to know why I've decided to have a repo with my dotfiles.
 https://wrotenwrites.com/a_modern_terminal_workflow_1/
