@@ -24,6 +24,7 @@ curl -o ~/.config/kitty/snazzy.conf https://raw.githubusercontent.com/connorholy
 
 echo "Removing existing dotfiles"
 # remove files if they already exist
+rm -rf ~/.config/nvim/coc-settings.json
 rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.tmux ~/.tmux.conf ~/.config/nvim 2> /dev/null
 
 echo "Creating symlinks"

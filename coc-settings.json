@@ -1,0 +1,39 @@
+{
+  "python.jediEnabled": true,
+  "python.linting.flake8Enabled": true,
+  "python.linting.mypyEnabled": true,
+  "python.formatting.provider": "black",
+  "coc.preferences.formatOnSaveFiletypes": [
+    "Markdown",
+    "cpp",
+    "css",
+    "dart",
+    "graphql",
+    "html",
+    "javascript",
+    "javascriptreact",
+    "json",
+    "lua",
+    "python",
+    "rust",
+    "typescript",
+    "typescriptreact"
+  ],
+  "eslint.filetypes": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "eslint.autoFixOnSave": true,
+  "Lua": {
+    "workspace.library": {
+      "/usr/share/nvim/runtime/lua": true,
+      "/usr/share/nvim/runtime/lua/vim": true,
+      "/usr/share/nvim/runtime/lua/vim/lsp": true
+    },
+    "diagnostics": {
+      "globals": ["vim"]
+    }
+  }
+}

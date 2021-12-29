@@ -8,18 +8,14 @@ vim.fn.sign_define("LspDiagnosticsSignHint", {text = "•"})
 --
 -- SAGA
 --
-local saga = require 'lspsaga'
-saga.init_lsp_saga {
-    --[[ dianostic_header_icon = ' ● ',
-    code_action_icon = '💡',
-    error_sign = '🚨',
-    warn_sign = '⚠',
-    hint_sign = "⚡",
-    infor_sign = 'I', ]]
-    border_style = "round",
-    code_action_keys = {quit = "<ESC>"},
-    rename_action_keys = {quit = "<ESC>"}
-}
+require'navigator'.setup({
+    keymaps = {
+        {key = "<Space>n", func = "diagnostic.goto_next({ border = 'rounded', max_width = 80})"},
+        {key = "<Space>m", func = "diagnostic.goto_prev({ border = 'rounded', max_width = 80})"},
+        {key = "gh", func = "hover()"}
+    },
+    lsp_installer = false
+})
 
 --
 -- FORMATTER

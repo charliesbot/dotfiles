@@ -24,7 +24,6 @@ return require"packer".startup(function(use)
     use 'phanviet/vim-monokai-pro'
 
     use {'mhinz/vim-startify'}
-    -- use {'ms-jpq/chadtree', branch = 'chad', run = 'python3 -m chadtree deps'}
     use {'scrooloose/nerdtree'}
     use {'Xuyuanp/nerdtree-git-plugin'}
 
@@ -58,14 +57,17 @@ return require"packer".startup(function(use)
     use 'bfrg/vim-cpp-modern'
 
     -- LSP
-    use "hrsh7th/nvim-cmp" -- Autocompletion plugin
+    --[[ use "hrsh7th/nvim-cmp" -- Autocompletion plugin
     use "hrsh7th/cmp-nvim-lsp"
     use "hrsh7th/cmp-vsnip"
     use "hrsh7th/vim-vsnip"
     use "mhartington/formatter.nvim"
     use "neovim/nvim-lspconfig"
-    use "glepnir/lspsaga.nvim"
-    use "williamboman/nvim-lsp-installer"
+    use {'ray-x/navigator.lua', requires = {'ray-x/guihua.lua', run = 'cd lua/fzy && make'}}
+    use "williamboman/nvim-lsp-installer" ]]
+
+    -- COC
+    use {'neoclide/coc.nvim', branch = 'release'}
 
     -- Flutter
     use {'dart-lang/dart-vim-plugin'}

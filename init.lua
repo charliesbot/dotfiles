@@ -13,11 +13,10 @@ require('plugins.multiCursor')
 require('plugins.indentLines')
 
 -- LSP
-require('lsp')
-require('lsp.setup')
+-- require('lsp')
+-- require('lsp.setup')
 
-require('plugins.cmp')
-require('plugins.lspConfig')
+-- require('plugins.cmp')
 
 -- end packages config
 
