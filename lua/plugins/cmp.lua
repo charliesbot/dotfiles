@@ -19,5 +19,5 @@ cmp.setup {
         ['<Tab>'] = cmp.mapping.select_next_item(),
         ['<S-Tab>'] = cmp.mapping.select_prev_item()
     },
-    sources = {{name = 'nvim_lsp'}}
+    sources = {{name = 'nvim_diagnostic'}}
 }
