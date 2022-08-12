@@ -17,7 +17,9 @@
     "python",
     "rust",
     "typescript",
-    "typescriptreact"
+    "typescriptreact",
+    "go",
+    "golang"
   ],
   "eslint.filetypes": [
     "javascript",
@@ -33,7 +35,9 @@
       "/usr/share/nvim/runtime/lua/vim/lsp": true
     },
     "diagnostics": {
-      "globals": ["vim"]
+      "globals": [
+        "vim"
+      ]
     }
   }
 }
