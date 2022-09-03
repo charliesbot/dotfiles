@@ -53,11 +53,13 @@ alias pip=pip3
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # Paths
-export ANDROID_HOME=/Users/charlie/Library/Android/sdk
-export PATH=$PATH:$ANDROID_HOME/emulator
-export PATH=$PATH:$ANDROID_HOME/tools
-export PATH=$PATH:$ANDROID_HOME/tools/bin
-export PATH=$PATH:$ANDROID_HOME/platform-tools
+export ANDROID_HOME="$HOME/Android/Sdk"
+export ANDROID_SDK_ROOT=${ANDROID_HOME}
+export PATH=${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${PATH}
+# export PATH=$PATH:$ANDROID_HOME/emulator
+# export PATH=$PATH:$ANDROID_HOME/tools
+# export PATH=$PATH:$ANDROID_HOME/tools/bin
+# export PATH=$PATH:$ANDROID_HOME/platform-tools
 
 # Flutter
 export PATH="$PATH:`pwd`/flutter/bin"
@@ -99,9 +101,18 @@ prompt pure
 
 # Pyenv
 if [[ $OSTYPE = (linux)* ]]; then
-  export PATH="/home/charlie/.pyenv/bin:$PATH"
+  export PATH="$HOME/.pyenv/bin:$PATH"
   eval "$(pyenv init -)"
   eval "$(pyenv virtualenv-init -)"
+fi
+
+# WSL
+if [[ $OSTYPE = (linux)* ]]; then
+  # Required for Android
+  export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+  alias android-studio=$HOME/Applications/android-studio/bin/studio.sh
+  test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
+  test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
 ### End of Zinit's installer chunk
