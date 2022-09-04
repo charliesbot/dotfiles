@@ -53,13 +53,18 @@ alias pip=pip3
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # Paths
-export ANDROID_HOME="$HOME/Android/Sdk"
+if [[ $OSTYPE = (linux)* ]]; then
+  export ANDROID_HOME="$HOME/Android/Sdk"
+else
+  export ANDROID_HOME="$HOME/Library/Android/sdk"
+fi
 export ANDROID_SDK_ROOT=${ANDROID_HOME}
-export PATH=${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${PATH}
-# export PATH=$PATH:$ANDROID_HOME/emulator
-# export PATH=$PATH:$ANDROID_HOME/tools
-# export PATH=$PATH:$ANDROID_HOME/tools/bin
-# export PATH=$PATH:$ANDROID_HOME/platform-tools
+# export PATH=${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${PATH}
+export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/tools
+export PATH=$PATH:$ANDROID_HOME/tools/bin
+export PATH=$PATH:$ANDROID_HOME/platform-tools
 
 # Flutter
 export PATH="$PATH:`pwd`/flutter/bin"
