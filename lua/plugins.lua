@@ -13,6 +13,14 @@ return require "packer".startup(function(use)
   use 'morhetz/gruvbox'
   use { 'dracula/vim', as = 'dracula' }
   use 'haishanh/night-owl.vim'
+  use {
+    "catppuccin/nvim",
+    as = "catppuccin",
+    config = function()
+      vim.g.catppuccin_flavour = "mocha" -- latte, frappe, macchiato, mocha
+      require("catppuccin").setup()
+    end
+  }
 
   use { 'mhinz/vim-startify' }
   use { 'scrooloose/nerdtree' }
@@ -42,17 +50,17 @@ return require "packer".startup(function(use)
 
   -- Language Support
   use {
-      'nvim-treesitter/nvim-treesitter',
-      run = ':TSUpdate'
+    'nvim-treesitter/nvim-treesitter',
+    run = ':TSUpdate'
   }
   use { "p00f/nvim-ts-rainbow" }
   use { 'windwp/nvim-ts-autotag' }
   use { 'bfrg/vim-cpp-modern' }
 
-	use {
-		'neoclide/coc.nvim',
-		branch = 'release'
-	}
+  use {
+    'neoclide/coc.nvim',
+    branch = 'release'
+  }
 
   -- Flutter
   use { 'dart-lang/dart-vim-plugin' }
@@ -67,9 +75,9 @@ return require "packer".startup(function(use)
 
   -- Git
   use {
-   'lewis6991/gitsigns.nvim',
-   requires = { 'nvim-lua/plenary.nvim' }
-   -- tag = 'release' -- To use the latest release
+    'lewis6991/gitsigns.nvim',
+    requires = { 'nvim-lua/plenary.nvim' }
+    -- tag = 'release' -- To use the latest release
   }
 
   -- Indent Lines

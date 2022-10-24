@@ -20,12 +20,14 @@ require('colors')
 require('customFunctions')
 
 local colorSchemes = {
-    dracula = 'dracula',
-    draculaPro = 'dracula_pro',
-    gruvbox = 'gruvbox',
-    gruvboxMaterial = 'gruvbox-material',
-    nightOwl = 'night-owl',
-    nova = 'nova',
-    tokyoNight = 'tokyonight'
+  dracula = 'dracula',
+  draculaPro = 'dracula_pro',
+  gruvbox = 'gruvbox',
+  gruvboxMaterial = 'gruvbox-material',
+  nightOwl = 'night-owl',
+  nova = 'nova',
+  tokyoNight = 'tokyonight',
+  catppuccin = 'catppuccin'
 }
-vim.cmd(string.format('colorscheme ' .. colorSchemes.dracula))
+
+vim.cmd(string.format('colorscheme ' .. colorSchemes.catppuccin))

@@ -3,6 +3,7 @@
   "python.linting.flake8Enabled": true,
   "python.linting.mypyEnabled": true,
   "python.formatting.provider": "black",
+  "flutter.provider.hot-reload": true,
   "coc.preferences.formatOnSaveFiletypes": [
     "Markdown",
     "cpp",
