@@ -11,10 +11,7 @@ require('plugins.quickUI')
 require('plugins.startify')
 require('plugins.multiCursor')
 require('plugins.indentLines')
-require('plugins.null_ls')
-
--- LSP
-require('lsp')
+require('plugins.coc')
 
 -- end packages config
 
@@ -23,7 +20,6 @@ require('colors')
 require('customFunctions')
 
 local colorSchemes = {
-    ayu = 'ayu',
     dracula = 'dracula',
     draculaPro = 'dracula_pro',
     gruvbox = 'gruvbox',
@@ -32,5 +28,4 @@ local colorSchemes = {
     nova = 'nova',
     tokyoNight = 'tokyonight'
 }
-
 vim.cmd(string.format('colorscheme ' .. colorSchemes.dracula))

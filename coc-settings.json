@@ -39,5 +39,6 @@
         "vim"
       ]
     }
-  }
+  },
+  "Lua.telemetry.enable": true
 }

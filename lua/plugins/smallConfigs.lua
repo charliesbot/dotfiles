@@ -17,18 +17,18 @@ vim.cmd("let NERDTreeIgnore=['\\.DS_Store', '\\~$', '\\.swp']")
 require('gitsigns').setup()
 
 -- Lualine
-require'lualine'.setup {
-    options = {theme = 'tokyonight'},
-    sections = {
-        lualine_a = {{'mode', lower = false}},
-        lualine_b = {'filename'},
-        lualine_c = {
-            {
-                'diagnostics',
-                sources = {"nvim_diagnostic"},
-                symbols = {error = 'E:', warn = 'W:', info = 'I:', hint = 'H:'}
-            }
-        },
-        lualine_x = {'encoding', 'filetype'}
-    }
+require 'lualine'.setup {
+  options = { theme = 'tokyonight' },
+  sections = {
+    lualine_a = { { 'mode', lower = false } },
+    lualine_b = { 'filename' },
+    lualine_c = {
+      {
+        'diagnostics',
+        sources = { "nvim_diagnostic", 'coc' },
+        symbols = { error = 'E: ', warn = 'W: ', info = 'I: ', hint = 'H: ' }
+      }
+    },
+    lualine_x = { 'encoding', 'filetype' }
+  }
 }

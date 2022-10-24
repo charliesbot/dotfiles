@@ -10,10 +10,8 @@ return require "packer".startup(function(use)
 
   -- Themes
   use 'folke/tokyonight.nvim'
-  use 'KeitaNakamura/neodark.vim'
   use 'morhetz/gruvbox'
   use { 'dracula/vim', as = 'dracula' }
-  use 'ayu-theme/ayu-vim'
   use 'haishanh/night-owl.vim'
 
   use { 'mhinz/vim-startify' }
@@ -43,38 +41,18 @@ return require "packer".startup(function(use)
   use { "metakirby5/codi.vim" }
 
   -- Language Support
-  use { "nvim-treesitter/nvim-treesitter" }
-  use { "nvim-treesitter/playground" }
+  use {
+      'nvim-treesitter/nvim-treesitter',
+      run = ':TSUpdate'
+  }
   use { "p00f/nvim-ts-rainbow" }
   use { 'windwp/nvim-ts-autotag' }
   use { 'bfrg/vim-cpp-modern' }
 
-  -- LSP
-  use({
-    "glepnir/lspsaga.nvim",
-    branch = "main"
-  })
-  use { "jose-elias-alvarez/null-ls.nvim" }
-  use {
-    'VonHeikemen/lsp-zero.nvim',
-    requires = {
-      -- LSP Support
-      { 'neovim/nvim-lspconfig' },
-      { 'williamboman/mason.nvim' },
-      { 'williamboman/mason-lspconfig.nvim' },
-
-      -- Autocompletion
-      { 'hrsh7th/nvim-cmp' },
-      { 'hrsh7th/cmp-buffer' },
-      { 'hrsh7th/cmp-path' },
-      { 'saadparwaiz1/cmp_luasnip' },
-      { 'hrsh7th/cmp-nvim-lsp' },
-      { 'hrsh7th/cmp-nvim-lua' },
-
-      -- Snippets
-      { 'L3MON4D3/LuaSnip' },
-    }
-  }
+	use {
+		'neoclide/coc.nvim',
+		branch = 'release'
+	}
 
   -- Flutter
   use { 'dart-lang/dart-vim-plugin' }
@@ -85,14 +63,13 @@ return require "packer".startup(function(use)
   use { "jiangmiao/auto-pairs" }
 
   -- Comments
-  -- use {'scrooloose/nerdcommenter'}
   use "b3nj5m1n/kommentary"
 
   -- Git
   use {
-    'lewis6991/gitsigns.nvim',
-    requires = { 'nvim-lua/plenary.nvim' }
-    -- tag = 'release' -- To use the latest release
+   'lewis6991/gitsigns.nvim',
+   requires = { 'nvim-lua/plenary.nvim' }
+   -- tag = 'release' -- To use the latest release
   }
 
   -- Indent Lines
