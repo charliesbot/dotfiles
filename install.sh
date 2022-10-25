@@ -64,7 +64,6 @@ brew install gcc
 brew install gdb
 brew install bazel
 brew install cmake
-brew install luarocks
 
 # FORMATTERS
 brew install shfmt
@@ -113,9 +112,6 @@ pip3 install pynvim
 # pure prompt manual config
 mkdir -p "$HOME/.zsh"
 git clone https://github.com/sindresorhus/pure.git "$HOME/.zsh/pure"
-
-# lua formatter
-luarocks install --server=https://luarocks.org/dev luaformatter
 
 # Go setup
 mkdir -p $HOME/go/{bin,src,pkg}
