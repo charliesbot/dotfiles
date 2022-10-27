@@ -22,6 +22,9 @@ fpath+=$HOME/.zsh/pure
 # export PATH=/Users/charlie/.fnm:$PATH
 eval "`fnm env`"
 
+# asdf
+. /opt/homebrew/opt/asdf/libexec/asdf.sh
+
 # fuck!
 eval $(thefuck --alias)
 
