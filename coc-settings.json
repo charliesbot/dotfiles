@@ -41,5 +41,8 @@
       ]
     }
   },
-  "Lua.telemetry.enable": true
+  "Lua.telemetry.enable": true,
+  "clangd.fallbackFlags": [
+    "-std=c++20"
+  ]
 }
