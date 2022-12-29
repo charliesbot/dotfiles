@@ -53,3 +53,6 @@ vim.cmd("set foldlevelstart=99")
 -- Coc enhancements
 vim.cmd("set cmdheight=1")
 vim.cmd("set updatetime=300")
+
+-- NerdTree
+vim.g['NERDTreeMinimalMenu'] = 1
