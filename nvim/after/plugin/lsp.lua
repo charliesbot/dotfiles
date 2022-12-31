@@ -6,6 +6,7 @@ lsp.ensure_installed({
 	"eslint",
 	"sumneko_lua",
 	"rust_analyzer",
+	"clangd",
 })
 
 -- Fix Undefined global 'vim'
@@ -19,6 +20,22 @@ lsp.configure("sumneko_lua", {
 	},
 })
 
+lsp.configure("clangd", {
+	capabilities = {
+		offsetEncoding = "utf-8",
+	},
+})
+
+local has_words_before = function()
+	unpack = unpack or table.unpack
+	local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+	return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+end
+
+local feedkey = function(key, mode)
+	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
+end
+
 local cmp = require("cmp")
 local cmp_select = { behavior = cmp.SelectBehavior.Select }
 local cmp_mappings = lsp.defaults.cmp_mappings({
@@ -26,12 +43,25 @@ local cmp_mappings = lsp.defaults.cmp_mappings({
 	["<C-n>"] = cmp.mapping.select_next_item(cmp_select),
 	["<C-y>"] = cmp.mapping.confirm({ select = true }),
 	["<C-Space>"] = cmp.mapping.complete(),
+	["<Tab>"] = cmp.mapping(function(fallback)
+		if cmp.visible() then
+			cmp.select_next_item()
+		elseif vim.fn["vsnip#available"](1) == 1 then
+			feedkey("<Plug>(vsnip-expand-or-jump)", "")
+		elseif has_words_before() then
+			cmp.complete()
+		else
+			fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
+		end
+	end, { "i", "s" }),
+	["<S-Tab>"] = cmp.mapping(function()
+		if cmp.visible() then
+			cmp.select_prev_item()
+		elseif vim.fn["vsnip#jumpable"](-1) == 1 then
+			feedkey("<Plug>(vsnip-jump-prev)", "")
+		end
+	end, { "i", "s" }),
 })
-
--- disable completion with tab
--- this helps with copilot setup
-cmp_mappings["<Tab>"] = nil
-cmp_mappings["<S-Tab>"] = nil
 
 lsp.setup_nvim_cmp({
 	mapping = cmp_mappings,
@@ -82,5 +112,5 @@ end)
 lsp.setup()
 
 vim.diagnostic.config({
-	virtual_text = true,
+	virtual_text = false,
 })

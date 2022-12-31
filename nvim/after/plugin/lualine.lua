@@ -6,10 +6,10 @@ require("lualine").setup({
 		lualine_c = {
 			{
 				"diagnostics",
-				sources = { "nvim_diagnostic", "coc" },
+				sources = { "nvim_diagnostic" },
 				symbols = { error = "E: ", warn = "W: ", info = "I: ", hint = "H: " },
 			},
 		},
-		lualine_x = { "encoding", "filetype" },
+		lualine_x = { "filetype" },
 	},
 })

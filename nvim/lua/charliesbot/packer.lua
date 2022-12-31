@@ -10,6 +10,9 @@ return require("packer").startup(function(use)
 	use("kylechui/nvim-surround")
 	use("nvim-lualine/lualine.nvim")
 	use("b3nj5m1n/kommentary")
+	use("j-hui/fidget.nvim")
+	use("goolord/alpha-nvim")
+	use("nvim-tree/nvim-web-devicons")
 	use({ "catppuccin/nvim", as = "catppuccin" })
 	use({
 		"nvim-telescope/telescope.nvim",
