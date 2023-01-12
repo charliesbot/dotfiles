@@ -4,7 +4,7 @@ vim.cmd.packadd("packer.nvim")
 return require("packer").startup(function(use)
 	-- Packer can manage itself
 	use("wbthomason/packer.nvim")
-	use("matze/vim-move")
+	use("fedepujol/move.nvim")
 	use("lewis6991/gitsigns.nvim")
 	use("windwp/nvim-autopairs")
 	use("kylechui/nvim-surround")
@@ -13,6 +13,8 @@ return require("packer").startup(function(use)
 	use("j-hui/fidget.nvim")
 	use("goolord/alpha-nvim")
 	use("nvim-tree/nvim-web-devicons")
+	use("tpope/vim-eunuch")
+	use({ "akinsho/flutter-tools.nvim" })
 	use({ "catppuccin/nvim", as = "catppuccin" })
 	use({
 		"nvim-telescope/telescope.nvim",

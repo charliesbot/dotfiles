@@ -26,15 +26,18 @@ lsp.configure("clangd", {
 	},
 })
 
+-- Flutter already has its lsp as part of the framework
+lsp.setup_servers({ "dartls", force = true })
+
 local has_words_before = function()
 	unpack = unpack or table.unpack
 	local line, col = unpack(vim.api.nvim_win_get_cursor(0))
 	return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
 end
 
-local feedkey = function(key, mode)
+--[[ local feedkey = function(key, mode)
 	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
-end
+end ]]
 
 local cmp = require("cmp")
 local cmp_select = { behavior = cmp.SelectBehavior.Select }
@@ -46,8 +49,8 @@ local cmp_mappings = lsp.defaults.cmp_mappings({
 	["<Tab>"] = cmp.mapping(function(fallback)
 		if cmp.visible() then
 			cmp.select_next_item()
-		elseif vim.fn["vsnip#available"](1) == 1 then
-			feedkey("<Plug>(vsnip-expand-or-jump)", "")
+		--[[ elseif vim.fn["vsnip#available"](1) == 1 then
+			feedkey("<Plug>(vsnip-expand-or-jump)", "") ]]
 		elseif has_words_before() then
 			cmp.complete()
 		else
@@ -57,8 +60,8 @@ local cmp_mappings = lsp.defaults.cmp_mappings({
 	["<S-Tab>"] = cmp.mapping(function()
 		if cmp.visible() then
 			cmp.select_prev_item()
-		elseif vim.fn["vsnip#jumpable"](-1) == 1 then
-			feedkey("<Plug>(vsnip-jump-prev)", "")
+			--[[ elseif vim.fn["vsnip#jumpable"](-1) == 1 then
+			feedkey("<Plug>(vsnip-jump-prev)", "") ]]
 		end
 	end, { "i", "s" }),
 })
@@ -106,11 +109,11 @@ lsp.on_attach(function(client, bufnr)
 	vim.keymap.set("n", "<leader>vca", vim.lsp.buf.code_action, opts)
 	vim.keymap.set("n", "<leader>vrr", vim.lsp.buf.references, opts)
 	vim.keymap.set("n", "<leader>vrn", vim.lsp.buf.rename, opts)
-	vim.keymap.set("i", "<C-h>", vim.lsp.buf.signature_help, opts)
+	vim.keymap.set("n", "<leader>sh", vim.lsp.buf.signature_help, opts)
 end)
 
 lsp.setup()
 
 vim.diagnostic.config({
-	virtual_text = false,
+	virtual_text = true,
 })

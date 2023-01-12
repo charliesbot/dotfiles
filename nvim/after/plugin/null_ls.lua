@@ -9,10 +9,10 @@ require("mason-null-ls").setup({
 
 null_ls.setup({
 	sources = {
+		completion.spell,
+		diagnostics.eslint,
 		formatting.prettier,
 		formatting.stylua,
-		diagnostics.eslint,
-		completion.spell,
 	},
 })
 

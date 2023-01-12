@@ -36,5 +36,3 @@ vim.opt.swapfile = false
 
 -- Always show signcolumns
 vim.opt.signcolumn = "yes"
-
-vim.g.move_key_modifier = 'C'

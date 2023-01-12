@@ -119,6 +119,11 @@ _G.packer_plugins = {
     path = "/Users/charliesbot/.local/share/nvim/site/pack/packer/start/fidget.nvim",
     url = "https://github.com/j-hui/fidget.nvim"
   },
+  ["flutter-tools.nvim"] = {
+    loaded = true,
+    path = "/Users/charliesbot/.local/share/nvim/site/pack/packer/start/flutter-tools.nvim",
+    url = "https://github.com/akinsho/flutter-tools.nvim"
+  },
   ["friendly-snippets"] = {
     loaded = true,
     path = "/Users/charliesbot/.local/share/nvim/site/pack/packer/start/friendly-snippets",
@@ -158,6 +163,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/Users/charliesbot/.local/share/nvim/site/pack/packer/start/mason.nvim",
     url = "https://github.com/williamboman/mason.nvim"
+  },
+  ["move.nvim"] = {
+    loaded = true,
+    path = "/Users/charliesbot/.local/share/nvim/site/pack/packer/start/move.nvim",
+    url = "https://github.com/fedepujol/move.nvim"
   },
   ["null-ls.nvim"] = {
     loaded = true,
@@ -214,10 +224,10 @@ _G.packer_plugins = {
     path = "/Users/charliesbot/.local/share/nvim/site/pack/packer/start/telescope.nvim",
     url = "https://github.com/nvim-telescope/telescope.nvim"
   },
-  ["vim-move"] = {
+  ["vim-eunuch"] = {
     loaded = true,
-    path = "/Users/charliesbot/.local/share/nvim/site/pack/packer/start/vim-move",
-    url = "https://github.com/matze/vim-move"
+    path = "/Users/charliesbot/.local/share/nvim/site/pack/packer/start/vim-eunuch",
+    url = "https://github.com/tpope/vim-eunuch"
   }
 }
 
