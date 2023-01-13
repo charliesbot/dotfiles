@@ -39,9 +39,7 @@ pyenv global 3.9.5
 # Symlinking files
 ln -s ~/dotfiles/zshrc ~/.zshrc
 ln -s ~/dotfiles/tmux.conf ~/.tmux.conf
-ln -s ~/dotfiles/init.lua ~/.config/nvim/init.lua
-ln -s ~/dotfiles/lua/* ~/.config/nvim/lua
-ln -s ~/dotfiles/coc-settings.json ~/.config/nvim/coc-settings.json
+ln -s ~/dotfiles/nvim/* ~/.config/nvim/
 ln -s ~/dotfiles/wezterm.lua ~/.wezterm.lua
 
 # Italics and true color profile for tmux
@@ -64,10 +62,6 @@ brew install gcc
 brew install gdb
 brew install bazel
 brew install cmake
-
-# FORMATTERS
-brew install shfmt
-brew install clang-format
 
 if [[ `uname` == "Linux"   ]]; then
   echo "Linux detected. Using Linux config..."
