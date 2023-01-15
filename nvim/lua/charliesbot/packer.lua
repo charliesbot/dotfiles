@@ -18,7 +18,6 @@ return require("packer").startup(function(use)
   use("RRethy/vim-illuminate")
   use("ellisonleao/glow.nvim")
   use("folke/trouble.nvim")
-  use("folke/lsp-colors.nvim")
   use({
     "nvim-telescope/telescope.nvim",
     tag = "0.1.0",
