@@ -1,12 +1,23 @@
 local lsp = require("lsp-zero")
+local null_ls = require("null-ls")
+local mason = require("mason")
+local mason_null_ls = require("mason-null-ls")
+
+
 lsp.preset("recommended")
 
 lsp.ensure_installed({
-  "tsserver",
-  "eslint",
+  "tsserver", "eslint",
   "sumneko_lua",
   "rust_analyzer",
   "clangd",
+})
+
+mason.setup()
+mason_null_ls.setup({
+  ensure_installed = { "stylua", "prettier", "eslint", "fixjson" },
+  automatic_installation = false,
+  automatic_setup = true,
 })
 
 -- Fix Undefined global 'vim'
@@ -30,7 +41,6 @@ lsp.configure("clangd", {
 lsp.setup_servers({ "dartls", force = true })
 
 local has_words_before = function()
-  unpack = unpack or table.unpack
   local line, col = unpack(vim.api.nvim_win_get_cursor(0))
   return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
 end
@@ -80,9 +90,10 @@ lsp.set_preferences({
   },
 })
 
+local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
+
 lsp.on_attach(function(client, bufnr)
   local opts = { buffer = bufnr, remap = false }
-  local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 
   if client.name == "eslint" then
     vim.cmd.LspStop("eslint")
@@ -90,17 +101,6 @@ lsp.on_attach(function(client, bufnr)
   end
 
   require('illuminate').on_attach(client)
-
-  if client.supports_method("textDocument/formatting") then
-    vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
-    vim.api.nvim_create_autocmd("BufWritePre", {
-      group = augroup,
-      buffer = bufnr,
-      callback = function()
-        vim.lsp.buf.format({ bufnr = bufnr })
-      end,
-    })
-  end
 
   vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
   vim.keymap.set("n", "gh", vim.lsp.buf.hover, opts)
@@ -114,8 +114,57 @@ lsp.on_attach(function(client, bufnr)
   vim.keymap.set("n", "<leader>sh", vim.lsp.buf.signature_help, opts)
 end)
 
-lsp.setup()
-
 vim.diagnostic.config({
   virtual_text = true,
+  severity_sort = true,
+  float = {
+    source = "always", -- Or "if_many"
+  },
 })
+
+lsp.nvim_workspace()
+
+
+local formatting = null_ls.builtins.formatting
+local diagnostics = null_ls.builtins.diagnostics
+local completion = null_ls.builtins.completion
+local null_sources = {
+  completion.spell,
+  diagnostics.eslint,
+  formatting.prettier,
+  formatting.rustfmt,
+  formatting.stylua.with({ extra_args = { "--indent_type", "Spaces", "indent_width", "2" } }),
+}
+
+local function format_on_save(client, bufnr)
+  if client.supports_method('textDocument/formatting') then
+    vim.api.nvim_clear_autocmds({
+      group = augroup,
+      buffer = bufnr,
+    })
+    vim.api.nvim_create_autocmd('BufWritePre', {
+      group = augroup,
+      buffer = bufnr,
+      callback = function()
+        vim.lsp.buf.format({ bufnr = bufnr })
+      end,
+    })
+  end
+end
+
+null_ls.setup({
+  debug = true,
+  sources = null_sources,
+  on_attach = format_on_save
+})
+
+mason_null_ls.setup_handlers {
+  -- All sources with no handler get passed here
+  function(source_name, methods)
+    -- To keep the original functionality of `automatic_setup = true`,
+    -- please add the below.
+    require("mason-null-ls.automatic_setup")(source_name, methods)
+  end,
+}
+
+lsp.setup()

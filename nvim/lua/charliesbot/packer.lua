@@ -13,9 +13,12 @@ return require("packer").startup(function(use)
   use("goolord/alpha-nvim")
   use("nvim-tree/nvim-web-devicons")
   use("tpope/vim-eunuch")
-  use({ "akinsho/flutter-tools.nvim" })
+  use("akinsho/flutter-tools.nvim")
   use({ "catppuccin/nvim", as = "catppuccin" })
   use("RRethy/vim-illuminate")
+  use("ellisonleao/glow.nvim")
+  use("folke/trouble.nvim")
+  use("folke/lsp-colors.nvim")
   use({
     "nvim-telescope/telescope.nvim",
     tag = "0.1.0",
