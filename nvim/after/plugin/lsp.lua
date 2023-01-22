@@ -3,7 +3,6 @@ local null_ls = require("null-ls")
 local mason = require("mason")
 local mason_null_ls = require("mason-null-ls")
 
-
 lsp.preset("recommended")
 
 lsp.ensure_installed({
@@ -45,10 +44,6 @@ local has_words_before = function()
   return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
 end
 
---[[ local feedkey = function(key, mode)
-	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
-end ]]
-
 local cmp = require("cmp")
 local cmp_select = { behavior = cmp.SelectBehavior.Select }
 local cmp_mappings = lsp.defaults.cmp_mappings({
@@ -59,8 +54,6 @@ local cmp_mappings = lsp.defaults.cmp_mappings({
   ["<Tab>"] = cmp.mapping(function(fallback)
     if cmp.visible() then
       cmp.select_next_item()
-      --[[ elseif vim.fn["vsnip#available"](1) == 1 then
-			feedkey("<Plug>(vsnip-expand-or-jump)", "") ]]
     elseif has_words_before() then
       cmp.complete()
     else
@@ -70,24 +63,36 @@ local cmp_mappings = lsp.defaults.cmp_mappings({
   ["<S-Tab>"] = cmp.mapping(function()
     if cmp.visible() then
       cmp.select_prev_item()
-      --[[ elseif vim.fn["vsnip#jumpable"](-1) == 1 then
-			feedkey("<Plug>(vsnip-jump-prev)", "") ]]
     end
   end, { "i", "s" }),
 })
 
 lsp.setup_nvim_cmp({
   mapping = cmp_mappings,
+  sources = {
+    { name = 'path' },
+    { name = 'nvim_lsp', keyword_length = 0 },
+    { name = 'buffer', keyword_length = 3 },
+    --{ name = 'luasnip', keyword_length = 2 },
+  }
 })
+
 
 lsp.set_preferences({
   suggest_lsp_servers = false,
+  set_lsp_keymaps = { omit = { '<C-k>', } },
   sign_icons = {
-    error = "E",
-    warn = "W",
-    hint = "H",
+    error = '✘',
+    warn = '▲',
+    hint = '⚑',
     info = "I",
-  },
+  }
+  -- sign_icons = {
+  --   error = "E",
+  --   warn = "W",
+  --   hint = "H",
+  --   info = "I",
+  -- },
 })
 
 local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
@@ -99,8 +104,6 @@ lsp.on_attach(function(client, bufnr)
     vim.cmd.LspStop("eslint")
     return
   end
-
-  require('illuminate').on_attach(client)
 
   vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
   vim.keymap.set("n", "gh", vim.lsp.buf.hover, opts)
@@ -114,22 +117,12 @@ lsp.on_attach(function(client, bufnr)
   vim.keymap.set("n", "<leader>sh", vim.lsp.buf.signature_help, opts)
 end)
 
-vim.diagnostic.config({
-  virtual_text = true,
-  severity_sort = true,
-  float = {
-    source = "always", -- Or "if_many"
-  },
-})
-
 lsp.nvim_workspace()
-
 
 local formatting = null_ls.builtins.formatting
 local diagnostics = null_ls.builtins.diagnostics
-local completion = null_ls.builtins.completion
 local null_sources = {
-  completion.spell,
+  -- completion.spell,
   diagnostics.eslint,
   formatting.prettier,
   formatting.rustfmt,
@@ -153,7 +146,7 @@ local function format_on_save(client, bufnr)
 end
 
 null_ls.setup({
-  debug = true,
+  debug = false,
   sources = null_sources,
   on_attach = format_on_save
 })
@@ -168,3 +161,13 @@ mason_null_ls.setup_handlers {
 }
 
 lsp.setup()
+
+vim.diagnostic.config({
+  virtual_text = true,
+  severity_sort = false,
+  underline = true,
+  update_in_insert = false,
+  float = {
+    source = "always", -- Or "if_many"
+  },
+})

@@ -5,19 +5,17 @@ return require("packer").startup(function(use)
   -- Packer can manage itself
   use("wbthomason/packer.nvim")
   use("lewis6991/gitsigns.nvim")
-  use("windwp/nvim-autopairs")
-  use("kylechui/nvim-surround")
+  use "echasnovski/mini.nvim"
   use("nvim-lualine/lualine.nvim")
-  use("b3nj5m1n/kommentary")
   use("j-hui/fidget.nvim")
   use("goolord/alpha-nvim")
   use("nvim-tree/nvim-web-devicons")
   use("tpope/vim-eunuch")
   use("akinsho/flutter-tools.nvim")
-  use({ "catppuccin/nvim", as = "catppuccin" })
-  use("RRethy/vim-illuminate")
+  use({ "catppuccin/nvim", as = "catpuccin" })
   use("ellisonleao/glow.nvim")
   use("folke/trouble.nvim")
+  use("lukas-reineke/indent-blankline.nvim")
   use({
     "nvim-telescope/telescope.nvim",
     tag = "0.1.0",
@@ -39,7 +37,6 @@ return require("packer").startup(function(use)
       { "saadparwaiz1/cmp_luasnip" },
       { "hrsh7th/cmp-nvim-lsp" },
       { "hrsh7th/cmp-nvim-lua" },
-
       -- Snippets
       { "L3MON4D3/LuaSnip" },
       { "rafamadriz/friendly-snippets" },
