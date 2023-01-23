@@ -17,6 +17,13 @@ return require("packer").startup(function(use)
   use("folke/trouble.nvim")
   use("lukas-reineke/indent-blankline.nvim")
   use({
+    "utilyre/barbecue.nvim",
+    tag = "*",
+    requires = {
+      "SmiteshP/nvim-navic",
+    },
+  })
+  use({
     "nvim-telescope/telescope.nvim",
     tag = "0.1.0",
     requires = { { "nvim-lua/plenary.nvim" } },

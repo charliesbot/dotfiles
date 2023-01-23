@@ -1,15 +1,30 @@
 require("lualine").setup({
-  options = { theme = "auto" },
+  options = {
+    theme = "auto",
+    component_separators = '|',
+    section_separators = { left = '', right = '' },
+  },
   sections = {
-    lualine_a = { { "mode", lower = false } },
-    lualine_b = { "filename" },
+    lualine_a = {
+      { 'mode', separator = { left = '' }, right_padding = 2 },
+    },
+    lualine_b = {
+      {
+        "filename",
+      },
+    },
     lualine_c = {
       {
         "diagnostics",
         sources = { "nvim_diagnostic" },
-        symbols = { error = "E: ", warn = "W: ", info = "I: ", hint = "H: " },
+        separator = { right = '' },
+        symbols = { error = "✘ ", warn = "▲ ", info = "I ", hint = "⚑ " },
       },
     },
-    lualine_x = { "filetype" },
+    lualine_x = {},
+    lualine_y = { 'filetype', 'progress' },
+    lualine_z = {
+      { 'location', separator = { right = '' }, left_padding = 2 },
+    },
   },
 })
