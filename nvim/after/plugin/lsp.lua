@@ -14,7 +14,7 @@ lsp.ensure_installed({
 
 mason.setup()
 mason_null_ls.setup({
-  ensure_installed = { "stylua", "prettier", "eslint", "fixjson" },
+  ensure_installed = { "stylua", "prettier", "fixjson" },
   automatic_installation = false,
   automatic_setup = true,
 })
@@ -100,11 +100,6 @@ local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 lsp.on_attach(function(client, bufnr)
   local opts = { buffer = bufnr, remap = false }
 
-  if client.name == "eslint" then
-    vim.cmd.LspStop("eslint")
-    return
-  end
-
   vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
   vim.keymap.set("n", "gh", vim.lsp.buf.hover, opts)
   vim.keymap.set("n", "<leader>vws", vim.lsp.buf.workspace_symbol, opts)
@@ -120,12 +115,14 @@ end)
 lsp.nvim_workspace()
 
 local formatting = null_ls.builtins.formatting
-local diagnostics = null_ls.builtins.diagnostics
+-- local diagnostics = null_ls.builtins.diagnostics
+local completion = null_ls.builtins.completion
 local null_sources = {
-  -- completion.spell,
-  diagnostics.eslint,
+  completion.spell,
+  -- diagnostics.eslint,
   formatting.prettier,
   formatting.rustfmt,
+  formatting.dart_format,
   formatting.stylua.with({ extra_args = { "--indent_type", "Spaces", "indent_width", "2" } }),
 }
 
