@@ -6,10 +6,11 @@ return require("packer").startup(function(use)
   use("wbthomason/packer.nvim")
   use("lewis6991/gitsigns.nvim")
   use "echasnovski/mini.nvim"
+  -- heads up: lualine blanks the start screen
   use("nvim-lualine/lualine.nvim")
   use("j-hui/fidget.nvim")
-  use("goolord/alpha-nvim")
   use("nvim-tree/nvim-web-devicons")
+  use("goolord/alpha-nvim")
   use("tpope/vim-eunuch")
   use("akinsho/flutter-tools.nvim")
   use({ "catppuccin/nvim", as = "catpuccin" })

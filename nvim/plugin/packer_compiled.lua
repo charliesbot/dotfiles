@@ -84,9 +84,14 @@ _G.packer_plugins = {
     path = "/Users/charliesbot/.local/share/nvim/site/pack/packer/start/alpha-nvim",
     url = "https://github.com/goolord/alpha-nvim"
   },
-  catppuccin = {
+  ["barbecue.nvim"] = {
     loaded = true,
-    path = "/Users/charliesbot/.local/share/nvim/site/pack/packer/start/catppuccin",
+    path = "/Users/charliesbot/.local/share/nvim/site/pack/packer/start/barbecue.nvim",
+    url = "https://github.com/utilyre/barbecue.nvim"
+  },
+  catpuccin = {
+    loaded = true,
+    path = "/Users/charliesbot/.local/share/nvim/site/pack/packer/start/catpuccin",
     url = "https://github.com/catppuccin/nvim"
   },
   ["cmp-buffer"] = {
@@ -134,10 +139,15 @@ _G.packer_plugins = {
     path = "/Users/charliesbot/.local/share/nvim/site/pack/packer/start/gitsigns.nvim",
     url = "https://github.com/lewis6991/gitsigns.nvim"
   },
-  kommentary = {
+  ["glow.nvim"] = {
     loaded = true,
-    path = "/Users/charliesbot/.local/share/nvim/site/pack/packer/start/kommentary",
-    url = "https://github.com/b3nj5m1n/kommentary"
+    path = "/Users/charliesbot/.local/share/nvim/site/pack/packer/start/glow.nvim",
+    url = "https://github.com/ellisonleao/glow.nvim"
+  },
+  ["indent-blankline.nvim"] = {
+    loaded = true,
+    path = "/Users/charliesbot/.local/share/nvim/site/pack/packer/start/indent-blankline.nvim",
+    url = "https://github.com/lukas-reineke/indent-blankline.nvim"
   },
   ["lsp-zero.nvim"] = {
     loaded = true,
@@ -157,27 +167,22 @@ _G.packer_plugins = {
   ["mason-null-ls.nvim"] = {
     loaded = true,
     path = "/Users/charliesbot/.local/share/nvim/site/pack/packer/start/mason-null-ls.nvim",
-    url = "https://github.com/jayp0521/mason-null-ls.nvim"
+    url = "https://github.com/jay-babu/mason-null-ls.nvim"
   },
   ["mason.nvim"] = {
     loaded = true,
     path = "/Users/charliesbot/.local/share/nvim/site/pack/packer/start/mason.nvim",
     url = "https://github.com/williamboman/mason.nvim"
   },
-  ["move.nvim"] = {
+  ["mini.nvim"] = {
     loaded = true,
-    path = "/Users/charliesbot/.local/share/nvim/site/pack/packer/start/move.nvim",
-    url = "https://github.com/fedepujol/move.nvim"
+    path = "/Users/charliesbot/.local/share/nvim/site/pack/packer/start/mini.nvim",
+    url = "https://github.com/echasnovski/mini.nvim"
   },
   ["null-ls.nvim"] = {
     loaded = true,
     path = "/Users/charliesbot/.local/share/nvim/site/pack/packer/start/null-ls.nvim",
     url = "https://github.com/jose-elias-alvarez/null-ls.nvim"
-  },
-  ["nvim-autopairs"] = {
-    loaded = true,
-    path = "/Users/charliesbot/.local/share/nvim/site/pack/packer/start/nvim-autopairs",
-    url = "https://github.com/windwp/nvim-autopairs"
   },
   ["nvim-cmp"] = {
     loaded = true,
@@ -189,10 +194,10 @@ _G.packer_plugins = {
     path = "/Users/charliesbot/.local/share/nvim/site/pack/packer/start/nvim-lspconfig",
     url = "https://github.com/neovim/nvim-lspconfig"
   },
-  ["nvim-surround"] = {
+  ["nvim-navic"] = {
     loaded = true,
-    path = "/Users/charliesbot/.local/share/nvim/site/pack/packer/start/nvim-surround",
-    url = "https://github.com/kylechui/nvim-surround"
+    path = "/Users/charliesbot/.local/share/nvim/site/pack/packer/start/nvim-navic",
+    url = "https://github.com/SmiteshP/nvim-navic"
   },
   ["nvim-tree.lua"] = {
     loaded = true,
@@ -223,6 +228,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/Users/charliesbot/.local/share/nvim/site/pack/packer/start/telescope.nvim",
     url = "https://github.com/nvim-telescope/telescope.nvim"
+  },
+  ["trouble.nvim"] = {
+    loaded = true,
+    path = "/Users/charliesbot/.local/share/nvim/site/pack/packer/start/trouble.nvim",
+    url = "https://github.com/folke/trouble.nvim"
   },
   ["vim-eunuch"] = {
     loaded = true,

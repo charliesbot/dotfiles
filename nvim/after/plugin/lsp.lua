@@ -80,7 +80,7 @@ lsp.setup_nvim_cmp({
 
 lsp.set_preferences({
   suggest_lsp_servers = false,
-  set_lsp_keymaps = { omit = { '<C-k>', } },
+  set_lsp_keymaps = { omit = { '<C-k>' } },
   sign_icons = {
     error = '✘',
     warn = '▲',
