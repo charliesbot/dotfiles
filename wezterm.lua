@@ -9,5 +9,8 @@ return {
   }),
   font_size = 15,
   color_scheme = "Catppuccin Mocha",
-  hide_tab_bar_if_only_one_tab = true
+  hide_tab_bar_if_only_one_tab = true,
+  keys = {
+    { key = '/', mods = 'CTRL', action = wezterm.action.DisableDefaultAssignment, },
+  },
 }
