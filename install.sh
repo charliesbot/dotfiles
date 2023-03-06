@@ -29,7 +29,7 @@ rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.tmux ~/.tmux.conf ~/.config/nvim 2> /dev/null
 
 echo "Creating symlinks"
 # Neovim expects some folders already exist
-mkdir -p ~/.config ~/.config/nvim ~/.config/nvim/lua
+mkdir -p ~/.config/ ~/.config/nvim/ ~/.config/nvim/lua/ ~/.config/nvim/lua/charliesbot/
 
 echo "Installing Python 3"
 # install python 3
