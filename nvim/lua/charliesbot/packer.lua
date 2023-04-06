@@ -17,6 +17,9 @@ return require("packer").startup(function(use)
   use("ellisonleao/glow.nvim")
   use("folke/trouble.nvim")
   use("lukas-reineke/indent-blankline.nvim")
+  use("HiPhish/nvim-ts-rainbow2")
+  use("chrisgrieser/nvim-spider")
+  use("chrisgrieser/nvim-various-textobjs")
   use({
     "utilyre/barbecue.nvim",
     tag = "*",
