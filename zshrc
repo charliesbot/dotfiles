@@ -117,8 +117,8 @@ fi
 # WSL
 if [[ $OSTYPE = (linux)* ]]; then
   # Required for Android
-  export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-  alias android-studio=$HOME/Applications/android-studio/bin/studio.sh
+  export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+  # alias android-studio=$HOME/Applications/android-studio/bin/studio.sh
   test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
   test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi

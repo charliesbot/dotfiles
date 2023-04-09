@@ -40,6 +40,7 @@ pyenv global 3.9.5
 ln -s ~/dotfiles/zshrc ~/.zshrc
 ln -s ~/dotfiles/tmux.conf ~/.tmux.conf
 ln -s ~/dotfiles/nvim/* ~/.config/nvim/
+ln -s ~/dotfiles/nvim/lua/charliesbot/* ~/.config/nvim/lua/charliesbot
 ln -s ~/dotfiles/wezterm.lua ~/.wezterm.lua
 
 # Italics and true color profile for tmux
