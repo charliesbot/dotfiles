@@ -148,15 +148,6 @@ null_ls.setup({
   on_attach = format_on_save
 })
 
-mason_null_ls.setup_handlers {
-  -- All sources with no handler get passed here
-  function(source_name, methods)
-    -- To keep the original functionality of `automatic_setup = true`,
-    -- please add the below.
-    require("mason-null-ls.automatic_setup")(source_name, methods)
-  end,
-}
-
 lsp.setup()
 
 vim.diagnostic.config({
