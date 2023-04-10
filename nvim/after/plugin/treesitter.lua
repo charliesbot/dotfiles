@@ -2,7 +2,8 @@ local rainbow = require 'ts-rainbow'
 
 require 'nvim-treesitter.configs'.setup {
   -- A list of parser names, or "all"
-  ensure_installed = { "help", "cpp", "c", "lua", "rust", "typescript", "javascript", "dart", "kotlin", "css", "python",
+  ensure_installed = { "vimdoc", "cpp", "c", "lua", "rust", "typescript", "javascript", "dart", "kotlin", "css",
+    "python",
     "json", "tsx" },
 
   -- Install parsers synchronously (only applied to `ensure_installed`)
