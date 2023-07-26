@@ -16,11 +16,7 @@ export PATH=$HOME/bin:/usr/local/bin:$PATH
 export ZSH=~/.oh-my-zsh
 
 # This fixes prompt error from Pure
-fpath+=$HOME/.zsh/pure
-
-# fnm
-# export PATH=/Users/charlie/.fnm:$PATH
-eval "`fnm env`"
+fpath+=("$(brew --prefix)/share/zsh/site-functions")
 
 # asdf
 . /opt/homebrew/opt/asdf/libexec/asdf.sh
@@ -124,3 +120,7 @@ if [[ $OSTYPE = (linux)* ]]; then
 fi
 
 ### End of Zinit's installer chunk
+
+# fnm
+export PATH="/home/charliesbot/.local/share/fnm:$PATH"
+eval "`fnm env`"

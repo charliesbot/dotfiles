@@ -95,18 +95,14 @@ fi
 # FZF shortcuts
 $(brew --prefix)/opt/fzf/install
 
-# install fnm
-curl -fsSL https://github.com/Schniz/fnm/raw/master/.ci/install.sh | bash
-
 # install Paq - Neovim Plugin Manager
 git clone https://github.com/savq/paq-nvim.git \
     "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/pack/paqs/opt/paq-nvim
 
 pip3 install pynvim
 
-# pure prompt manual config
-mkdir -p "$HOME/.zsh"
-git clone https://github.com/sindresorhus/pure.git "$HOME/.zsh/pure"
+# pure prompt
+brew install pure
 
 # Go setup
 mkdir -p $HOME/go/{bin,src,pkg}
