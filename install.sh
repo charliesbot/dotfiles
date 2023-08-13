@@ -56,7 +56,6 @@ brew install neovim
 brew install ag
 brew install fzf
 brew install bat
-brew install thefuck
 brew install go
 brew install llvm
 brew install gcc

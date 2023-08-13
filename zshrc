@@ -18,12 +18,6 @@ export ZSH=~/.oh-my-zsh
 # This fixes prompt error from Pure
 fpath+=("$(brew --prefix)/share/zsh/site-functions")
 
-# asdf
-. /opt/homebrew/opt/asdf/libexec/asdf.sh
-
-# fuck!
-eval $(thefuck --alias)
-
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
@@ -120,7 +114,3 @@ if [[ $OSTYPE = (linux)* ]]; then
 fi
 
 ### End of Zinit's installer chunk
-
-# fnm
-export PATH="/home/charliesbot/.local/share/fnm:$PATH"
-eval "`fnm env`"
