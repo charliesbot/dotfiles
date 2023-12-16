@@ -26,6 +26,7 @@ echo "Removing existing dotfiles"
 # remove files if they already exist
 rm -rf ~/.config/nvim/coc-settings.json
 rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.tmux ~/.tmux.conf ~/.config/nvim 2> /dev/null
+rm -rf ~/.ideavimrc
 
 echo "Creating symlinks"
 # Neovim expects some folders already exist
@@ -42,6 +43,7 @@ ln -s ~/dotfiles/tmux.conf ~/.tmux.conf
 ln -s ~/dotfiles/nvim/* ~/.config/nvim/
 ln -s ~/dotfiles/nvim/lua/charliesbot/* ~/.config/nvim/lua/charliesbot
 ln -s ~/dotfiles/wezterm.lua ~/.wezterm.lua
+ln -s ~/dotfiles/ideavimrc ~/.ideavimrc
 
 # Italics and true color profile for tmux
 tic -x tmux.terminfo
