@@ -9,15 +9,7 @@ if [[ `uname` == "Linux"   ]]; then
   # Adding homebrew to zprofile
   echo 'eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >> /home/charlie/.zprofile
   eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
-  echo "Installing PyEnv"
-  curl https://pyenv.run | bash
 fi
-
-echo "Installing Oh my zsh"
-sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-
-echo "Installing zInit"
-sh -c "$(curl -fsSL https://git.io/zinit-install)"
 
 echo "Installing Kitty Snazzy Theme"
 curl -o ~/.config/kitty/snazzy.conf https://raw.githubusercontent.com/connorholyday/kitty-snazzy/master/snazzy.conf
@@ -31,11 +23,6 @@ rm -rf ~/.ideavimrc
 echo "Creating symlinks"
 # Neovim expects some folders already exist
 mkdir -p ~/.config/ ~/.config/nvim/ ~/.config/nvim/lua/ ~/.config/nvim/lua/charliesbot/
-
-echo "Installing Python 3"
-# install python 3
-pyenv install 3.9.5 #latest
-pyenv global 3.9.5
 
 # Symlinking files
 ln -s ~/dotfiles/zshrc ~/.zshrc
@@ -52,6 +39,8 @@ echo "Installing brew"
 # install brew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
+brew update
+
 brew install ripgrep
 brew install tmux
 brew install neovim
@@ -64,6 +53,7 @@ brew install gcc
 brew install gdb
 brew install bazel
 brew install cmake
+brew install pyenv
 
 if [[ `uname` == "Linux"   ]]; then
   echo "Linux detected. Using Linux config..."
@@ -74,8 +64,6 @@ fi
 
 if [[ `uname` == "Darwin"   ]]; then
   echo "Mac detected. Using Mac config..."
-  brew install pyenv
-
   # disable key repeat
   defaults write -g ApplePressAndHoldEnabled -bool false
 
@@ -93,14 +81,13 @@ if [[ `uname` == "Darwin"   ]]; then
   brew install reattach-to-user-namespace
 fi
 
+echo "Installing Python 3"
+# install python 3
+#pyenv install-latest
+#pyenv global 3.9.5
+
 # FZF shortcuts
 $(brew --prefix)/opt/fzf/install
-
-# install Paq - Neovim Plugin Manager
-git clone https://github.com/savq/paq-nvim.git \
-    "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/pack/paqs/opt/paq-nvim
-
-pip3 install pynvim
 
 # pure prompt
 brew install pure
