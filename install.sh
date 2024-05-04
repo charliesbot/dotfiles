@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
+if [[ `uname` == "Darwin"   ]]; then
+  echo "Mac detected. Using Mac config..."
+fi
 
-if [[ `uname` == "Linux"   ]]; then
+if [[ `uname` == "Linux" ]]; then
   echo "Linux detected. Using Linux config..."
-  echo "Installing zsh..."
-  sudo apt install zsh
-  echo "Changing shell to zsh"
-  sudo chsh -s $(which zsh)
-  # Adding homebrew to zprofile
-  echo 'eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >> /home/charlie/.zprofile
-  eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+  echo "Updating system packages..."
+  sudo apt update && sudo apt upgrade -y
+  sudo apt install zsh curl wget build-essential -y
+  (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> $HOME/.bashrc
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
 echo "Installing Kitty Snazzy Theme"
@@ -16,19 +17,19 @@ curl -o ~/.config/kitty/snazzy.conf https://raw.githubusercontent.com/connorholy
 
 echo "Removing existing dotfiles"
 # remove files if they already exist
-rm -rf ~/.config/nvim/coc-settings.json
 rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.tmux ~/.tmux.conf ~/.config/nvim 2> /dev/null
 rm -rf ~/.ideavimrc
+rm -rf ~/.config/nvim/lua/charliesbot
 
 echo "Creating symlinks"
 # Neovim expects some folders already exist
-mkdir -p ~/.config/ ~/.config/nvim/ ~/.config/nvim/lua/ ~/.config/nvim/lua/charliesbot/
+mkdir -p ~/.config/ ~/.config/nvim/ ~/.config/nvim/lua/ ~/.config/nvim/lua/$USER/
 
 # Symlinking files
 ln -s ~/dotfiles/zshrc ~/.zshrc
 ln -s ~/dotfiles/tmux.conf ~/.tmux.conf
-ln -s ~/dotfiles/nvim/* ~/.config/nvim/
-ln -s ~/dotfiles/nvim/lua/charliesbot/* ~/.config/nvim/lua/charliesbot
+ln -s ~/dotfiles/nvim/. ~/.config/nvim
+#ln -s ~/dotfiles/nvim/lua/charliesbot/. ~/.config/nvim/lua/charliesbot
 ln -s ~/dotfiles/wezterm.lua ~/.wezterm.lua
 ln -s ~/dotfiles/ideavimrc ~/.ideavimrc
 
@@ -59,11 +60,10 @@ if [[ `uname` == "Linux"   ]]; then
   echo "Linux detected. Using Linux config..."
   echo "Installing JetBrains Mono"
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/JetBrains/JetBrainsMono/master/install_manual.sh)"
-  echo "Installing pyenv"
 fi
 
 if [[ `uname` == "Darwin"   ]]; then
-  echo "Mac detected. Using Mac config..."
+  echo "Using specific config for Mac"
   # disable key repeat
   defaults write -g ApplePressAndHoldEnabled -bool false
 
@@ -97,3 +97,17 @@ mkdir -p $HOME/go/{bin,src,pkg}
 
 # Writting vim will launch nvim
 alias vim="nvim"
+
+# Change the default shell to zsh
+echo "Changing the default shell to zsh for future logins..."
+sudo chsh -s $(which zsh) $USER
+
+# Check if the current shell is already zsh
+if [ "$SHELL" = "/usr/bin/zsh" ]; then
+  echo "DONE!"
+else
+  # Change the default shell to zsh for future logins
+  echo "Setup complete."
+  echo "Log out and back in to use zsh as your default shell."
+  sudo chsh -s $(which zsh) $USER
+fi

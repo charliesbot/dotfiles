@@ -3,9 +3,6 @@
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 
-# Path to your oh-my-zsh installation.
-export ZSH=~/.oh-my-zsh
-
 # This fixes prompt error from Pure
 fpath+=("$(brew --prefix)/share/zsh/site-functions")
 
@@ -13,14 +10,6 @@ fpath+=("$(brew --prefix)/share/zsh/site-functions")
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
 ZSH_THEME=""
-
-# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
-plugins=(git z)
-
-source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
@@ -87,13 +76,6 @@ export PATH="/usr/local/sbin:$PATH"
 autoload -U promptinit; promptinit
 prompt pure
 
-# Pyenv
-if [[ $OSTYPE = (linux)* ]]; then
-  export PATH="$HOME/.pyenv/bin:$PATH"
-  eval "$(pyenv init -)"
-  eval "$(pyenv virtualenv-init -)"
-fi
-
 # NVM
   export NVM_DIR="$HOME/.nvm"
   [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
@@ -107,8 +89,6 @@ if [[ $OSTYPE = (linux)* ]]; then
   test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
   test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
-
-### End of Zinit's installer chunk
 
 # bun completions
 [ -s "/Users/charliesbot/.bun/_bun" ] && source "/Users/charliesbot/.bun/_bun"
