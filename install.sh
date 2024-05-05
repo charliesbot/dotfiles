@@ -1,15 +1,28 @@
 #!/usr/bin/env bash
-if [[ `uname` == "Darwin"   ]]; then
-  echo "Mac detected. Using Mac config..."
+if [[ $(uname) == "Darwin" ]]; then
+	echo "Mac detected. Using Mac config..."
 fi
 
-if [[ `uname` == "Linux" ]]; then
-  echo "Linux detected. Using Linux config..."
-  echo "Updating system packages..."
-  sudo apt update && sudo apt upgrade -y
-  sudo apt install zsh curl wget build-essential -y
-  (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> $HOME/.bashrc
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+if [[ $(uname) == "Linux" ]]; then
+	echo "Linux detected. Using Linux config..."
+	# Distro identification
+	. /etc/os-release
+	if [[ $NAME == "Fedora"* ]]; then
+		echo "Updating system packages (Fedora)..."
+		sudo dnf upgrade -y
+		sudo dnf install -y zsh curl wget git @development-tools
+	elif [[ $NAME == "Ubuntu" ]]; then
+		echo "Updating system packages (Ubuntu)..."
+		sudo apt update && sudo apt upgrade -y
+		sudo apt install zsh curl wget build-essential git -y
+	else
+		echo "Distribution not specifically supported for package updates."
+	fi
+	(
+		echo
+		echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
+	) >>$HOME/.bashrc
+	eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
 echo "Installing Kitty Snazzy Theme"
@@ -17,19 +30,18 @@ curl -o ~/.config/kitty/snazzy.conf https://raw.githubusercontent.com/connorholy
 
 echo "Removing existing dotfiles"
 # remove files if they already exist
-rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.tmux ~/.tmux.conf ~/.config/nvim 2> /dev/null
+rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.tmux ~/.tmux.conf ~/.config/nvim 2>/dev/null
 rm -rf ~/.ideavimrc
 rm -rf ~/.config/nvim/lua/charliesbot
 
 echo "Creating symlinks"
 # Neovim expects some folders already exist
-mkdir -p ~/.config/ ~/.config/nvim/ ~/.config/nvim/lua/ ~/.config/nvim/lua/$USER/
+mkdir -p ~/.config/ ~/.config/nvim/
 
 # Symlinking files
 ln -s ~/dotfiles/zshrc ~/.zshrc
 ln -s ~/dotfiles/tmux.conf ~/.tmux.conf
-ln -s ~/dotfiles/nvim/. ~/.config/nvim
-#ln -s ~/dotfiles/nvim/lua/charliesbot/. ~/.config/nvim/lua/charliesbot
+ln -s ~/dotfiles/nvim/* ~/.config/nvim/
 ln -s ~/dotfiles/wezterm.lua ~/.wezterm.lua
 ln -s ~/dotfiles/ideavimrc ~/.ideavimrc
 
@@ -55,30 +67,31 @@ brew install gdb
 brew install bazel
 brew install cmake
 brew install pyenv
+brew install pure
 
-if [[ `uname` == "Linux"   ]]; then
-  echo "Linux detected. Using Linux config..."
-  echo "Installing JetBrains Mono"
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/JetBrains/JetBrainsMono/master/install_manual.sh)"
+if [[ $(uname) == "Linux" ]]; then
+	echo "Linux detected. Using Linux config..."
+	echo "Installing JetBrains Mono"
+	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/JetBrains/JetBrainsMono/master/install_manual.sh)"
 fi
 
-if [[ `uname` == "Darwin"   ]]; then
-  echo "Using specific config for Mac"
-  # disable key repeat
-  defaults write -g ApplePressAndHoldEnabled -bool false
+if [[ $(uname) == "Darwin" ]]; then
+	echo "Using specific config for Mac"
+	# disable key repeat
+	defaults write -g ApplePressAndHoldEnabled -bool false
 
-  brew tap homebrew/cask-fonts
+	brew tap homebrew/cask-fonts
 
-  # casks only work in mac
-  brew install --cask kitty
-  brew install --cask font-fira-code
-  brew install --cask font-cascadia
-  brew install --cask font-jetbrains-mono
-  brew install --cask font-iosevka
-  brew install --cask rectangle
+	# casks only work in mac
+	brew install --cask kitty
+	brew install --cask font-fira-code
+	brew install --cask font-cascadia
+	brew install --cask font-jetbrains-mono
+	brew install --cask font-iosevka
+	brew install --cask rectangle
 
-  brew install deno # deno brew formula only works with mac
-  brew install reattach-to-user-namespace
+	brew install deno # deno brew formula only works with mac
+	brew install reattach-to-user-namespace
 fi
 
 echo "Installing Python 3"
@@ -88,9 +101,6 @@ echo "Installing Python 3"
 
 # FZF shortcuts
 $(brew --prefix)/opt/fzf/install
-
-# pure prompt
-brew install pure
 
 # Go setup
 mkdir -p $HOME/go/{bin,src,pkg}
@@ -104,10 +114,10 @@ sudo chsh -s $(which zsh) $USER
 
 # Check if the current shell is already zsh
 if [ "$SHELL" = "/usr/bin/zsh" ]; then
-  echo "DONE!"
+	echo "DONE!"
 else
-  # Change the default shell to zsh for future logins
-  echo "Setup complete."
-  echo "Log out and back in to use zsh as your default shell."
-  sudo chsh -s $(which zsh) $USER
+	# Change the default shell to zsh for future logins
+	echo "Setup complete."
+	echo "Log out and back in to use zsh as your default shell."
+	sudo chsh -s $(which zsh) $USER
 fi
