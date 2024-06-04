@@ -81,6 +81,11 @@ prompt pure
   [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
   [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
+# Ruby Version Manager (useful for Cocoapods)
+ source /opt/homebrew/opt/chruby/share/chruby/chruby.sh
+ source /opt/homebrew/opt/chruby/share/chruby/auto.sh
+chruby ruby-3.3.1
+
 # WSL
 if [[ $OSTYPE = (linux)* ]]; then
   # Required for Android
