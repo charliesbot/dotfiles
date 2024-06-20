@@ -3,6 +3,9 @@
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 
+# Not sure why do I need this, but otherwise the git aliases don't work
+source ~/.oh-my-zsh/plugins/git/git.plugin.zsh
+
 # This fixes prompt error from Pure
 fpath+=("$(brew --prefix)/share/zsh/site-functions")
 
@@ -22,10 +25,6 @@ export EDITOR='nvim'
 alias pip=pip3
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-plugins=(git)
-source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # Paths
 if [[ $OSTYPE = (linux)* ]]; then
@@ -107,3 +106,8 @@ fi
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+
+# plugins
+source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+plugins=(git)
