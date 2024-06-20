@@ -25,6 +25,9 @@ if [[ $(uname) == "Linux" ]]; then
 	eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
+echo "Installing Oh My ZSH"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
 echo "Installing Kitty Snazzy Theme"
 curl -o ~/.config/kitty/snazzy.conf https://raw.githubusercontent.com/connorholyday/kitty-snazzy/master/snazzy.conf
 
@@ -68,6 +71,8 @@ brew install bazel
 brew install cmake
 brew install pyenv
 brew install pure
+brew install zsh-autosuggestions
+brew install zsh-syntax-highlighting
 
 if [[ $(uname) == "Linux" ]]; then
 	echo "Linux detected. Using Linux config..."

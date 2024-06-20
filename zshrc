@@ -4,7 +4,7 @@
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # This fixes prompt error from Pure
-# fpath+=("$(brew --prefix)/share/zsh/site-functions")
+fpath+=("$(brew --prefix)/share/zsh/site-functions")
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -18,11 +18,14 @@ export EDITOR='nvim'
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
-# alias
 # alias python=/usr/local/bin/python3
 alias pip=pip3
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+plugins=(git)
+source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # Paths
 if [[ $OSTYPE = (linux)* ]]; then
@@ -86,10 +89,12 @@ prompt pure
  source /opt/homebrew/opt/chruby/share/chruby/auto.sh
 chruby ruby-3.3.1
 
+export JAVA_HOME=`/usr/libexec/java_home -v 21.0.3`
+
 # WSL
 if [[ $OSTYPE = (linux)* ]]; then
+  # export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
   # Required for Android
-  export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
   # alias android-studio=$HOME/Applications/android-studio/bin/studio.sh
   test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
   test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
@@ -101,3 +106,4 @@ fi
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
