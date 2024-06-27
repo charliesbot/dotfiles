@@ -5,7 +5,8 @@ Steps
 1) Run `init.sh`
 2) Be happy
 
-Further reading
+Heads up! This script set up my terminal config.
 
-This post by Joe L. Wroten is amazing. Take a look if you want to know why I've decided to have a repo with my dotfiles.
-https://wrotenwrites.com/a_modern_terminal_workflow_1/
+To setup Neovim, I split my config in a new repo, based on kickstart.nvim
+
+https://github.com/charliesbot/kickstart.nvim
