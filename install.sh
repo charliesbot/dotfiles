@@ -1,32 +1,17 @@
 #!/usr/bin/env bash
 if [[ $(uname) == "Darwin" ]]; then
 	echo "Mac detected. Using Mac config..."
+	curl -sS https://starship.rs/install.sh | sh
+	echo "Installing brew"
+	# install brew
+	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
 if [[ $(uname) == "Linux" ]]; then
 	echo "Linux detected. Using Linux config..."
-	# Distro identification
-	. /etc/os-release
-	if [[ $NAME == "Fedora"* ]]; then
-		echo "Updating system packages (Fedora)..."
-		sudo dnf upgrade -y
-		sudo dnf install -y zsh curl wget git @development-tools
-	elif [[ $NAME == "Ubuntu" ]]; then
-		echo "Updating system packages (Ubuntu)..."
-		sudo apt update && sudo apt upgrade -y
-		sudo apt install zsh curl wget build-essential git -y
-	else
-		echo "Distribution not specifically supported for package updates."
-	fi
-	(
-		echo
-		echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
-	) >>$HOME/.bashrc
-	eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+	echo "Bluefin already supports Starship."
+	echo "Switching to ZSH"
 fi
-
-echo "Installing Oh My ZSH"
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 echo "Installing Kitty Snazzy Theme"
 curl -o ~/.config/kitty/snazzy.conf https://raw.githubusercontent.com/connorholyday/kitty-snazzy/master/snazzy.conf
@@ -35,7 +20,6 @@ echo "Removing existing dotfiles"
 # remove files if they already exist
 rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.tmux ~/.tmux.conf ~/.config/nvim 2>/dev/null
 rm -rf ~/.ideavimrc
-rm -rf ~/.config/nvim/lua/charliesbot
 
 echo "Creating symlinks"
 # Neovim expects some folders already exist
@@ -45,15 +29,12 @@ mkdir -p ~/.config/ ~/.config/nvim/
 ln -s ~/dotfiles/zshrc ~/.zshrc
 ln -s ~/dotfiles/tmux.conf ~/.tmux.conf
 ln -s ~/dotfiles/nvim/* ~/.config/nvim/
+ln -s ~/dotfiles/starship.toml ~/.config/starship.toml
 ln -s ~/dotfiles/wezterm.lua ~/.wezterm.lua
 ln -s ~/dotfiles/ideavimrc ~/.ideavimrc
 
 # Italics and true color profile for tmux
 tic -x tmux.terminfo
-
-echo "Installing brew"
-# install brew
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 brew update
 
@@ -70,7 +51,7 @@ brew install gdb
 brew install bazel
 brew install cmake
 brew install pyenv
-brew install pure
+brew install nvm
 brew install zsh-autosuggestions
 brew install zsh-syntax-highlighting
 
@@ -78,6 +59,7 @@ if [[ $(uname) == "Linux" ]]; then
 	echo "Linux detected. Using Linux config..."
 	echo "Installing JetBrains Mono"
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/JetBrains/JetBrainsMono/master/install_manual.sh)"
+	flatpak run org.wezfurlong.wezterm -y
 fi
 
 if [[ $(uname) == "Darwin" ]]; then
@@ -85,24 +67,17 @@ if [[ $(uname) == "Darwin" ]]; then
 	# disable key repeat
 	defaults write -g ApplePressAndHoldEnabled -bool false
 
+	brew install starship
+
 	brew tap homebrew/cask-fonts
 
 	# casks only work in mac
 	brew install --cask kitty
-	brew install --cask font-fira-code
 	brew install --cask font-cascadia
 	brew install --cask font-jetbrains-mono
-	brew install --cask font-iosevka
-	brew install --cask rectangle
 
-	brew install deno # deno brew formula only works with mac
 	brew install reattach-to-user-namespace
 fi
-
-echo "Installing Python 3"
-# install python 3
-#pyenv install-latest
-#pyenv global 3.9.5
 
 # FZF shortcuts
 $(brew --prefix)/opt/fzf/install
@@ -113,16 +88,15 @@ mkdir -p $HOME/go/{bin,src,pkg}
 # Writting vim will launch nvim
 alias vim="nvim"
 
-# Change the default shell to zsh
-echo "Changing the default shell to zsh for future logins..."
-sudo chsh -s $(which zsh) $USER
-
 # Check if the current shell is already zsh
 if [ "$SHELL" = "/usr/bin/zsh" ]; then
 	echo "DONE!"
 else
-	# Change the default shell to zsh for future logins
-	echo "Setup complete."
-	echo "Log out and back in to use zsh as your default shell."
-	sudo chsh -s $(which zsh) $USER
+        if [[ $(uname) == "Linux" ]]; then
+		just shell zsh
+		# Change the default shell to zsh for future logins
+		echo "Log out and back in to use zsh as your default shell."
+	fi
 fi
+
+echo "Setup complete."

@@ -1,3 +1,6 @@
 .DS_Store
-node_modules
-lspServers/node_modules/
+tags
+test.sh
+.luarc.json
+spell/
+lazy-lock.json
