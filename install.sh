@@ -10,8 +10,13 @@ fi
 echo "$config_type detected. Using $config_type config..."
 
 # Brew must be installed before any other step
-echo "Installing brew"
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+# Brew installation check
+if ! command -v brew &> /dev/null; then
+    echo "Installing brew"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+else
+    echo "Brew is already installed."
+fi
 
 if [[ $(uname) == "Linux" ]]; then
 	sudo dnf upgrade -y
@@ -59,12 +64,12 @@ if [[ $(uname) == "Linux" ]]; then
 	echo "Installing JetBrains Mono"
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/JetBrains/JetBrainsMono/master/install_manual.sh)"
 	echo "Installing Cascadia"
-	wget -qO- https://github.com/microsoft/cascadia-code/releases/download/v2404.23/CascadiaCode-2404.23.zip -O cascadia.zip
+	wget -qO- $(curl -s https://api.github.com/repos/microsoft/cascadia-code/releases/latest | grep browser_download_url | grep zip | cut -d '"' -f 4) -O cascadia.zip
 	unzip -o cascadia.zip -d ~/.local/share/fonts
 	rm cascadia.zip
 	fc-cache -fv
 	echo "Installing WezTerm"
-	flatpak run org.wezfurlong.wezterm -y
+	flatpak install flathub org.wezfurlong.wezterm -y
 fi
 
 if [[ $(uname) == "Darwin" ]]; then
@@ -86,9 +91,6 @@ fi
 # FZF shortcuts
 $(brew --prefix)/opt/fzf/install
 
-# Writting vim will launch nvim
-alias vim="nvim"
-
 # Check if the current shell is already zsh
 if [[ "$SHELL" == *"zsh" ]]; then
     echo "You are already using zsh as your default shell."
@@ -106,7 +108,12 @@ else
     fi
 fi
 
+echo "                 "
+echo "                 "
+echo "                 "
+echo "                 "
 echo "All systems operational. 🤖"
+echo "                 "
 echo " ┓     ┓•   ┓    "
 echo "┏┣┓┏┓┏┓┃┓┏┓┏┣┓┏┓╋"
 echo "┗┛┗┗┻┛ ┗┗┗ ┛┗┛┗┛┗"

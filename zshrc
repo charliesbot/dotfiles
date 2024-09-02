@@ -66,14 +66,15 @@ export FZF_DEFAULT_COMMAND='rg --files --fixed-strings --hidden --follow --glob 
 
 export PATH="/usr/local/sbin:$PATH"
 
-# NVM
-source $(brew --prefix nvm)/nvm.sh
-
 # export JAVA_HOME=`/usr/libexec/java_home -v 21.0.3`
 
 if [[ $OSTYPE = (linux)* ]]; then
-  # Put here commands related to Linux envs
+  test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
+  test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
+
+# NVM
+source $(brew --prefix nvm)/nvm.sh
 
 export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
 
