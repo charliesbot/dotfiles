@@ -1,65 +1,83 @@
 #!/usr/bin/env bash
-os_type=$(uname)
 
-if [[ $os_type == "Darwin" ]]; then
-    config_type="Mac"
-else
-    config_type="Linux"
-fi
+# Function to check if a command exists
+check_command() {
+    local cmd="$1"
+    if ! command -v "$cmd" &> /dev/null; then
+        return 1
+    else
+        return 0
+    fi
+}
 
-echo "$config_type detected. Using $config_type config..."
+install_brew() {
+	check_command brew
+	if [[ $? -ne 0 ]]; then
+		echo "Installing Brew..."
+	    	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+	    	if [[ $os_type == "Linux" ]]; then
+		    (
+		    	echo
+		    	echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
+		    ) >>$HOME/.bashrc
+		    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+	    	fi
+	fi
+}
 
-# Brew must be installed before any other step
-# Brew installation check
-if ! command -v brew &> /dev/null; then
-    echo "Installing brew"
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-else
-    echo "Brew is already installed."
-fi
+create_symlinks() {
+    echo "Removing existing dotfiles..."
+    rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.config/nvim ~/.ideavimrc 2>/dev/null
 
-if [[ $(uname) == "Linux" ]]; then
+    echo "Creating symlinks..."
+    mkdir -p ~/.config/nvim
+    mkdir -p ~/.config/zellij
+
+    ln -s ~/dotfiles/zshrc ~/.zshrc
+    ln -s ~/dotfiles/nvim/* ~/.config/nvim/
+    ln -s ~/dotfiles/starship.toml ~/.config/starship.toml
+    ln -s ~/dotfiles/wezterm.lua ~/.wezterm.lua
+    ln -s ~/dotfiles/ideavimrc ~/.ideavimrc
+}
+
+install_wezterm() {
+	echo "Installing WezTerm"
+	flatpak install flathub org.wezfurlong.wezterm -y
+}
+
+install_starship() {
+	echo "Installing Starship"
+	curl -sS https://starship.rs/install.sh | sh
+}
+
+install_common_brew_packages() {
+	brew update
+
+	brew install jesseduffield/lazydocker/lazydocker
+	brew install lazydocker
+	brew install neovim
+	brew install nvm
+	brew install zsh-autosuggestions
+	brew install zsh-syntax-highlighting
+	brew install zellij
+}
+
+install_mac_and_linux_brew_packages() {
+	brew install zellij
+	brew install fzf
+	# FZF shortcuts
+	$(brew --prefix)/opt/fzf/install
+}
+
+setup_linux() {
+	echo "Using specific config for Linux"
+
+	# update OS
 	sudo dnf upgrade -y
+
 	sudo dnf install -y zsh curl wget git
-	(
-		echo
-		echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
-	) >>$HOME/.bashrc
-	eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-	echo "Switching to ZSH"
-fi
 
-echo "Installing Starship"
-curl -sS https://starship.rs/install.sh | sh
-
-echo "Removing existing dotfiles"
-# remove files if they already exist
-rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.config/nvim 2>/dev/null
-rm -rf ~/.ideavimrc
-
-echo "Creating symlinks"
-# Neovim expects some folders already exist
-mkdir -p ~/.config/ ~/.config/nvim/
-
-# Symlinking files
-ln -s ~/dotfiles/zshrc ~/.zshrc
-ln -s ~/dotfiles/nvim/* ~/.config/nvim/
-ln -s ~/dotfiles/starship.toml ~/.config/starship.toml
-ln -s ~/dotfiles/wezterm.lua ~/.wezterm.lua
-ln -s ~/dotfiles/ideavimrc ~/.ideavimrc
-
-brew update
-
-brew install zellij
-brew install jesseduffield/lazydocker/lazydocker
-brew install lazydocker
-brew install neovim
-brew install fzf
-brew install nvm
-brew install zsh-autosuggestions
-brew install zsh-syntax-highlighting
-
-if [[ $(uname) == "Linux" ]]; then
+	# Install Fonts
 	mkdir -p ~/.local/share/fonts
 	echo "Installing JetBrains Mono"
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/JetBrains/JetBrainsMono/master/install_manual.sh)"
@@ -68,12 +86,35 @@ if [[ $(uname) == "Linux" ]]; then
 	unzip -o cascadia.zip -d ~/.local/share/fonts
 	rm cascadia.zip
 	fc-cache -fv
-	echo "Installing WezTerm"
-	flatpak install flathub org.wezfurlong.wezterm -y
-fi
 
-if [[ $(uname) == "Darwin" ]]; then
+	install_wezterm
+	install_starship
+	install_common_brew_packages
+	install_mac_and_linux_brew_packages
+
+	# Check if the current shell is already zsh
+	if [[ "$SHELL" == *"zsh" ]]; then
+	    echo "You are already using zsh as your default shell."
+	else
+	    # Get the path of zsh
+	    zsh_path=$(which zsh)
+
+	    # Change the default shell to zsh for future logins
+	    echo "Setting up zsh as your default shell..."
+	    if chsh -s "$zsh_path"; then
+		echo "Setup complete. Log out and back in to start using zsh as your default shell."
+	    else
+		echo "Error: Failed to change the default shell."
+		echo "Please try running 'chsh -s $(which zsh)' manually."
+	    fi
+	fi
+}
+
+setup_mac() {
 	echo "Using specific config for Mac"
+
+	install_starship
+
 	# disable key repeat
 	defaults write -g ApplePressAndHoldEnabled -bool false
 
@@ -86,26 +127,39 @@ if [[ $(uname) == "Darwin" ]]; then
 	brew install --cask font-jetbrains-mono
 
 	brew install reattach-to-user-namespace
+
+	install_common_brew_packages
+	install_mac_and_linux_brew_packages
+}
+
+setup_bluefin() {
+	echo "Using specific config for Bluefin"
+
+	install_wezterm
+
+	install_common_brew_packages
+
+	ujust shell zsh
+}
+
+os_type=""
+
+if ! check_command ujust; then
+    os_type="Bluefin"
+elif [[ $(uname) == "Darwin" ]]; then
+    os_type="Mac"
+else
+    os_type="Linux"
 fi
 
-# FZF shortcuts
-$(brew --prefix)/opt/fzf/install
+echo "$os_type detected. Using $os_type config..."
 
-# Check if the current shell is already zsh
-if [[ "$SHELL" == *"zsh" ]]; then
-    echo "You are already using zsh as your default shell."
+if [[ $os_type == "Bluefin" ]]; then
+	setup_bluefin
+elif [[ $os_type == "Mac" ]]; then
+	setup_macos
 else
-    # Get the path of zsh
-    zsh_path=$(which zsh)
-
-    # Change the default shell to zsh for future logins
-    echo "Setting up zsh as your default shell..."
-    if chsh -s "$zsh_path"; then
-        echo "Setup complete. Log out and back in to start using zsh as your default shell."
-    else
-        echo "Error: Failed to change the default shell."
-	echo "Please try running 'chsh -s $(which zsh)' manually."
-    fi
+	setup_linux
 fi
 
 echo "                 "
