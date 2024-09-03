@@ -7,8 +7,7 @@ check_command() {
 }
 
 install_brew() {
-	check_command brew
-	if [[ $? -ne 0 ]]; then
+	if ! check_command brew; then
 		echo "Installing Brew..."
 	    	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 		if [[ $os_type == "Linux" ]]; then
@@ -53,12 +52,12 @@ install_brew_packages() {
 	brew install zsh-autosuggestions
 	brew install zsh-syntax-highlighting
 	brew install zellij
-}
 
-install_fzf() {
-	brew install fzf
-	# FZF shortcuts
-	$(brew --prefix)/opt/fzf/install
+	if ! check_command fzf; then
+		brew install fzf
+		# Add FZF shortcuts
+		"$(brew --prefix)"/opt/fzf/install
+	fi
 }
 
 setup_linux() {
@@ -82,11 +81,10 @@ setup_linux() {
 	install_wezterm
 	install_starship
 	install_brew_packages
-	install_fzf
 
 	# Check if the current shell is already zsh
 	if [[ "$SHELL" == *"zsh" ]]; then
-	    echo "You are already using zsh as your default shell."
+	    echo "ZSH is the default shell."
 	else
 	    # Get the path of zsh
 	    zsh_path=$(which zsh)
@@ -121,7 +119,6 @@ setup_mac() {
 	brew install reattach-to-user-namespace
 
 	install_brew_packages
-	install_fzf
 }
 
 setup_bluefin() {
