@@ -45,10 +45,9 @@ install_starship() {
 install_brew_packages() {
 	brew update
 
-	brew install jesseduffield/lazydocker/lazydocker
-	brew install lazydocker
+	brew install jesseduffield/lazydocker/lazydocker # this is the tap for lazydocker
+	brew install lazydocker # this is the actual package for lazy docker
 	brew install neovim
-	brew install nvm
 	brew install zsh-autosuggestions
 	brew install zsh-syntax-highlighting
 	brew install zellij
@@ -159,10 +158,7 @@ case $os_type in
         ;;
 esac
 
-echo "                 "
-echo "                 "
-echo "                 "
-echo "                 "
+echo -e "\n\n\n\nAll systems operational. 🤖"
 echo "All systems operational. 🤖"
 echo "                 "
 echo " ┓     ┓•   ┓    "
