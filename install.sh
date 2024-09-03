@@ -3,11 +3,7 @@
 # Function to check if a command exists
 check_command() {
     local cmd="$1"
-    if ! command -v "$cmd" &> /dev/null; then
-        return 1
-    else
-        return 0
-    fi
+    command -v "$cmd" &> /dev/null
 }
 
 install_brew() {
@@ -15,13 +11,10 @@ install_brew() {
 	if [[ $? -ne 0 ]]; then
 		echo "Installing Brew..."
 	    	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-	    	if [[ $os_type == "Linux" ]]; then
-		    (
-		    	echo
-		    	echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
-		    ) >>$HOME/.bashrc
-		    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-	    	fi
+		if [[ $os_type == "Linux" ]]; then
+			echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> "$HOME/.bashrc"
+			eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+		fi
 	fi
 }
 
@@ -50,7 +43,7 @@ install_starship() {
 	curl -sS https://starship.rs/install.sh | sh
 }
 
-install_common_brew_packages() {
+install_brew_packages() {
 	brew update
 
 	brew install jesseduffield/lazydocker/lazydocker
@@ -62,8 +55,7 @@ install_common_brew_packages() {
 	brew install zellij
 }
 
-install_mac_and_linux_brew_packages() {
-	brew install zellij
+install_fzf() {
 	brew install fzf
 	# FZF shortcuts
 	$(brew --prefix)/opt/fzf/install
@@ -89,8 +81,8 @@ setup_linux() {
 
 	install_wezterm
 	install_starship
-	install_common_brew_packages
-	install_mac_and_linux_brew_packages
+	install_brew_packages
+	install_fzf
 
 	# Check if the current shell is already zsh
 	if [[ "$SHELL" == *"zsh" ]]; then
@@ -128,8 +120,8 @@ setup_mac() {
 
 	brew install reattach-to-user-namespace
 
-	install_common_brew_packages
-	install_mac_and_linux_brew_packages
+	install_brew_packages
+	install_fzf
 }
 
 setup_bluefin() {
@@ -137,7 +129,7 @@ setup_bluefin() {
 
 	install_wezterm
 
-	install_common_brew_packages
+	install_brew_packages
 
 	ujust shell zsh
 }
@@ -154,13 +146,21 @@ fi
 
 echo "$os_type detected. Using $os_type config..."
 
-if [[ $os_type == "Bluefin" ]]; then
-	setup_bluefin
-elif [[ $os_type == "Mac" ]]; then
-	setup_macos
-else
-	setup_linux
-fi
+case $os_type in
+    "Bluefin")
+        setup_bluefin
+        ;;
+    "Mac")
+        setup_mac
+        ;;
+    "Linux")
+        setup_linux
+        ;;
+    *)
+        echo "Unknown OS type: $os_type. Exiting."
+        exit 1
+        ;;
+esac
 
 echo "                 "
 echo "                 "
