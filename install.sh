@@ -24,6 +24,7 @@ create_symlinks() {
     echo "Creating symlinks..."
     mkdir -p ~/.config/nvim
     mkdir -p ~/.config/zellij
+    mkdir -p ~/projects
 
     ln -s ~/dotfiles/zshrc ~/.zshrc
     ln -s ~/dotfiles/nvim/* ~/.config/nvim/
