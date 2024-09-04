@@ -51,6 +51,7 @@ install_brew_packages() {
 	brew install zsh-autosuggestions
 	brew install zsh-syntax-highlighting
 	brew install zellij
+	brew install nvm
 
 	if ! check_command fzf; then
 		brew install fzf
@@ -60,12 +61,14 @@ install_brew_packages() {
 }
 
 setup_linux() {
-	echo "Using specific config for Linux"
+	echo -e "Using specific config for Linux \n"
 
 	# update OS
 	sudo dnf upgrade -y
 
 	sudo dnf install -y zsh curl wget git
+
+	create_symlinks
 
 	# Install Fonts
 	mkdir -p ~/.local/share/fonts
@@ -77,6 +80,7 @@ setup_linux() {
 	rm cascadia.zip
 	fc-cache -fv
 
+	install_brew
 	install_wezterm
 	install_starship
 	install_brew_packages
@@ -100,12 +104,16 @@ setup_linux() {
 }
 
 setup_mac() {
-	echo "Using specific config for Mac"
+	echo -e "Using specific config for Mac \n"
+
+	create_symlinks
 
 	install_starship
 
 	# disable key repeat
 	defaults write -g ApplePressAndHoldEnabled -bool false
+
+	install_brew
 
 	brew tap homebrew/cask-fonts
 
@@ -121,7 +129,9 @@ setup_mac() {
 }
 
 setup_bluefin() {
-	echo "Using specific config for Bluefin"
+	echo -e "Using specific config for Bluefin \n"
+
+	create_symlinks
 
 	install_wezterm
 
@@ -132,7 +142,7 @@ setup_bluefin() {
 
 os_type=""
 
-if ! check_command ujust; then
+if check_command ujust; then
     os_type="Bluefin"
 elif [[ $(uname) == "Darwin" ]]; then
     os_type="Mac"
@@ -140,7 +150,7 @@ else
     os_type="Linux"
 fi
 
-echo "$os_type detected. Using $os_type config..."
+echo -e "$os_type detected. Using $os_type config... \n"
 
 case $os_type in
     "Bluefin")
@@ -159,7 +169,6 @@ case $os_type in
 esac
 
 echo -e "\n\n\n\nAll systems operational. 🤖"
-echo "All systems operational. 🤖"
 echo "                 "
 echo " ┓     ┓•   ┓    "
 echo "┏┣┓┏┓┏┓┃┓┏┓┏┣┓┏┓╋"
