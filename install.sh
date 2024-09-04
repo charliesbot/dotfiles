@@ -139,6 +139,8 @@ setup_bluefin() {
 	install_brew_packages
 
 	ujust shell zsh
+
+	ujust dx-group # setup user and permissions for docker
 }
 
 os_type=""
