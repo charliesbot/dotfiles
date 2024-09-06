@@ -53,6 +53,7 @@ install_brew_packages() {
 	brew install zsh-syntax-highlighting
 	brew install zellij
 	brew install nvm
+	brew install devcontainer
 
 	if ! check_command fzf; then
 		brew install fzf
