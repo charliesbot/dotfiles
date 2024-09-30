@@ -62,6 +62,18 @@ install_brew_packages() {
 	fi
 }
 
+install_brew_packages_for_mac() {
+	brew install --cask 1password
+	brew install --cask docker
+	brew install --cask google-chrome
+	brew install --cask logi-options+
+	brew install --cask android-studio
+	brew install --cask visual-studio-code
+	brew install --cask raycast
+	brew install --cask kitty
+	brew install --cask wezterm
+}
+
 setup_linux() {
 	echo -e "Using specific config for Linux \n"
 
@@ -128,6 +140,7 @@ setup_mac() {
 	brew install reattach-to-user-namespace
 
 	install_brew_packages
+	install_brew_packages_for_mac
 }
 
 setup_bluefin() {
