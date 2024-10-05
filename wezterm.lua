@@ -2,7 +2,7 @@ local wezterm = require "wezterm"
 
 return {
   font = wezterm.font({
-    family = "MonoLisa Variable",
+    family = "JetBrains Mono",
     harfbuzz_features = {
       "ss02=1",
     },

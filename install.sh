@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# Function to keep updating the sudo timestamp until the script ends
+keep_sudo_alive() {
+    while true; do sudo -n true; sleep 60; done 2>/dev/null &
+}
+
 # Function to check if a command exists
 check_command() {
     local cmd="$1"
@@ -9,7 +14,7 @@ check_command() {
 install_brew() {
 	if ! check_command brew; then
 		echo "Installing Brew..."
-	    	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+	    	NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 		if [[ $os_type == "Linux" ]]; then
 			echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> "$HOME/.bashrc"
 			eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
@@ -19,7 +24,7 @@ install_brew() {
 
 create_symlinks() {
     echo "Removing existing dotfiles..."
-    rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.config/nvim ~/.ideavimrc 2>/dev/null
+    rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.config/nvim ~/.ideavimrc ~/.wezterm.lua ~/.config/starship.toml	2>/dev/null
 
     echo "Creating symlinks..."
     mkdir -p ~/.config/nvim
@@ -40,7 +45,7 @@ install_wezterm() {
 
 install_starship() {
 	echo "Installing Starship"
-	curl -sS https://starship.rs/install.sh | sh
+	curl -sS https://starship.rs/install.sh | sh -s -- -y
 }
 
 install_brew_packages() {
@@ -62,7 +67,7 @@ install_brew_packages() {
 	fi
 }
 
-install_brew_packages_for_mac() {
+install_brew_cask_packages() {
 	brew install --cask 1password
 	brew install --cask docker
 	brew install --cask google-chrome
@@ -72,6 +77,9 @@ install_brew_packages_for_mac() {
 	brew install --cask raycast
 	brew install --cask kitty
 	brew install --cask wezterm
+	brew install --cask whatsapp
+	brew install --cask telegram
+	brew install --cask soundsource
 }
 
 setup_linux() {
@@ -140,7 +148,7 @@ setup_mac() {
 	brew install reattach-to-user-namespace
 
 	install_brew_packages
-	install_brew_packages_for_mac
+	install_brew_cask_packages
 }
 
 setup_bluefin() {
@@ -168,6 +176,11 @@ else
 fi
 
 echo -e "$os_type detected. Using $os_type config... \n"
+
+# Ask for the administrator password upfront and keep the sudo timestamp updated
+#sudo -v
+
+# keep_sudo_alive
 
 case $os_type in
     "Bluefin")
