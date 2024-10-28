@@ -12,6 +12,21 @@ ZSH_THEME=""
 
 export EDITOR='nvim'
 
+# Git aliases
+alias g='git'
+alias ga='git add'
+alias gc='git commit -v'
+alias gd='git diff'
+alias gds='git diff --staged'
+alias gf='git fetch'
+alias glgg='git log --graph'
+alias glgga='git log --graph --decorate --all'
+alias glgm='git log --graph --max-count=10'
+alias gp='git push'
+alias gpom="git push origin master"
+alias grmc='git rm --cached'
+alias gst='git status'
+
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
@@ -83,4 +98,5 @@ source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 eval "$(starship init zsh)"
+
 
