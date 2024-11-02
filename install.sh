@@ -59,6 +59,7 @@ install_brew_packages() {
 	brew install zellij
 	brew install nvm
 	brew install devcontainer
+	brew install scrcpy
 
 	if ! check_command fzf; then
 		brew install fzf
