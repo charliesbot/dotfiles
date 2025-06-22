@@ -1,3 +1,6 @@
+Plug 'preservim/nerdtree'
+Plug 'tpope/vim-surround'
+
 set visualbell
 set noerrorbells
 
@@ -33,6 +36,8 @@ nnoremap <leader>/ :nohls<return><esc>
 map gh <Action>(ShowErrorDescription)
 
 nnoremap <leader>V :vsplit<CR>
+
+map <C-b> :NERDTreeToggle<CR>
 
 imap <C-n> <ESC>:action HippieCompletion<CR>a
 imap <C-p> <ESC>:action HippieBackwardCompletion<CR>a
