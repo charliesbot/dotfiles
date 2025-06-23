@@ -27,14 +27,6 @@ alias gpom="git push origin master"
 alias grmc='git rm --cached'
 alias gst='git status'
 
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
-
-# alias python=/usr/local/bin/python3
-alias pip=pip3
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
 # Paths
 if [[ $OSTYPE = (linux)* ]]; then
   export ANDROID_HOME="$HOME/Android/Sdk"
@@ -42,7 +34,6 @@ else
   export ANDROID_HOME="$HOME/Library/Android/sdk"
 fi
 export ANDROID_SDK_ROOT=${ANDROID_HOME}
-# export PATH=${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${PATH}
 export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
 export PATH=$PATH:$ANDROID_HOME/emulator
 export PATH=$PATH:$ANDROID_HOME/tools
@@ -54,10 +45,8 @@ export PATH="$PATH:`pwd`/flutter/bin"
 export PATH=~/.local/bin:$PATH
 # Cargo
 export PATH="$HOME/.cargo/bin:$PATH"
-# CPP
-export PATH="/usr/local/opt/llvm/bin:$PATH"
-export LDFLAGS="-L/usr/local/opt/llvm/lib"
-export CPPFLAGS="-I/usr/local/opt/llvm/include"
+#Java
+export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
 
 # Lang
 export LC_ALL=en_US.UTF-8
@@ -66,10 +55,9 @@ export LANG=en_US.UTF-8
 # GitHub Credentials
 GITHUB_USERNAME=charliesbot
 
-# pipenv
-export PIP_CONFIG_FILE=~/.config/pip/pip.conf
-
+# [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 # FZF Sugar
+source <(fzf --zsh)
 
 # --files: List files that would be searched but do not search
 # --no-ignore: Do not respect .gitignore, etc...
@@ -77,26 +65,18 @@ export PIP_CONFIG_FILE=~/.config/pip/pip.conf
 # --follow: Follow symlinks
 # --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
 
-export FZF_DEFAULT_COMMAND='rg --files --fixed-strings --hidden --follow --glob "!.git/*"'
-
-export PATH="/usr/local/sbin:$PATH"
-
-# export JAVA_HOME=`/usr/libexec/java_home -v 21.0.3`
+# export FZF_DEFAULT_COMMAND='rg --files --fixed-strings --hidden --follow --glob "!.git/*"'
+#
+# export PATH="/usr/local/sbin:$PATH"
 
 if [[ $OSTYPE = (linux)* ]]; then
   test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
   test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
-# NVM
-source $(brew --prefix nvm)/nvm.sh
+eval "$(starship init zsh)"
 
-export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
-
-# plugins
 source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-eval "$(starship init zsh)"
 
 
