@@ -1,4 +1,4 @@
-font-size = 16
+font-size = 14
 font-family                    = MonoLisa Variable
 font-family-bold               = MonoLisa Variable
 font-family-italic             = MonoLisa Variable
@@ -12,3 +12,7 @@ font-variation-bold-italic     = wght = 700
 copy-on-select                 = true
 shell-integration              = zsh
 clipboard-trim-trailing-spaces = true
+
+window-padding-balance = true
+window-padding-y = 0
+window-padding-color = extend

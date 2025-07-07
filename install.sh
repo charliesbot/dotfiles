@@ -28,19 +28,15 @@ create_symlinks() {
 
     echo "Creating symlinks..."
     mkdir -p ~/.config/nvim
-    mkdir -p ~/.config/zellij
     mkdir -p ~/projects
 
     ln -s ~/dotfiles/zshrc ~/.zshrc
     ln -s ~/dotfiles/nvim/* ~/.config/nvim/
+    ln -s ~/dotfiles/tmux.conf ~/.tmux.conf
     ln -s ~/dotfiles/starship.toml ~/.config/starship.toml
     ln -s ~/dotfiles/wezterm.lua ~/.wezterm.lua
     ln -s ~/dotfiles/ideavimrc ~/.ideavimrc
-}
-
-install_wezterm() {
-	echo "Installing WezTerm"
-	flatpak install flathub org.wezfurlong.wezterm -y
+    ln -s ~/dotfiles/gitmux.conf ~/.gitmux.conf
 }
 
 install_starship() {
@@ -54,12 +50,17 @@ install_brew_packages() {
 	brew install jesseduffield/lazydocker/lazydocker # this is the tap for lazydocker
 	brew install lazydocker # this is the actual package for lazy docker
 	brew install neovim
+	brew install tmux
+	brew install tpm # tmux package manager
 	brew install zsh-autosuggestions
 	brew install zsh-syntax-highlighting
-	brew install zellij
 	brew install nvm
 	brew install devcontainer
 	brew install scrcpy
+	brew install gh
+	# Gitmux
+	brew tap arl/arl
+	brew install gitmux
 
 	if ! check_command fzf; then
 		brew install fzf
@@ -76,11 +77,9 @@ install_brew_cask_packages() {
 	brew install --cask android-studio
 	brew install --cask visual-studio-code
 	brew install --cask raycast
-	brew install --cask kitty
-	brew install --cask wezterm
 	brew install --cask whatsapp
-	brew install --cask telegram
-	brew install --cask soundsource
+	brew install --cask ghostty
+	brew install --cask ghostty
 }
 
 setup_linux() {
@@ -93,6 +92,9 @@ setup_linux() {
 
 	create_symlinks
 
+	# Italics and true color profile for tmux
+	tic -x tmux.terminfo
+
 	# Install Fonts
 	mkdir -p ~/.local/share/fonts
 	echo "Installing JetBrains Mono"
@@ -104,7 +106,6 @@ setup_linux() {
 	fc-cache -fv
 
 	install_brew
-	install_wezterm
 	install_starship
 	install_brew_packages
 
@@ -130,6 +131,9 @@ setup_mac() {
 	echo -e "Using specific config for Mac \n"
 
 	create_symlinks
+
+	# Italics and true color profile for tmux
+	tic -x tmux.terminfo
 
 	install_starship
 
@@ -157,7 +161,8 @@ setup_bluefin() {
 
 	create_symlinks
 
-	install_wezterm
+	# Italics and true color profile for tmux
+	tic -x tmux.terminfo
 
 	install_brew_packages
 
