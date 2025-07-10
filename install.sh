@@ -11,6 +11,49 @@ check_command() {
     command -v "$cmd" &> /dev/null
 }
 
+mac_configs() {
+# disable key repeat
+defaults write -g ApplePressAndHoldEnabled -bool false
+# Keyboard: enable full keyboard access for all controls (e.g. enable
+# Tab in modal dialogs)
+defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
+# Keyboard: set key repeat speed
+defaults write NSGlobalDomain KeyRepeat -int 2
+# Keyboard: set delay until key repeat
+defaults write NSGlobalDomain InitialKeyRepeat -int 25
+# Window Manager: disable margins of tiled windows
+defaults write com.apple.WindowManager EnableTiledWindowMargins -bool false
+# Dock: only show when moving pointer to the screen edge
+defaults write com.apple.dock autohide -bool true
+# Dock: don't automatically rearrange Spaces based on most recent use
+defaults write com.apple.dock mru-spaces -bool false
+# Dock: group windows by application in Mission Control
+defaults write com.apple.dock expose-group-apps -bool true
+# Dock: disable all Hot Corners
+#
+# wvous-C-corner: action associated with the corner; 0 for no-op
+#
+# wvous-C-modifier: modifier keys (as a bit mask) which need to be
+# pressed for the hot corner to trigger; 0 for no modifier
+#
+# Where C signifies corner: bottom-left (bl), bottom-right (br),
+# top-left (tl), and top-right (tr)
+#
+# See
+# https://blog.jiayu.co/2018/12/quickly-configuring-hot-corners-on-macos/
+disable_dock_hot_corners() {
+    local corner
+    local corners=(bl br tl tr)
+
+    for corner in "${corners[@]}"; do
+        defaults write com.apple.dock "wvous-$corner-corner" -int 0
+        defaults write com.apple.dock "wvous-$corner-modifier" -int 0
+    done
+}
+
+disable_dock_hot_corners
+}
+
 install_brew() {
 	if ! check_command brew; then
 		echo "Installing Brew..."
@@ -137,8 +180,7 @@ setup_mac() {
 
 	install_starship
 
-	# disable key repeat
-	defaults write -g ApplePressAndHoldEnabled -bool false
+	mac_configs
 
 	install_brew
 
