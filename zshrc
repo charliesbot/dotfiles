@@ -79,4 +79,7 @@ eval "$(starship init zsh)"
 source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
+if [[ -f "$HOME/.hgrc" ]]; then
+  source "$HOME/.zshrc-google-plugin"
+fi
 
