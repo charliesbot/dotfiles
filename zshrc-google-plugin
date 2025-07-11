@@ -5,3 +5,4 @@ if [[ -f /etc/bash_completion.d/hgd ]]; then
 fi
 
 alias extend=/google/bin/releases/youtube-innertube-tools/extend/extend
+alias gemini='/google/bin/releases/gemini-cli/tools/gemini'
