@@ -1,8 +1,8 @@
-font-size = 14
-font-family                    = MonoLisa Variable
-font-family-bold               = MonoLisa Variable
-font-family-italic             = MonoLisa Variable
-font-family-bold-italic        = MonoLisa Variable
+font-size = 15
+font-family                    = Google Sans Code
+font-family-bold               = Google Sans Code
+font-family-italic             = Google Sans Code
+font-family-bold-italic        = Google Sans Code
 
 font-variation                 = wght = 400
 font-variation-bold            = wght = 700
@@ -16,3 +16,5 @@ clipboard-trim-trailing-spaces = true
 window-padding-balance = true
 window-padding-y = 0
 window-padding-color = extend
+
+theme = catppuccin-mocha

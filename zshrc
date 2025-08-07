@@ -56,6 +56,9 @@ export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
+# 1Password Stored Keys
+export GEMINI_API_KEY=$(op item get "Google Gemini AI Studio" --field "API Key")
+
 # GitHub Credentials
 GITHUB_USERNAME=charliesbot
 
