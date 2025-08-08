@@ -56,9 +56,6 @@ export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
-# 1Password Stored Keys
-export GEMINI_API_KEY=$(op item get "Google Gemini AI Studio" --field "API Key")
-
 # GitHub Credentials
 GITHUB_USERNAME=charliesbot
 
@@ -89,3 +86,8 @@ source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zs
 if [[ -f "$HOME/.hgrc" ]]; then
   source "$HOME/.zshrc-google-plugin"
 fi
+
+# 1Password Stored Keys
+load_secrets() {
+  export GEMINI_API_KEY=$(op item get "Google Gemini AI Studio" --field "API Key")
+}
