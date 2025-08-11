@@ -839,6 +839,7 @@ require('lazy').setup({
   require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.copilot',
+  require 'kickstart.plugins.dropbar',
   require 'kickstart.plugins.neo-tree',
   require 'kickstart.plugins.mini',
   require 'kickstart.plugins.lualine',
