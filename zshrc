@@ -25,6 +25,15 @@ alias gpom="git push origin master"
 alias grmc='git rm --cached'
 alias gst='git status'
 
+# History configuration
+HISTFILE=${HOME}/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+
+setopt APPEND_HISTORY
+setopt INC_APPEND_HISTORY
+setopt SHARE_HISTORY
+
 # Paths
 if [[ $OSTYPE = (linux)* ]]; then
   export ANDROID_HOME="$HOME/Android/Sdk"
@@ -78,3 +87,4 @@ source <(fzf --zsh)
 
 export FZF_DEFAULT_COMMAND='rg --files --fixed-strings --hidden --follow --glob "!.git/*"'
 # export PATH="/usr/local/sbin:$PATH"
+
