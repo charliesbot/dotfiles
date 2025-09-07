@@ -70,7 +70,6 @@ create_symlinks() {
     rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.config/nvim ~/.ideavimrc ~/.wezterm.lua ~/.config/starship.toml	2>/dev/null
 
     echo "Creating symlinks..."
-    mkdir -p ~/.config/nvim
     mkdir -p ~/projects
 
     ln -s ~/dotfiles/zshrc ~/.zshrc
