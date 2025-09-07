@@ -37,6 +37,9 @@ setopt SHARE_HISTORY
 # Paths
 if [[ $OSTYPE = (linux)* ]]; then
   export ANDROID_HOME="$HOME/Android/Sdk"
+  open() {
+    xdg-open "${@:-.}" &>/dev/null
+  }
 else
   export ANDROID_HOME="$HOME/Library/Android/sdk"
 fi
