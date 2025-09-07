@@ -1,11 +1,5 @@
-# Initialize completion
-
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/usr/local/bin:$PATH
-
-if [ -f ~/.zshrc.secrets ]; then
-  . ~/.zshrc.secrets
-fi
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -59,20 +53,6 @@ export LANG=en_US.UTF-8
 # GitHub Credentials
 GITHUB_USERNAME=charliesbot
 
-# [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-# FZF Sugar
-source <(fzf --zsh)
-
-# --files: List files that would be searched but do not search
-# --no-ignore: Do not respect .gitignore, etc...
-# --hidden: Search hidden files and folders
-# --follow: Follow symlinks
-# --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
-
-# export FZF_DEFAULT_COMMAND='rg --files --fixed-strings --hidden --follow --glob "!.git/*"'
-#
-# export PATH="/usr/local/sbin:$PATH"
-
 if [[ $OSTYPE = (linux)* ]]; then
   test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
   test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
@@ -87,7 +67,14 @@ if [[ -f "$HOME/.hgrc" ]]; then
   source "$HOME/.zshrc-google-plugin"
 fi
 
-# 1Password Stored Keys
-load_secrets() {
-  export GEMINI_API_KEY=$(op item get "Google Gemini AI Studio" --field "API Key")
-}
+# FZF Sugar
+source <(fzf --zsh)
+
+# --files: List files that would be searched but do not search
+# --no-ignore: Do not respect .gitignore, etc...
+# --hidden: Search hidden files and folders
+# --follow: Follow symlinks
+# --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
+
+export FZF_DEFAULT_COMMAND='rg --files --fixed-strings --hidden --follow --glob "!.git/*"'
+# export PATH="/usr/local/sbin:$PATH"
