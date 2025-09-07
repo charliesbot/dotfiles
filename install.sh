@@ -77,6 +77,7 @@ create_symlinks() {
     ln -s ~/dotfiles/tmux.conf ~/.tmux.conf
     ln -s ~/dotfiles/starship.toml ~/.config/starship.toml
     ln -s ~/dotfiles/ideavimrc ~/.ideavimrc
+    ln -s ~/dotfiles/ghostty ~/.config/ghostty/config
     ln -s ~/dotfiles/gitmux.conf ~/.gitmux.conf
 }
 
