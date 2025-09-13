@@ -1,0 +1,30 @@
+layout {
+    default_tab_template {
+        children
+        pane size=1 borderless=true {
+            plugin location="file:~/.config/zellij/plugins/zjstatus.wasm" {
+                format_left   "#[fg=#c5a3a9,bold]{tabs}"
+                format_space  ""
+                format_right   "{mode}"
+
+                border_enabled  "false"
+                border_char     ""
+                border_format   "#[fg=#6C7086,bold]{char}"
+                border_position "bottom"
+
+                hide_frame_for_single_pane "true"
+
+                tab_normal   "#[fg=#7f849c,thin] {name} "
+                tab_active   "#[bg=#fab387,fg=#313244,bold,italic] {name} "
+
+                mode_locked        "#[bg=#a5adcb,fg=#24273a,bold] LOCKED  #[bg=#24273a,fg=#a5adcb]"
+                mode_normal        "#[bg=#89b4fa] "  // Light blue for normal mode
+                mode_tmux          "#[bg=#eba0ac] "  // Intense pink for tmux mode
+
+            }
+        }
+        // pane size=1 borderless=true  {
+        //   plugin location="zellij:status-bar"
+        // }
+    }
+}

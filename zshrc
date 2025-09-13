@@ -1,3 +1,23 @@
+# Functions
+zellij_tab_name_update() {
+  if [[ -n $ZELLIJ ]]; then
+    tab_name=''
+    if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        tab_name+=$(basename "$(git rev-parse --show-toplevel)")/
+        tab_name+=$(git rev-parse --show-prefix)
+        tab_name=${tab_name%/}
+    else
+        tab_name=$PWD
+            if [[ $tab_name == $HOME ]]; then
+            tab_name="~"
+             else
+            tab_name=${tab_name##*/}
+             fi
+    fi
+    zellij action rename-tab $tab_name >/dev/null 2>&1
+  fi
+}
+
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 
@@ -15,13 +35,8 @@ alias g='git'
 alias ga='git add'
 alias gc='git commit -v'
 alias gd='git diff'
-alias gds='git diff --staged'
 alias gf='git fetch'
 alias glgg='git log --graph'
-alias glgga='git log --graph --decorate --all'
-alias glgm='git log --graph --max-count=10'
-alias gp='git push'
-alias gpom="git push origin master"
 alias grmc='git rm --cached'
 alias gst='git status'
 
@@ -89,5 +104,8 @@ source <(fzf --zsh)
 # --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
 
 export FZF_DEFAULT_COMMAND='rg --files --fixed-strings --hidden --follow --glob "!.git/*"'
-# export PATH="/usr/local/sbin:$PATH"
+
+autoload -U add-zsh-hook
+add-zsh-hook chpwd zellij_tab_name_update
+add-zsh-hook precmd zellij_tab_name_update
 
