@@ -12,7 +12,7 @@ layout {
                 border_format   "#[fg=#6C7086,bold]{char}"
                 border_position "bottom"
 
-                hide_frame_for_single_pane "true"
+                hide_frame_for_single_pane "false"
 
                 tab_normal   "#[fg=#7f849c,thin] {name} "
                 tab_active   "#[bg=#fab387,fg=#313244,bold,italic] {name} "

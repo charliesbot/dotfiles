@@ -2,8 +2,7 @@ keybinds clear-defaults=true {
     locked {
         bind "Ctrl g" { SwitchToMode "normal"; }
     }
-    pane {
-        bind "left" { MoveFocus "left"; }
+    pane { bind "left" { MoveFocus "left"; }
         bind "down" { MoveFocus "down"; }
         bind "up" { MoveFocus "up"; }
         bind "right" { MoveFocus "right"; }
@@ -264,6 +263,12 @@ plugins {
 // eg. "file:/path/to/my-plugin.wasm"
 // eg. "https://example.com/my-plugin.wasm"
 load_plugins {
+     // "file:~/.config/zellij/plugins/zjframes.wasm" {
+        // hide_frame_for_single_pane       "true"
+        // hide_frame_except_for_search     "true"
+        // hide_frame_except_for_scroll     "true"
+        // hide_frame_except_for_fullscreen "true"
+    // }
 }
  
 simplified_ui true

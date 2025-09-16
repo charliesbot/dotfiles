@@ -74,11 +74,10 @@ create_symlinks() {
 
     ln -s ~/dotfiles/zshrc ~/.zshrc
     ln -s ~/dotfiles/nvim ~/.config/nvim
-    ln -s ~/dotfiles/tmux.conf ~/.tmux.conf
+    ln -s ~/dotfiles/zellij ~/.config/zellij
+    ln -s ~/dotfiles/ghostty ~/.config/ghostty
     ln -s ~/dotfiles/starship.toml ~/.config/starship.toml
     ln -s ~/dotfiles/ideavimrc ~/.ideavimrc
-    ln -s ~/dotfiles/ghostty ~/.config/ghostty/config
-    ln -s ~/dotfiles/gitmux.conf ~/.gitmux.conf
 }
 
 install_starship() {
