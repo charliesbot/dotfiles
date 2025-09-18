@@ -91,17 +91,13 @@ install_brew_packages() {
 	brew install jesseduffield/lazydocker/lazydocker # this is the tap for lazydocker
 	brew install lazydocker # this is the actual package for lazy docker
 	brew install neovim
-	brew install tmux
-	brew install tpm # tmux package manager
 	brew install zsh-autosuggestions
 	brew install zsh-syntax-highlighting
 	brew install nvm
 	brew install devcontainer
 	brew install scrcpy
+	brew install zellij
 	brew install gh
-	# Gitmux
-	brew tap arl/arl
-	brew install gitmux
 
 	if ! check_command fzf; then
 		brew install fzf
@@ -120,7 +116,6 @@ install_brew_cask_packages() {
 	brew install --cask raycast
 	brew install --cask whatsapp
 	brew install --cask ghostty
-	brew install --cask ghostty
 }
 
 setup_linux() {
@@ -130,11 +125,13 @@ setup_linux() {
 	sudo dnf upgrade -y
 
 	sudo dnf install -y zsh curl wget git
+	sudo dnf5 install @development-tools -y
+
+	# Enable KVM for Android Emulator
+	sudo dnf5 install @virtualization -y
+	sudo usermod -aG kvm $(whoami)
 
 	create_symlinks
-
-	# Italics and true color profile for tmux
-	tic -x tmux.terminfo
 
 	# Install Fonts
 	mkdir -p ~/.local/share/fonts
@@ -173,9 +170,6 @@ setup_mac() {
 
 	create_symlinks
 
-	# Italics and true color profile for tmux
-	tic -x tmux.terminfo
-
 	install_starship
 
 	mac_configs
@@ -200,9 +194,6 @@ setup_bluefin() {
 	echo -e "Using specific config for Bluefin \n"
 
 	create_symlinks
-
-	# Italics and true color profile for tmux
-	tic -x tmux.terminfo
 
 	install_brew_packages
 

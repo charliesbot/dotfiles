@@ -94,8 +94,10 @@ if [[ -f "$HOME/.hgrc" ]]; then
   source "$HOME/.zshrc-google-plugin"
 fi
 
-# FZF Sugar
-source <(fzf --zsh)
+# Enable FZF if present
+if command -v fzf >/dev/null 2>&1; then
+  source <(fzf --zsh)
+fi
 
 # --files: List files that would be searched but do not search
 # --no-ignore: Do not respect .gitignore, etc...
