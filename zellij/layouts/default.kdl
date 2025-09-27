@@ -20,6 +20,7 @@ layout {
                 mode_locked        "#[bg=#a5adcb,fg=#24273a,bold] LOCKED  #[bg=#24273a,fg=#a5adcb]"
                 mode_normal        "#[bg=#89b4fa] "  // Light blue for normal mode
                 mode_tmux          "#[bg=#eba0ac] "  // Intense pink for tmux mode
+                mode_tab           "#[bg=$yellow,fg=$bg,bold] 󰫈 TAB#[bg=$black,fg=$yellow]"
 
             }
         }

@@ -286,7 +286,7 @@ pane_frames false
 // Examples:
 //
 // copy_command "xclip -selection clipboard" // x11
-// copy_command "wl-copy"                    // wayland
+copy_command "wl-copy"                    // wayland
 // copy_command "pbcopy"                     // osx
 // 
 // copy_command "pbcopy"
@@ -303,7 +303,7 @@ pane_frames false
 // Enable automatic copying (and clearing) of selection when releasing mouse
 // Default: true
 // 
-copy_on_select false
+copy_on_select true
  
 show_startup_tips false
  

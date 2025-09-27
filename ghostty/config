@@ -18,3 +18,4 @@ window-padding-y = 0
 window-padding-color = extend
 
 theme = catppuccin-mocha.conf
+keybind = shift+enter=text:\x1b\r
