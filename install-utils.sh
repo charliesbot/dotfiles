@@ -77,6 +77,7 @@ install_brew_packages() {
     brew install scrcpy
     brew install zellij
     brew install gh
+    brew install zig
 
     if ! check_command fzf; then
         brew install fzf
