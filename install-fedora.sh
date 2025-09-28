@@ -104,6 +104,22 @@ install_vscode() {
     echo "Visual Studio Code installed."
 }
 
+# Install 1Password
+install_1password() {
+    echo "Installing 1Password..."
+
+    # Add the key for the 1Password yum repository
+    sudo rpm --import https://downloads.1password.com/linux/keys/1password.asc
+
+    # Add the 1Password yum repository
+    sudo sh -c 'echo -e "[1password]\nname=1Password Stable Channel\nbaseurl=https://downloads.1password.com/linux/rpm/stable/\$basearch\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=\"https://downloads.1password.com/linux/keys/1password.asc\"" > /etc/yum.repos.d/1password.repo'
+
+    # Install 1Password
+    sudo dnf install -y 1password
+
+    echo "1Password installed."
+}
+
 # Install GPU drivers
 install_gpu_drivers() {
     echo "Detecting GPU and installing appropriate drivers..."
@@ -306,6 +322,9 @@ setup_fedora() {
 
     # Install Visual Studio Code
     install_vscode
+
+    # Install 1Password
+    install_1password
 
     # Install fonts
     install_linux_fonts
