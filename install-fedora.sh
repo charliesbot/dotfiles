@@ -125,7 +125,7 @@ install_gpu_drivers() {
     echo "Detecting GPU and installing appropriate drivers..."
 
     # Check for NVIDIA GPU
-    if lspci | grep -i nvidia > /dev/null; then
+    if lspci | grep -i nvidia >/dev/null; then
         echo "NVIDIA GPU detected. Installing NVIDIA drivers..."
         sudo dnf update -y
         sudo dnf install -y akmod-nvidia
@@ -144,7 +144,7 @@ install_gpu_drivers() {
         echo "NVIDIA setup complete. Reboot recommended."
 
     # Check for AMD GPU
-    elif lspci | grep -i amd > /dev/null || lspci | grep -i radeon > /dev/null; then
+    elif lspci | grep -i amd >/dev/null || lspci | grep -i radeon >/dev/null; then
         echo "AMD GPU detected. Installing AMD drivers..."
         sudo dnf swap -y mesa-va-drivers mesa-va-drivers-freeworld
         sudo dnf swap -y mesa-vdpau-drivers mesa-vdpau-drivers-freeworld
@@ -174,9 +174,9 @@ install_multimedia() {
     echo "Installing multimedia codecs and packages..."
 
     sudo dnf4 group install -y multimedia
-    sudo dnf swap -y 'ffmpeg-free' 'ffmpeg' --allowerasing # Switch to full FFMPEG
+    sudo dnf swap -y 'ffmpeg-free' 'ffmpeg' --allowerasing                                                   # Switch to full FFMPEG
     sudo dnf upgrade -y @multimedia --setopt="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin # Installs gstreamer components. Required if you use Gnome Videos and other dependent applications
-    sudo dnf group install -y sound-and-video # Installs useful Sound and Video complementary packages
+    sudo dnf group install -y sound-and-video                                                                # Installs useful Sound and Video complementary packages
     sudo dnf install -y ffmpeg-libs libva libva-utils
     sudo dnf install -y openh264 gstreamer1-plugin-openh264 mozilla-openh264
     sudo dnf config-manager setopt fedora-cisco-openh264.enabled=1
@@ -241,7 +241,7 @@ configure_dns() {
 
     sudo mkdir -p '/etc/systemd/resolved.conf.d'
 
-    sudo tee '/etc/systemd/resolved.conf.d/99-dns-over-tls.conf' > /dev/null <<EOF
+    sudo tee '/etc/systemd/resolved.conf.d/99-dns-over-tls.conf' >/dev/null <<EOF
 [Resolve]
 DNS=8.8.8.8#dns.google 8.8.4.4#dns.google 2001:4860:4860::8888#dns.google 2001:4860:4860::8844#dns.google
 DNSOverTLS=yes
@@ -354,7 +354,7 @@ if [[ "$os_type" != "Linux" ]]; then
 fi
 
 # Check if running on Fedora
-if ! command -v dnf &> /dev/null; then
+if ! command -v dnf &>/dev/null; then
     echo "This script requires dnf package manager (Fedora)."
     exit 1
 fi

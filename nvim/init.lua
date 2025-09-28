@@ -549,6 +549,7 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
+        bashls = {},
         clangd = {
           cmd = {
             'clangd',
@@ -611,6 +612,8 @@ require('lazy').setup({
         'eslint_d', -- ESLint daemon for faster linting (used by gts)
         'prettierd', -- Prettier daemon for faster formatting (used by gts)
         'clang-format', -- C/C++ formatter
+        'bash-language-server', -- Bash LSP for autocomplete
+        'shfmt', -- Shell script formatter
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -671,6 +674,8 @@ require('lazy').setup({
         markdown = { 'prettierd', 'prettier', stop_after_first = true },
         cpp = { 'clang-format' },
         c = { 'clang-format' },
+        bash = { 'shfmt' },
+        sh = { 'shfmt' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         -- javascript = { "prettierd", "prettier", stop_after_first = true },

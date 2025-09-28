@@ -2,82 +2,85 @@
 
 # Function to keep updating the sudo timestamp until the script ends
 keep_sudo_alive() {
-    while true; do sudo -n true; sleep 60; done 2>/dev/null &
+	while true; do
+		sudo -n true
+		sleep 60
+	done 2>/dev/null &
 }
 
 # Function to check if a command exists
 check_command() {
-    local cmd="$1"
-    command -v "$cmd" &> /dev/null
+	local cmd="$1"
+	command -v "$cmd" &>/dev/null
 }
 
 mac_configs() {
-# disable key repeat
-defaults write -g ApplePressAndHoldEnabled -bool false
-# Keyboard: enable full keyboard access for all controls (e.g. enable
-# Tab in modal dialogs)
-defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
-# Keyboard: set key repeat speed
-defaults write NSGlobalDomain KeyRepeat -int 2
-# Keyboard: set delay until key repeat
-defaults write NSGlobalDomain InitialKeyRepeat -int 25
-# Window Manager: disable margins of tiled windows
-defaults write com.apple.WindowManager EnableTiledWindowMargins -bool false
-# Dock: only show when moving pointer to the screen edge
-defaults write com.apple.dock autohide -bool true
-# Dock: don't automatically rearrange Spaces based on most recent use
-defaults write com.apple.dock mru-spaces -bool false
-# Dock: group windows by application in Mission Control
-defaults write com.apple.dock expose-group-apps -bool true
-# Dock: disable all Hot Corners
-#
-# wvous-C-corner: action associated with the corner; 0 for no-op
-#
-# wvous-C-modifier: modifier keys (as a bit mask) which need to be
-# pressed for the hot corner to trigger; 0 for no modifier
-#
-# Where C signifies corner: bottom-left (bl), bottom-right (br),
-# top-left (tl), and top-right (tr)
-#
-# See
-# https://blog.jiayu.co/2018/12/quickly-configuring-hot-corners-on-macos/
-disable_dock_hot_corners() {
-    local corner
-    local corners=(bl br tl tr)
+	# disable key repeat
+	defaults write -g ApplePressAndHoldEnabled -bool false
+	# Keyboard: enable full keyboard access for all controls (e.g. enable
+	# Tab in modal dialogs)
+	defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
+	# Keyboard: set key repeat speed
+	defaults write NSGlobalDomain KeyRepeat -int 2
+	# Keyboard: set delay until key repeat
+	defaults write NSGlobalDomain InitialKeyRepeat -int 25
+	# Window Manager: disable margins of tiled windows
+	defaults write com.apple.WindowManager EnableTiledWindowMargins -bool false
+	# Dock: only show when moving pointer to the screen edge
+	defaults write com.apple.dock autohide -bool true
+	# Dock: don't automatically rearrange Spaces based on most recent use
+	defaults write com.apple.dock mru-spaces -bool false
+	# Dock: group windows by application in Mission Control
+	defaults write com.apple.dock expose-group-apps -bool true
+	# Dock: disable all Hot Corners
+	#
+	# wvous-C-corner: action associated with the corner; 0 for no-op
+	#
+	# wvous-C-modifier: modifier keys (as a bit mask) which need to be
+	# pressed for the hot corner to trigger; 0 for no modifier
+	#
+	# Where C signifies corner: bottom-left (bl), bottom-right (br),
+	# top-left (tl), and top-right (tr)
+	#
+	# See
+	# https://blog.jiayu.co/2018/12/quickly-configuring-hot-corners-on-macos/
+	disable_dock_hot_corners() {
+		local corner
+		local corners=(bl br tl tr)
 
-    for corner in "${corners[@]}"; do
-        defaults write com.apple.dock "wvous-$corner-corner" -int 0
-        defaults write com.apple.dock "wvous-$corner-modifier" -int 0
-    done
-}
+		for corner in "${corners[@]}"; do
+			defaults write com.apple.dock "wvous-$corner-corner" -int 0
+			defaults write com.apple.dock "wvous-$corner-modifier" -int 0
+		done
+	}
 
-disable_dock_hot_corners
+	disable_dock_hot_corners
 }
 
 install_brew() {
 	if ! check_command brew; then
 		echo "Installing Brew..."
-	    	NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+		NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 		if [[ $os_type == "Linux" ]]; then
-			echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> "$HOME/.bashrc"
+			echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >>"$HOME/.bashrc"
 			eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 		fi
 	fi
 }
 
 create_symlinks() {
-    echo "Removing existing dotfiles..."
-    rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.config/nvim ~/.ideavimrc ~/.wezterm.lua ~/.config/starship.toml	2>/dev/null
+	echo "Removing existing dotfiles..."
+	rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.config/nvim ~/.ideavimrc ~/.wezterm.lua ~/.config/starship.toml 2>/dev/null
 
-    echo "Creating symlinks..."
-    mkdir -p ~/projects
+	echo "Creating symlinks..."
+	mkdir -p ~/projects
 
-    ln -s ~/dotfiles/zshrc ~/.zshrc
-    ln -s ~/dotfiles/nvim ~/.config/nvim
-    ln -s ~/dotfiles/zellij ~/.config/zellij
-    ln -s ~/dotfiles/ghostty ~/.config/ghostty
-    ln -s ~/dotfiles/starship.toml ~/.config/starship.toml
-    ln -s ~/dotfiles/ideavimrc ~/.ideavimrc
+	ln -s ~/dotfiles/zshrc ~/.zshrc
+	ln -s ~/dotfiles/nvim ~/.config/nvim
+	ln -s ~/dotfiles/zellij ~/.config/zellij
+	ln -s ~/dotfiles/ghostty ~/.config/ghostty
+	ln -s ~/dotfiles/starship.toml ~/.config/starship.toml
+	ln -s ~/dotfiles/ideavimrc ~/.ideavimrc
 }
 
 install_starship() {
@@ -89,7 +92,7 @@ install_brew_packages() {
 	brew update
 
 	brew install jesseduffield/lazydocker/lazydocker # this is the tap for lazydocker
-	brew install lazydocker # this is the actual package for lazy docker
+	brew install lazydocker                          # this is the actual package for lazy docker
 	brew install neovim
 	brew install zsh-autosuggestions
 	brew install zsh-syntax-highlighting
@@ -149,19 +152,19 @@ setup_linux() {
 
 	# Check if the current shell is already zsh
 	if [[ "$SHELL" == *"zsh" ]]; then
-	    echo "ZSH is the default shell."
+		echo "ZSH is the default shell."
 	else
-	    # Get the path of zsh
-	    zsh_path=$(which zsh)
+		# Get the path of zsh
+		zsh_path=$(which zsh)
 
-	    # Change the default shell to zsh for future logins
-	    echo "Setting up zsh as your default shell..."
-	    if chsh -s "$zsh_path"; then
-		echo "Setup complete. Log out and back in to start using zsh as your default shell."
-	    else
-		echo "Error: Failed to change the default shell."
-		echo "Please try running 'chsh -s $(which zsh)' manually."
-	    fi
+		# Change the default shell to zsh for future logins
+		echo "Setting up zsh as your default shell..."
+		if chsh -s "$zsh_path"; then
+			echo "Setup complete. Log out and back in to start using zsh as your default shell."
+		else
+			echo "Error: Failed to change the default shell."
+			echo "Please try running 'chsh -s $(which zsh)' manually."
+		fi
 	fi
 }
 
@@ -205,11 +208,11 @@ setup_bluefin() {
 os_type=""
 
 if check_command ujust; then
-    os_type="Bluefin"
+	os_type="Bluefin"
 elif [[ $(uname) == "Darwin" ]]; then
-    os_type="Mac"
+	os_type="Mac"
 else
-    os_type="Linux"
+	os_type="Linux"
 fi
 
 echo -e "$os_type detected. Using $os_type config... \n"
@@ -220,19 +223,19 @@ echo -e "$os_type detected. Using $os_type config... \n"
 # keep_sudo_alive
 
 case $os_type in
-    "Bluefin")
-        setup_bluefin
-        ;;
-    "Mac")
-        setup_mac
-        ;;
-    "Linux")
-        setup_linux
-        ;;
-    *)
-        echo "Unknown OS type: $os_type. Exiting."
-        exit 1
-        ;;
+"Bluefin")
+	setup_bluefin
+	;;
+"Mac")
+	setup_mac
+	;;
+"Linux")
+	setup_linux
+	;;
+*)
+	echo "Unknown OS type: $os_type. Exiting."
+	exit 1
+	;;
 esac
 
 echo -e "\n\n\n\nAll systems operational. 🤖"
