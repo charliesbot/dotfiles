@@ -898,5 +898,8 @@ vim.keymap.set('n', '<C-j>', ':move .+1<CR>==', { desc = 'Move line down', silen
 vim.keymap.set('v', '<C-k>', ":move '<-2<CR>gv=gv", { desc = 'Move selection up', silent = true })
 vim.keymap.set('v', '<C-j>', ":move '>+1<CR>gv=gv", { desc = 'Move selection down', silent = true })
 
+-- Fix Tab key to insert proper indentation instead of snippet jumping
+vim.keymap.set('i', '<Tab>', '<Tab>', { desc = 'Insert tab/spaces for indentation' })
+
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
