@@ -4,13 +4,21 @@
 
 # Function to keep updating the sudo timestamp until the script ends
 keep_sudo_alive() {
-    while true; do sudo -n true; sleep 60; done 2>/dev/null &
+    while true; do
+        sudo -n true
+        sleep 60
+    done 2>/dev/null &
 }
 
 # Function to check if a command exists
 check_command() {
     local cmd="$1"
-    command -v "$cmd" &> /dev/null
+    command -v "$cmd" &>/dev/null
+}
+
+install_catpuccin_themes() {
+    mkdir -p ~/.config/tmux/plugins/catppuccin
+    git clone -b v2.1.3 https://github.com/catppuccin/tmux.git ~/.config/tmux/plugins/catppuccin/tmux
 }
 
 # Install Homebrew
@@ -34,10 +42,10 @@ install_brew() {
     # Add to appropriate shell config based on current shell
     if [[ "$SHELL" == *"zsh" ]]; then
         echo "Adding Homebrew to ~/.zshrc"
-        echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.zshrc
+        echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >>~/.zshrc
     else
         echo "Adding Homebrew to ~/.bashrc"
-        echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >> ~/.bashrc
+        echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >>~/.bashrc
     fi
 }
 
@@ -47,14 +55,17 @@ create_symlinks() {
     rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.config/nvim ~/.ideavimrc ~/.config/starship.toml ~/config/ghostty 2>/dev/null
 
     echo "Creating symlinks..."
-    mkdir -p ~/projects ~/.config
+    mkdir -p ~/projects ~/.config ~/.config/tmux ~/.config/tmux/plugins
 
     ln -s ~/dotfiles/zshrc ~/.zshrc
     ln -s ~/dotfiles/nvim ~/.config/nvim
-    ln -s ~/dotfiles/zellij ~/.config/zellij
+    ln -s ~/dotfiles/tmux.conf ~/.tmux.conf
     ln -s ~/dotfiles/ghostty ~/.config/ghostty
     ln -s ~/dotfiles/starship.toml ~/.config/starship.toml
     ln -s ~/dotfiles/ideavimrc ~/.ideavimrc
+
+    # Italics and true color profile for tmux
+    tic -x tmux.terminfo
 }
 
 # Install Starship prompt
@@ -68,14 +79,14 @@ install_brew_packages() {
     brew update
 
     brew install jesseduffield/lazydocker/lazydocker # this is the tap for lazydocker
-    brew install lazydocker # this is the actual package for lazy docker
+    brew install lazydocker                          # this is the actual package for lazy docker
     brew install neovim
     brew install zsh-autosuggestions
     brew install zsh-syntax-highlighting
     brew install nvm
     brew install devcontainer
     brew install scrcpy
-    brew install zellij
+    brew install tmux
     brew install gh
     brew install zig
 

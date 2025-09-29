@@ -338,6 +338,9 @@ setup_fedora() {
     # Create dotfile symlinks (this will overwrite .bashrc)
     create_symlinks
 
+    # Install Catpuccin Themes (Tmux)
+    install_catpuccin_themes
+
     # Setup ZSH as default shell (last step)
     setup_zsh_shell
 
