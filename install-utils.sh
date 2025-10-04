@@ -89,6 +89,8 @@ install_brew_packages() {
     brew install tmux
     brew install gh
     brew install zig
+    brew install lazygit
+    brew install fnm
 
     if ! check_command fzf; then
         brew install fzf
