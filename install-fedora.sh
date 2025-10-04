@@ -22,6 +22,9 @@ enable_third_party_repos() {
     sudo dnf group upgrade -y core
     sudo dnf4 group install -y core
 
+    # Remove the limited Fedora repo
+    flatpak remote-delete fedora
+
     # Enable Flathub repository
     flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
     flatpak update --appstream -y
@@ -307,7 +310,7 @@ setup_fedora() {
     configure_services
 
     # Configure GNOME keybindings
-    configure_gnome_keybindings
+    #configure_gnome_keybindings
 
     # Install Homebrew and packages (before changing shell)
     install_brew
