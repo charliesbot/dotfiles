@@ -123,6 +123,29 @@ install_1password() {
     echo "1Password installed."
 }
 
+# Install Node.js and AI CLI tools
+install_node_and_tools() {
+    echo "Installing Node.js using fnm..."
+
+    # Install the latest Node.js version using fnm
+    if command -v fnm &>/dev/null; then
+        fnm install latest
+        fnm use latest
+        fnm default latest
+
+        echo "Installing AI CLI tools..."
+        # Install Google Gemini CLI
+        npm install -g @google/gemini-cli
+        # Install Anthropic Claude Code CLI
+        npm install -g @anthropic-ai/claude-code
+
+        echo "Node.js and AI CLI tools installed."
+    else
+        echo "fnm not found. Skipping Node.js installation."
+        echo "Note: fnm will be installed later via Homebrew."
+    fi
+}
+
 # Install GPU drivers
 install_gpu_drivers() {
     echo "Detecting GPU and installing appropriate drivers..."
@@ -196,35 +219,6 @@ configure_services() {
     echo "System services configured."
 }
 
-# Configure GNOME keybindings
-configure_gnome_keybindings() {
-    echo "Configuring GNOME keybindings..."
-
-    # Disable dynamic workspaces for consistent numbering
-    gsettings set org.gnome.mutter dynamic-workspaces false
-
-    # Configure keyboard repeat settings for Neovim users
-    gsettings set org.gnome.desktop.peripherals.keyboard delay 200
-    gsettings set org.gnome.desktop.peripherals.keyboard repeat-interval 15
-
-    # Set workspace switching keybindings
-    gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-right "['<Super>bracketright']"
-    gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-left "['<Super>bracketleft']"
-
-    # Alt+F4 is very cumbersome
-    gsettings set org.gnome.desktop.wm.keybindings close "['<Super>w']"
-
-    # Set workspace switching by number (Meta + 1, Meta + 2, etc.)
-    # First clear the conflicting application switching keybindings
-    for i in {1..9}; do
-        gsettings set org.gnome.shell.keybindings switch-to-application-$i "[]"
-        gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-$i "['<Super>$i']"
-    done
-    gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-10 "['<Super>0']"
-
-    echo "GNOME keybindings configured."
-}
-
 # Set hostname
 set_hostname() {
     echo "Current hostname: $(hostnamectl --static)"
@@ -253,19 +247,6 @@ EOF
     sudo systemctl restart systemd-resolved
 
     echo "DNS configured with Google DNS over TLS."
-}
-
-# Install Flatpak applications
-install_flatpaks() {
-    echo "Installing Flatpak applications..."
-
-    # Install Extension Manager
-    flatpak install -y flathub com.mattjakeman.ExtensionManager
-
-    # Install Flatseal (manage Flatpak permissions)
-    flatpak install -y flathub com.github.tchx84.Flatseal
-
-    echo "Flatpak applications installed."
 }
 
 # Cleanup unwanted packages
@@ -309,13 +290,13 @@ setup_fedora() {
     # Configure system services
     configure_services
 
-    # Configure GNOME keybindings
-    #configure_gnome_keybindings
-
     # Install Homebrew and packages (before changing shell)
     install_brew
     install_starship
     install_brew_packages
+
+    # Install Node.js and global npm packages (after brew packages which includes fnm)
+    install_node_and_tools
 
     # Install Android Studio
     install_android_studio
@@ -331,9 +312,6 @@ setup_fedora() {
 
     # Install fonts
     install_linux_fonts
-
-    # Install Flatpak applications
-    install_flatpaks
 
     # Cleanup unwanted packages
     cleanup_packages
