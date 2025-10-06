@@ -23,11 +23,11 @@ enable_third_party_repos() {
     sudo dnf4 group install -y core
 
     # Remove the limited Fedora repo
-    flatpak remote-delete fedora
+    flatpak remote-delete --system fedora --force 2>/dev/null || true
 
     # Enable Flathub repository
-    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-    flatpak update --appstream -y
+    flatpak remote-add --system --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+    flatpak update --system --appstream -y --noninteractive
 
     echo "Third-party repositories enabled."
 }
@@ -127,8 +127,11 @@ install_1password() {
 install_node_and_tools() {
     echo "Installing Node.js using fnm..."
 
-    # Install the latest Node.js version using fnm
+    # Setup fnm environment for current bash session
     if command -v fnm &>/dev/null; then
+        eval "$(fnm env --use-on-cd --shell bash)"
+
+        # Install the latest Node.js version using fnm
         fnm install latest
         fnm use latest
         fnm default latest
@@ -142,7 +145,7 @@ install_node_and_tools() {
         echo "Node.js and AI CLI tools installed."
     else
         echo "fnm not found. Skipping Node.js installation."
-        echo "Note: fnm will be installed later via Homebrew."
+        echo "Note: fnm should have been installed via Homebrew."
     fi
 }
 
@@ -327,6 +330,9 @@ setup_fedora() {
 
     # Print completion message
     print_completion
+
+    # Clean up temporary sudoers configuration
+    sudo rm -f /etc/sudoers.d/install_timeout
 }
 
 # Detect OS and run setup
@@ -347,6 +353,12 @@ echo "Fedora detected. Starting installation..."
 
 # Ask for the administrator password upfront
 sudo -v
+
+# Extend sudo timeout to 30 minutes for this session
+sudo sh -c 'echo "Defaults:$SUDO_USER timestamp_timeout=30" > /etc/sudoers.d/install_timeout'
+
+# Disable GUI password prompts by preferring terminal authentication
+export SUDO_ASKPASS=/bin/false
 
 # Keep sudo alive during the long installation process
 keep_sudo_alive
