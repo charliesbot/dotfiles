@@ -367,9 +367,6 @@ setup_fedora() {
 
     # Print completion message
     print_completion
-
-    # Clean up temporary sudoers configuration
-    sudo rm -f /etc/sudoers.d/install_timeout
 }
 
 # Detect OS and run setup
@@ -391,14 +388,8 @@ echo "Fedora detected. Starting installation..."
 # Ask for the administrator password upfront
 sudo -v
 
-# Extend sudo timeout to 30 minutes for this session
-sudo sh -c 'echo "Defaults:$SUDO_USER timestamp_timeout=30" > /etc/sudoers.d/install_timeout'
-
-# Disable GUI password prompts by preferring terminal authentication
-export SUDO_ASKPASS=/bin/false
-
-# Keep sudo alive during the long installation process
-keep_sudo_alive
+# Setup unattended authentication (keeps sudo alive and prevents password dialogs)
+setup_unattended_auth
 
 # Run the main setup
 setup_fedora

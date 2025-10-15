@@ -8,6 +8,43 @@ keep_sudo_alive() {
         sudo -n true
         sleep 60
     done 2>/dev/null &
+    KEEPALIVE_PID=$!
+    echo "$KEEPALIVE_PID"
+}
+
+# Function to create temporary polkit rule to prevent graphical password dialogs
+setup_polkit_nopasswd() {
+    echo "Setting up polkit rule to prevent password dialogs..."
+    sudo tee /etc/polkit-1/rules.d/99-temporary-install.rules >/dev/null <<'EOF'
+polkit.addRule(function(action, subject) {
+    if (subject.isInGroup("wheel")) {
+        return polkit.Result.YES;
+    }
+});
+EOF
+    echo "Polkit rule created."
+}
+
+# Function to clean up temporary polkit rule
+cleanup_polkit_rule() {
+    sudo rm -f /etc/polkit-1/rules.d/99-temporary-install.rules
+}
+
+# Function to setup authentication for unattended installation
+setup_unattended_auth() {
+    echo "Configuring authentication for unattended installation..."
+
+    # Create polkit rule
+    setup_polkit_nopasswd
+
+    # Start keep-alive process
+    KEEPALIVE_PID=$(keep_sudo_alive)
+
+    # Setup cleanup trap
+    trap "kill $KEEPALIVE_PID &> /dev/null 2>&1; cleanup_polkit_rule" EXIT
+
+    echo "Authentication configured. Sudo will stay active and no password dialogs will appear."
+    echo
 }
 
 # Function to check if a command exists
