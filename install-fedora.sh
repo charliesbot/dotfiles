@@ -222,6 +222,29 @@ configure_services() {
     echo "System services configured."
 }
 
+# Configure lid switch behavior to allow clamshell mode
+configure_lid_switch() {
+    echo "Configuring lid switch behavior for clamshell mode..."
+
+    local config_file="/etc/systemd/logind.conf.d/logind.conf"
+
+    # Create the directory if it doesn't exist
+    sudo mkdir -p "$(dirname "$config_file")"
+
+    # Write the configuration using a heredoc
+    sudo tee "$config_file" >/dev/null <<'EOF'
+[Login]
+HandleLidSwitch=ignore
+HandleLidSwitchExternalPower=ignore
+HandleLidSwitchDocked=ignore
+EOF
+
+    # Restart the service to apply changes
+    sudo systemctl restart systemd-logind.service
+
+    echo "Lid switch behavior configured."
+}
+
 # Set hostname
 set_hostname() {
     echo "Current hostname: $(hostnamectl --static)"
@@ -233,23 +256,6 @@ set_hostname() {
     else
         echo "Keeping current hostname."
     fi
-}
-
-# Configure DNS servers
-configure_dns() {
-    echo "Configuring DNS servers..."
-
-    sudo mkdir -p '/etc/systemd/resolved.conf.d'
-
-    sudo tee '/etc/systemd/resolved.conf.d/99-dns-over-tls.conf' >/dev/null <<EOF
-[Resolve]
-DNS=8.8.8.8#dns.google 8.8.4.4#dns.google 2001:4860:4860::8888#dns.google 2001:4860:4860::8844#dns.google
-DNSOverTLS=yes
-EOF
-
-    sudo systemctl restart systemd-resolved
-
-    echo "DNS configured with Google DNS over TLS."
 }
 
 # Cleanup unwanted packages
@@ -292,6 +298,9 @@ setup_fedora() {
 
     # Configure system services
     configure_services
+
+    # Configure lid switch for clamshell mode
+    configure_lid_switch
 
     # Install Homebrew and packages (before changing shell)
     install_brew

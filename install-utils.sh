@@ -132,6 +132,17 @@ install_linux_fonts() {
     fc-cache -fv
 }
 
+# Configure DNS servers
+configure_dns() {
+    echo "Configuring DNS servers..."
+
+    sudo mkdir -p /etc/systemd/resolved.conf.d
+    echo -e "[Resolve]\nDNS=8.8.8.8 8.8.4.4\nFallbackDNS=1.1.1.1 1.0.0.1" | sudo tee /etc/systemd/resolved.conf.d/99-global-dns.conf >/dev/null
+    sudo systemctl restart systemd-resolved
+
+    echo "DNS configured with Google DNS (primary) and Cloudflare DNS (fallback)."
+}
+
 # Print completion message
 print_completion() {
     echo -e "\n\n\n\nAll systems operational. 🤖"
