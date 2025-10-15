@@ -258,6 +258,28 @@ set_hostname() {
     fi
 }
 
+# Prompt for Git user details to be applied later
+prompt_for_git_config() {
+    echo "Enter your details for Git configuration."
+    read -p "Enter your full name: " git_name
+    read -p "Enter your email: " git_email
+
+    export GIT_CONFIG_NAME="$git_name"
+    export GIT_CONFIG_EMAIL="$git_email"
+}
+
+# Apply stored Git configuration
+apply_git_config() {
+    if [[ -n "$GIT_CONFIG_NAME" && -n "$GIT_CONFIG_EMAIL" ]]; then
+        echo "Applying Git configuration..."
+        git config --global user.name "$GIT_CONFIG_NAME"
+        git config --global user.email "$GIT_CONFIG_EMAIL"
+        echo "Git user name and email have been set."
+    else
+        echo "Git user details not provided, skipping Git configuration."
+    fi
+}
+
 # Cleanup unwanted packages
 cleanup_packages() {
     echo "Cleaning up unwanted packages..."
@@ -278,6 +300,9 @@ setup_fedora() {
     # Set hostname
     set_hostname
 
+    # Prompt for Git details
+    prompt_for_git_config
+
     # Configure DNS servers
     configure_dns
 
@@ -289,6 +314,9 @@ setup_fedora() {
 
     # Install Fedora-specific packages
     install_fedora_packages
+
+    # Apply Git configuration
+    apply_git_config
 
     # Install multimedia codecs and packages
     install_multimedia
