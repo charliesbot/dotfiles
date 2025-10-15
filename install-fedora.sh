@@ -23,11 +23,14 @@ enable_third_party_repos() {
     sudo dnf4 group install -y core
 
     # Remove the limited Fedora repo
-    flatpak remote-delete --system fedora --force 2>/dev/null || true
+    flatpak remote-delete fedora --force 2>/dev/null || true
 
     # Enable Flathub repository
-    flatpak remote-add --system --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-    flatpak update --system --appstream -y --noninteractive
+    flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+    flatpak update --appstream -y --noninteractive
+
+    # Install Flatpak Extension Manager
+    flatpak install -y flathub com.mattjakeman.ExtensionManager
 
     echo "Third-party repositories enabled."
 }
@@ -47,6 +50,9 @@ install_fedora_packages() {
 
     # Install archive tools
     sudo dnf install -y p7zip p7zip-plugins unrar
+
+    # Install GNOME tools
+    sudo dnf install -y gnome-tweaks
 
     # Install Ghostty terminal emulator
     sudo dnf install -y ghostty
