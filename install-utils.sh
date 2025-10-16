@@ -128,6 +128,8 @@ install_brew_packages() {
     brew install zig
     brew install lazygit
     brew install fnm
+    brew install openjdk
+    brew install zoxide
 
     if ! check_command fzf; then
         brew install fzf

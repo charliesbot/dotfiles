@@ -1,23 +1,3 @@
-# Functions
-zellij_tab_name_update() {
-  if [[ -n $ZELLIJ ]]; then
-    tab_name=''
-    if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-        tab_name+=$(basename "$(git rev-parse --show-toplevel)")/
-        tab_name+=$(git rev-parse --show-prefix)
-        tab_name=${tab_name%/}
-    else
-        tab_name=$PWD
-            if [[ $tab_name == $HOME ]]; then
-            tab_name="~"
-             else
-            tab_name=${tab_name##*/}
-             fi
-    fi
-    zellij action rename-tab $tab_name >/dev/null 2>&1
-  fi
-}
-
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 
@@ -70,8 +50,7 @@ export PATH="$PATH:`pwd`/flutter/bin"
 export PATH=~/.local/bin:$PATH
 # Cargo
 export PATH="$HOME/.cargo/bin:$PATH"
-#Java
-export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+export PATH="/opt/homebrew/opt/openjdk@21/bin:$PATH"
 
 # Lang
 export LC_ALL=en_US.UTF-8
@@ -87,9 +66,14 @@ fi
 
 eval "$(starship init zsh)"
 eval "$(fnm env --use-on-cd --shell zsh)"
+eval "$(zoxide init zsh)"
 
 source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+#Java
+export JAVA_HOME=$(brew --prefix openjdk)
+export PATH="$JAVA_HOME/bin:$PATH"
 
 if [[ -f "$HOME/.hgrc" ]]; then
   source "$HOME/.zshrc-google-plugin"
@@ -107,8 +91,3 @@ fi
 # --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
 
 export FZF_DEFAULT_COMMAND='rg --files --fixed-strings --hidden --follow --glob "!.git/*"'
-
-autoload -U add-zsh-hook
-add-zsh-hook chpwd zellij_tab_name_update
-add-zsh-hook precmd zellij_tab_name_update
-
