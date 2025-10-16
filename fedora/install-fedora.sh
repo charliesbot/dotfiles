@@ -6,7 +6,7 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Source the shared utilities
-source "$SCRIPT_DIR/install-utils.sh"
+source "$SCRIPT_DIR/../install-utils.sh"
 
 # Enable third-party repositories
 enable_third_party_repos() {
