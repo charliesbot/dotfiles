@@ -29,9 +29,6 @@ enable_third_party_repos() {
     flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
     flatpak update --appstream -y --noninteractive
 
-    # Install Flatpak Extension Manager
-    flatpak install -y flathub com.mattjakeman.ExtensionManager
-
     echo "Third-party repositories enabled."
 }
 
@@ -50,9 +47,6 @@ install_fedora_packages() {
 
     # Install archive tools
     sudo dnf install -y p7zip p7zip-plugins unrar
-
-    # Install GNOME tools
-    sudo dnf install -y gnome-tweaks
 
     # Install Ghostty terminal emulator
     sudo dnf install -y ghostty
@@ -244,10 +238,6 @@ HandleLidSwitch=ignore
 HandleLidSwitchExternalPower=ignore
 HandleLidSwitchDocked=ignore
 EOF
-
-    # Restart the service to apply changes
-    sudo systemctl restart systemd-logind.service
-
     echo "Lid switch behavior configured."
 }
 

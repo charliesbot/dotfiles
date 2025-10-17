@@ -15,13 +15,13 @@ keep_sudo_alive() {
 # Function to create temporary polkit rule to prevent graphical password dialogs
 setup_polkit_nopasswd() {
     echo "Setting up polkit rule to prevent password dialogs..."
-    sudo tee /etc/polkit-1/rules.d/99-temporary-install.rules >/dev/null <<'EOF'
-polkit.addRule(function(action, subject) {
+    # Use a pipe with echo instead of a here-document directly with sudo.
+    # This is more robust and avoids potential hanging issues.
+    echo 'polkit.addRule(function(action, subject) {
     if (subject.isInGroup("wheel")) {
         return polkit.Result.YES;
     }
-});
-EOF
+});' | sudo tee /etc/polkit-1/rules.d/99-temporary-install.rules > /dev/null
     echo "Polkit rule created."
 }
 
@@ -37,11 +37,17 @@ setup_unattended_auth() {
     # Create polkit rule
     setup_polkit_nopasswd
 
-    # Start keep-alive process
-    KEEPALIVE_PID=$(keep_sudo_alive)
+    # Start a background loop to keep sudo active.
+    # This loop is started directly, avoiding subshell issues.
+    while true; do
+        sudo -n true
+        sleep 60
+    done 2>/dev/null &
+    KEEPALIVE_PID=$!
 
-    # Setup cleanup trap
-    trap "kill $KEEPALIVE_PID &> /dev/null 2>&1; cleanup_polkit_rule" EXIT
+    # Setup a trap to kill the background process and clean up the polkit rule on exit.
+    # This now traps EXIT, INT (Ctrl+C), and TERM signals for more robust cleanup.
+    trap "echo -e '\nCleaning up authentication helpers...'; kill $KEEPALIVE_PID &>/dev/null; cleanup_polkit_rule" EXIT INT TERM
 
     echo "Authentication configured. Sudo will stay active and no password dialogs will appear."
     echo
