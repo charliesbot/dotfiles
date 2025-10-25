@@ -53,7 +53,7 @@ Ready to get started? Follow the instructions for your operating system.
 
     ```bash
     cd ~/dotfiles
-    bash install.sh
+    bash macos/install-macos.sh
     ```
 
 3.  **Authenticate and Update Git Remote**
@@ -76,4 +76,3 @@ Ready to get started? Follow the instructions for your operating system.
 **Made with ☕ and a whole lot of terminal time.**
 
 </div>
-

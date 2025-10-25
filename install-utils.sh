@@ -21,7 +21,7 @@ setup_polkit_nopasswd() {
     if (subject.isInGroup("wheel")) {
         return polkit.Result.YES;
     }
-});' | sudo tee /etc/polkit-1/rules.d/99-temporary-install.rules > /dev/null
+});' | sudo tee /etc/polkit-1/rules.d/99-temporary-install.rules >/dev/null
     echo "Polkit rule created."
 }
 
@@ -139,8 +139,8 @@ install_brew_packages() {
 
     if ! check_command fzf; then
         brew install fzf
-        # Add FZF shortcuts
-        "$(brew --prefix)"/opt/fzf/install
+        # Add FZF shortcuts non-interactively (enable all features)
+        "$(brew --prefix)"/opt/fzf/install --all
     fi
 }
 

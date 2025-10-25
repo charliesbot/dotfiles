@@ -56,22 +56,29 @@ install_fedora_packages() {
     sudo usermod -aG kvm $(whoami)
 }
 
-# Install Android Studio
-install_android_studio() {
-    echo "Installing Android Studio..."
+# Install JetBrains Toolbox
+install_jetbrains_toolbox() {
+    echo "Installing JetBrains Toolbox..."
 
-    # Download Android Studio
+    # Download JetBrains Toolbox
     cd /tmp
-    wget https://redirector.gvt1.com/edgedl/android/studio/ide-zips/2025.1.3.7/android-studio-2025.1.3.7-linux.tar.gz
+    wget -O jetbrains-toolbox.tar.gz "https://download.jetbrains.com/toolbox/jetbrains-toolbox-3.0.0.59313.tar.gz"
 
-    # Extract to /opt
-    sudo tar -xzf android-studio-2025.1.3.7-linux.tar.gz -C /opt/
+    # Extract the archive
+    tar -xzf jetbrains-toolbox.tar.gz
+
+    # Find the extracted directory (it has a version-specific name)
+    toolbox_dir=$(find /tmp -maxdepth 1 -type d -name "jetbrains-toolbox-*" | head -n 1)
+
+    # Run the installer (this will install to ~/.local/share/JetBrains/Toolbox)
+    "$toolbox_dir/jetbrains-toolbox" &
 
     # Clean up
-    rm android-studio-2025.1.3.7-linux.tar.gz
+    rm -rf jetbrains-toolbox.tar.gz "$toolbox_dir"
 
-    echo "Android Studio installed to /opt/android-studio/"
-    echo "You can run it with: /opt/android-studio/bin/studio"
+    echo "JetBrains Toolbox installed."
+    echo "The Toolbox app has been launched. Use it to install Android Studio and other JetBrains IDEs."
+    echo "You can find it in your applications menu or run: ~/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox"
 }
 
 # Install Google Chrome Beta
@@ -334,8 +341,8 @@ setup_fedora() {
     # Install Node.js and global npm packages (after brew packages which includes fnm)
     install_node_and_tools
 
-    # Install Android Studio
-    install_android_studio
+    # Install JetBrains Toolbox (use it to install Android Studio and other JetBrains IDEs)
+    install_jetbrains_toolbox
 
     # Install Google Chrome Beta
     install_chrome
