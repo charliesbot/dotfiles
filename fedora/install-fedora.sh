@@ -60,25 +60,36 @@ install_fedora_packages() {
 install_jetbrains_toolbox() {
     echo "Installing JetBrains Toolbox..."
 
+    local install_dir="$HOME/.local/share/JetBrains/Toolbox/bin"
+    local symlink_dir="$HOME/.local/bin"
+
+    # Get latest version URL
+    ARCHIVE_URL=$(curl -s 'https://data.services.jetbrains.com/products/releases?code=TBA&latest=true&type=release' | grep -Po '"linux":.*?[^\\]",' | awk -F ':' '{print $3,":"$4}' | sed 's/[", ]//g')
+    ARCHIVE_FILENAME=$(basename "$ARCHIVE_URL")
+
     # Download JetBrains Toolbox
     cd /tmp
-    wget -O jetbrains-toolbox.tar.gz "https://download.jetbrains.com/toolbox/jetbrains-toolbox-3.0.0.59313.tar.gz"
+    rm "/tmp/$ARCHIVE_FILENAME" 2>/dev/null || true
+    wget -q "$ARCHIVE_URL"
 
-    # Extract the archive
-    tar -xzf jetbrains-toolbox.tar.gz
+    # Extract directly to install directory
+    mkdir -p "$install_dir"
+    rm "$install_dir/jetbrains-toolbox" 2>/dev/null || true
+    tar -xzf "$ARCHIVE_FILENAME" -C "$install_dir" --strip-components=1
+    rm "/tmp/$ARCHIVE_FILENAME"
+    chmod +x "$install_dir/jetbrains-toolbox"
 
-    # Find the extracted directory (it has a version-specific name)
-    toolbox_dir=$(find /tmp -maxdepth 1 -type d -name "jetbrains-toolbox-*" | head -n 1)
+    # Create symlink for CLI access
+    mkdir -p "$symlink_dir"
+    rm "$symlink_dir/jetbrains-toolbox" 2>/dev/null || true
+    ln -s "$install_dir/jetbrains-toolbox" "$symlink_dir/jetbrains-toolbox"
 
-    # Run the installer (this will install to ~/.local/share/JetBrains/Toolbox)
-    "$toolbox_dir/jetbrains-toolbox" &
-
-    # Clean up
-    rm -rf jetbrains-toolbox.tar.gz "$toolbox_dir"
+    # Run for the first time to set up desktop launcher
+    "$install_dir/jetbrains-toolbox" &
 
     echo "JetBrains Toolbox installed."
     echo "The Toolbox app has been launched. Use it to install Android Studio and other JetBrains IDEs."
-    echo "You can find it in your applications menu or run: ~/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox"
+    echo "You can also run it from terminal: jetbrains-toolbox"
 }
 
 # Install Google Chrome Beta
