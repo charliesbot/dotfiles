@@ -2,16 +2,6 @@
 
 # Shared utility functions for dotfiles installation
 
-# Function to keep updating the sudo timestamp until the script ends
-keep_sudo_alive() {
-    while true; do
-        sudo -n true
-        sleep 60
-    done 2>/dev/null &
-    KEEPALIVE_PID=$!
-    echo "$KEEPALIVE_PID"
-}
-
 # Function to create temporary polkit rule to prevent graphical password dialogs
 setup_polkit_nopasswd() {
     echo "Setting up polkit rule to prevent password dialogs..."
@@ -41,7 +31,7 @@ setup_unattended_auth() {
     # This loop is started directly, avoiding subshell issues.
     while true; do
         sudo -n true
-        sleep 60
+        sleep 30
     done 2>/dev/null &
     KEEPALIVE_PID=$!
 
