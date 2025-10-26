@@ -55,6 +55,10 @@ install_fedora_packages() {
     # Install Ghostty terminal emulator
     sudo dnf install -y ghostty
 
+    # Install Vicinae (file manager)
+    sudo dnf copr enable -y gvalkov/vicinae
+    sudo dnf install -y vicinae
+
     # Enable KVM for Android Emulator
     sudo dnf5 install @virtualization -y
     sudo usermod -aG kvm $(whoami)
