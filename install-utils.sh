@@ -56,29 +56,29 @@ install_catpuccin_themes() {
 
 # Install Homebrew
 install_brew() {
-    # 1. Check if brew is installed and log it
     if check_command brew; then
         echo "Homebrew is already installed."
     else
-        # 2. If not installed, install it
         echo "Installing Homebrew..."
         NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
 
-    # 3. Follow Next steps instructions to add Homebrew to PATH
     echo "Setting up Homebrew environment..."
 
     # Source brew for current session
-    test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
-    test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-
-    # Add to appropriate shell config based on current shell
-    if [[ "$SHELL" == *"zsh" ]]; then
-        echo "Adding Homebrew to ~/.zshrc"
-        echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >>~/.zshrc
+    if [[ "$(uname)" == "Darwin" ]]; then
+        # macOS
+        eval "$(/opt/homebrew/bin/brew shellenv)"
     else
-        echo "Adding Homebrew to ~/.bashrc"
-        echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >>~/.bashrc
+        # Linux
+        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    fi
+
+    # Add to shell config
+    if [[ "$SHELL" == *"zsh" ]]; then
+        grep -q "brew shellenv" ~/.zshrc 2>/dev/null || echo 'eval "$(brew shellenv)"' >>~/.zshrc
+    else
+        grep -q "brew shellenv" ~/.bashrc 2>/dev/null || echo 'eval "$(brew shellenv)"' >>~/.bashrc
     fi
 }
 
