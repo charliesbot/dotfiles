@@ -29,6 +29,10 @@ enable_third_party_repos() {
     flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
     flatpak update --appstream -y --noninteractive
 
+    # Install Extensions flatpak
+    echo "Installing GNOME Extensions flatpak..."
+    flatpak install -y flathub com.mattjakeman.ExtensionManager
+
     echo "Third-party repositories enabled."
 }
 
@@ -108,32 +112,6 @@ install_1password() {
     sudo dnf install -y 1password
 
     echo "1Password installed."
-}
-
-# Install Node.js and AI CLI tools
-install_node_and_tools() {
-    echo "Installing Node.js using fnm..."
-
-    # Setup fnm environment for current bash session
-    if command -v fnm &>/dev/null; then
-        eval "$(fnm env --use-on-cd --shell bash)"
-
-        # Install the latest Node.js version using fnm
-        fnm install latest
-        fnm use latest
-        fnm default latest
-
-        echo "Installing AI CLI tools..."
-        # Install Google Gemini CLI
-        npm install -g @google/gemini-cli
-        # Install Anthropic Claude Code CLI
-        npm install -g @anthropic-ai/claude-code
-
-        echo "Node.js and AI CLI tools installed."
-    else
-        echo "fnm not found. Skipping Node.js installation."
-        echo "Note: fnm should have been installed via Homebrew."
-    fi
 }
 
 # Install GPU drivers
@@ -241,28 +219,6 @@ set_hostname() {
     fi
 }
 
-# Prompt for Git user details to be applied later
-prompt_for_git_config() {
-    echo "Enter your details for Git configuration."
-    read -p "Enter your full name: " git_name
-    read -p "Enter your email: " git_email
-
-    export GIT_CONFIG_NAME="$git_name"
-    export GIT_CONFIG_EMAIL="$git_email"
-}
-
-# Apply stored Git configuration
-apply_git_config() {
-    if [[ -n "$GIT_CONFIG_NAME" && -n "$GIT_CONFIG_EMAIL" ]]; then
-        echo "Applying Git configuration..."
-        git config --global user.name "$GIT_CONFIG_NAME"
-        git config --global user.email "$GIT_CONFIG_EMAIL"
-        echo "Git user name and email have been set."
-    else
-        echo "Git user details not provided, skipping Git configuration."
-    fi
-}
-
 # Cleanup unwanted packages
 cleanup_packages() {
     echo "Cleaning up unwanted packages..."
@@ -279,6 +235,9 @@ cleanup_packages() {
 # Main setup function for Fedora
 setup_fedora() {
     echo -e "Setting up dotfiles for Fedora...\n"
+
+    # Suppress login message
+    suppress_login_message
 
     # Set hostname
     set_hostname
@@ -315,7 +274,6 @@ setup_fedora() {
 
     # Install Homebrew and packages (before changing shell)
     install_brew
-    install_starship
     install_brew_packages
 
     # Install Node.js and global npm packages (after brew packages which includes fnm)

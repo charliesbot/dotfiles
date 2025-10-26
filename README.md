@@ -39,15 +39,25 @@ Ready to get started? Follow the instructions for your operating system.
 
 ### macOS
 
-1.  **Clone the Repository**
+1.  **Install Xcode Command Line Tools**
 
-    You'll need `git` to be installed. It typically comes with the Xcode Command Line Tools.
+    You'll need the Xcode Command Line Tools to get `git`. Run this command:
+
+    ```bash
+    xcode-select --install
+    ```
+
+    A dialog will appear. Click **Install** and wait for it to complete (this may take a few minutes).
+
+2.  **Clone the Repository**
+
+    Use HTTPS to clone (no SSH setup needed yet):
 
     ```bash
     git clone https://github.com/charliesbot/dotfiles.git ~/dotfiles
     ```
 
-2.  **Run the Installation Script**
+3.  **Run the Installation Script**
 
     The installation script will handle the rest, including installing Homebrew and all other dependencies.
 
@@ -56,9 +66,9 @@ Ready to get started? Follow the instructions for your operating system.
     bash macos/install-macos.sh
     ```
 
-3.  **Authenticate and Update Git Remote**
+4.  **Authenticate with GitHub and Update Git Remote**
 
-    This final step is crucial for pushing changes back to your repository.
+    After the script completes, set up GitHub authentication with SSH:
 
     ```bash
     gh auth login --web --git-protocol ssh
@@ -68,6 +78,13 @@ Ready to get started? Follow the instructions for your operating system.
     - When `gh` offers to change your existing remote from HTTPS to SSH, say **Yes**.
 
     This will reconfigure your local repository to use your new SSH key, allowing you to `push` and `pull` changes seamlessly.
+
+    Alternatively, if `gh` doesn't prompt you, update the remote manually:
+
+    ```bash
+    cd ~/dotfiles
+    git remote set-url origin git@github.com:charliesbot/dotfiles.git
+    ```
 
 ---
 

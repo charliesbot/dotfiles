@@ -49,6 +49,39 @@ check_command() {
     command -v "$cmd" &>/dev/null
 }
 
+# Suppress login message
+# This creates ~/.hushlogin file which suppresses the login message that appears
+# when you open a new shell. The message typically looks like:
+#   Last login: Wed Oct 26 10:30:45 on ttys000
+# Creating this empty file tells the shell to skip displaying that message.
+suppress_login_message() {
+    echo "Suppressing login message..."
+    touch ~/.hushlogin
+    echo "Login message suppressed."
+}
+
+# Prompt for Git user details to be applied later
+prompt_for_git_config() {
+    echo "Enter your details for Git configuration."
+    read -p "Enter your full name: " git_name
+    read -p "Enter your email: " git_email
+
+    export GIT_CONFIG_NAME="$git_name"
+    export GIT_CONFIG_EMAIL="$git_email"
+}
+
+# Apply stored Git configuration
+apply_git_config() {
+    if [[ -n "$GIT_CONFIG_NAME" && -n "$GIT_CONFIG_EMAIL" ]]; then
+        echo "Applying Git configuration..."
+        git config --global user.name "$GIT_CONFIG_NAME"
+        git config --global user.email "$GIT_CONFIG_EMAIL"
+        echo "Git user name and email have been set."
+    else
+        echo "Git user details not provided, skipping Git configuration."
+    fi
+}
+
 install_catpuccin_themes() {
     mkdir -p ~/.config/tmux/plugins/catppuccin
     git clone -b v2.1.3 https://github.com/catppuccin/tmux.git ~/.config/tmux/plugins/catppuccin/tmux
@@ -85,7 +118,7 @@ install_brew() {
 # Create symlinks for dotfiles
 create_symlinks() {
     echo "Removing existing dotfiles..."
-    rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.config/nvim ~/.ideavimrc ~/.config/starship.toml ~/config/ghostty 2>/dev/null
+    rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.config/nvim ~/.ideavimrc ~/.config/starship.toml ~/.config/ghostty 2>/dev/null
 
     echo "Creating symlinks..."
     mkdir -p ~/projects ~/.config ~/.config/tmux ~/.config/tmux/plugins
@@ -101,22 +134,17 @@ create_symlinks() {
     tic -x tmux.terminfo
 }
 
-# Install Starship prompt
-install_starship() {
-    echo "Installing Starship"
-    curl -sS https://starship.rs/install.sh | sh -s -- -y
-}
-
 # Install common brew packages
 install_brew_packages() {
     brew update
 
-    brew install jesseduffield/lazydocker/lazydocker # this is the tap for lazydocker
-    brew install lazydocker                          # this is the actual package for lazy docker
+    # Install lazydocker (requires both tap and package)
+    brew install jesseduffield/lazydocker/lazydocker
+    brew install lazydocker
     brew install neovim
     brew install zsh-autosuggestions
     brew install zsh-syntax-highlighting
-    brew install nvm
+    brew install starship
     brew install devcontainer
     brew install scrcpy
     brew install tmux
@@ -176,6 +204,22 @@ configure_dns() {
     sudo systemctl restart systemd-resolved
 
     echo "DNS configured with Google DNS (primary) and Cloudflare DNS (fallback)."
+}
+
+# Install Node.js and AI CLI tools
+install_node_and_tools() {
+    echo "Installing Node.js using fnm..."
+    eval "$(fnm env)"
+
+    fnm install --latest
+    fnm use latest
+    fnm default latest
+
+    echo "Installing AI CLI tools..."
+    npm install -g @google/gemini-cli
+    npm install -g @anthropic-ai/claude-code
+
+    echo "Node.js and AI CLI tools installed."
 }
 
 # Print completion message

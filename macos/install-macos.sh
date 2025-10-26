@@ -24,6 +24,12 @@ configure_macos_defaults() {
     # Keyboard: set delay until key repeat (shorter delay)
     defaults write NSGlobalDomain InitialKeyRepeat -int 25
 
+    # Keyboard: set global key repeat speed to maximum (faster character repeat in all apps)
+    defaults write -g KeyRepeat -int 1
+
+    # Keyboard: set global initial key repeat delay to minimum (quicker response when holding keys)
+    defaults write -g InitialKeyRepeat -int 10
+
     # Window Manager: disable margins of tiled windows
     defaults write com.apple.WindowManager EnableTiledWindowMargins -bool false
 
@@ -75,9 +81,6 @@ install_brew_cask_packages() {
 install_macos_fonts() {
     echo "Installing fonts..."
 
-    # Add the homebrew fonts tap
-    brew tap homebrew/cask-fonts
-
     # Install fonts
     echo "Installing Cascadia Code font..."
     brew install --cask font-cascadia-code
@@ -98,32 +101,6 @@ install_macos_packages() {
     echo "macOS-specific packages installed."
 }
 
-# Install Node.js and AI CLI tools
-install_node_and_tools() {
-    echo "Installing Node.js using fnm..."
-
-    # Setup fnm environment for current bash session
-    if command -v fnm &>/dev/null; then
-        eval "$(fnm env --use-on-cd --shell bash)"
-
-        # Install the latest Node.js version using fnm
-        fnm install latest
-        fnm use latest
-        fnm default latest
-
-        echo "Installing AI CLI tools..."
-        # Install Google Gemini CLI
-        npm install -g @google/gemini-cli
-        # Install Anthropic Claude Code CLI
-        npm install -g @anthropic-ai/claude-code
-
-        echo "Node.js and AI CLI tools installed."
-    else
-        echo "fnm not found. Skipping Node.js installation."
-        echo "Note: fnm should have been installed via Homebrew."
-    fi
-}
-
 # Set computer name/hostname
 set_hostname() {
     echo "Current computer name: $(scutil --get ComputerName 2>/dev/null || echo 'Not set')"
@@ -140,28 +117,6 @@ set_hostname() {
         echo "Computer name set to: $new_name"
     else
         echo "Keeping current computer name."
-    fi
-}
-
-# Prompt for Git user details to be applied later
-prompt_for_git_config() {
-    echo "Enter your details for Git configuration."
-    read -p "Enter your full name: " git_name
-    read -p "Enter your email: " git_email
-
-    export GIT_CONFIG_NAME="$git_name"
-    export GIT_CONFIG_EMAIL="$git_email"
-}
-
-# Apply stored Git configuration
-apply_git_config() {
-    if [[ -n "$GIT_CONFIG_NAME" && -n "$GIT_CONFIG_EMAIL" ]]; then
-        echo "Applying Git configuration..."
-        git config --global user.name "$GIT_CONFIG_NAME"
-        git config --global user.email "$GIT_CONFIG_EMAIL"
-        echo "Git user name and email have been set."
-    else
-        echo "Git user details not provided, skipping Git configuration."
     fi
 }
 
@@ -184,6 +139,9 @@ install_xcode_tools() {
 # Main setup function for macOS
 setup_macos() {
     echo -e "Setting up dotfiles for macOS...\\n"
+
+    # Suppress login message
+    suppress_login_message
 
     # Install Xcode Command Line Tools first (required for many tools)
     install_xcode_tools
@@ -217,9 +175,6 @@ setup_macos() {
 
     # Install Node.js and global npm packages (after brew packages which includes fnm)
     install_node_and_tools
-
-    # Install Starship prompt
-    install_starship
 
     # Create dotfile symlinks
     create_symlinks
