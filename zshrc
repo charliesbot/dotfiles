@@ -76,6 +76,9 @@ source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zs
 export JAVA_HOME=$(brew --prefix openjdk)
 export PATH="$JAVA_HOME/bin:$PATH"
 
+# Bin
+export PATH="$HOME/.local/bin:$PATH"
+
 if [[ -f "$HOME/.hgrc" ]]; then
   source "$HOME/.zshrc-google-plugin"
 fi

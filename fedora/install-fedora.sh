@@ -58,38 +58,7 @@ install_fedora_packages() {
 
 # Install JetBrains Toolbox
 install_jetbrains_toolbox() {
-    echo "Installing JetBrains Toolbox..."
-
-    local install_dir="$HOME/.local/share/JetBrains/Toolbox/bin"
-    local symlink_dir="$HOME/.local/bin"
-
-    # Get latest version URL
-    ARCHIVE_URL=$(curl -s 'https://data.services.jetbrains.com/products/releases?code=TBA&latest=true&type=release' | grep -Po '"linux":.*?[^\\]",' | awk -F ':' '{print $3,":"$4}' | sed 's/[", ]//g')
-    ARCHIVE_FILENAME=$(basename "$ARCHIVE_URL")
-
-    # Download JetBrains Toolbox
-    cd /tmp
-    rm "/tmp/$ARCHIVE_FILENAME" 2>/dev/null || true
-    wget -q "$ARCHIVE_URL"
-
-    # Extract directly to install directory
-    mkdir -p "$install_dir"
-    rm "$install_dir/jetbrains-toolbox" 2>/dev/null || true
-    tar -xzf "$ARCHIVE_FILENAME" -C "$install_dir" --strip-components=1
-    rm "/tmp/$ARCHIVE_FILENAME"
-    chmod +x "$install_dir/jetbrains-toolbox"
-
-    # Create symlink for CLI access
-    mkdir -p "$symlink_dir"
-    rm "$symlink_dir/jetbrains-toolbox" 2>/dev/null || true
-    ln -s "$install_dir/jetbrains-toolbox" "$symlink_dir/jetbrains-toolbox"
-
-    # Run for the first time to set up desktop launcher
-    "$install_dir/jetbrains-toolbox" &
-
-    echo "JetBrains Toolbox installed."
-    echo "The Toolbox app has been launched. Use it to install Android Studio and other JetBrains IDEs."
-    echo "You can also run it from terminal: jetbrains-toolbox"
+    bash "$SCRIPT_DIR/jetbrains-toolbox.sh"
 }
 
 # Install Google Chrome Beta
