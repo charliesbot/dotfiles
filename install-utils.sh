@@ -142,6 +142,8 @@ install_brew_packages() {
     brew install jesseduffield/lazydocker/lazydocker
     brew install lazydocker
     brew install neovim
+    brew install zoxide
+    brew install --cask claude-code
     brew install zsh-autosuggestions
     brew install zsh-syntax-highlighting
     brew install starship
@@ -151,9 +153,16 @@ install_brew_packages() {
     brew install gh
     brew install zig
     brew install lazygit
-    brew install fnm
-    brew install openjdk
-    brew install zoxide
+    brew install gemini-cli
+    # Java 17 is required by some plugins.
+    # It also requires to be symlinked.
+    brew install openjdk@17
+    sudo ln -sfn /opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-17.jdk
+
+    # Install fonts
+    echo "Installing fonts via Homebrew..."
+    brew install --cask font-jetbrains-mono
+    brew install --cask font-cascadia-code
 
     if ! check_command fzf; then
         brew install fzf
@@ -182,19 +191,6 @@ setup_zsh_shell() {
     fi
 }
 
-# Install fonts for Linux
-install_linux_fonts() {
-    # Install Fonts
-    mkdir -p ~/.local/share/fonts
-    echo "Installing JetBrains Mono"
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/JetBrains/JetBrainsMono/master/install_manual.sh)"
-    echo "Installing Cascadia"
-    wget -qO- $(curl -s https://api.github.com/repos/microsoft/cascadia-code/releases/latest | grep browser_download_url | grep zip | cut -d '"' -f 4) -O cascadia.zip
-    unzip -o cascadia.zip -d ~/.local/share/fonts
-    rm cascadia.zip
-    fc-cache -fv
-}
-
 # Configure DNS servers
 configure_dns() {
     echo "Configuring DNS servers..."
@@ -208,16 +204,13 @@ configure_dns() {
 
 # Install Node.js and AI CLI tools
 install_node_and_tools() {
+    brew install fnm
     echo "Installing Node.js using fnm..."
     eval "$(fnm env)"
 
     fnm install --latest
     fnm use latest
     fnm default latest
-
-    echo "Installing AI CLI tools..."
-    npm install -g @google/gemini-cli
-    npm install -g @anthropic-ai/claude-code
 
     echo "Node.js and AI CLI tools installed."
 }

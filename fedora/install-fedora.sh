@@ -278,10 +278,13 @@ setup_fedora() {
 
     # Install Homebrew and packages (before changing shell)
     install_brew
-    install_brew_packages
 
     # Install Node.js and global npm packages (after brew packages which includes fnm)
+    # This step MUST go before the rest of the brew packages because
+    # it installs node, which might be a dependency of other brew packages.
     install_node_and_tools
+
+    install_brew_packages
 
     # Install JetBrains Toolbox (use it to install Android Studio and other JetBrains IDEs)
     install_jetbrains_toolbox
@@ -294,9 +297,6 @@ setup_fedora() {
 
     # Install 1Password
     install_1password
-
-    # Install fonts
-    install_linux_fonts
 
     # Cleanup unwanted packages
     cleanup_packages
