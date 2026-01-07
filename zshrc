@@ -20,6 +20,13 @@ alias glgg='git log --graph'
 alias grmc='git rm --cached'
 alias gst='git status'
 alias gp='git push'
+# Branch Management
+alias gsw='git switch'
+alias gsc='git switch -c'  # Think "Switch & Create"
+alias gsm='git switch main' # Quick jump to main/master
+# File Recovery (The other half of checkout)
+alias grs='git restore'
+alias grss='git restore --staged' # To unstage files
 
 # History configuration
 HISTFILE=${HOME}/.zsh_history
