@@ -1,0 +1,41 @@
+{
+  "skill_name": "agents-md",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "hey can you review my AGENTS.md and improve it? i think it's missing some stuff but the structure is fine",
+      "expected_output": "Should assess the file as a patch (not refactor), identify missing sections (No 'Never' section, no common commands, no priorities, no tooling context), preserve the existing structure and voice, present a plan before making changes, and produce output under 200 lines with CLAUDE.md and GEMINI.md symlinks",
+      "files": ["evals/sample-patch-agents.md"]
+    },
+    {
+      "id": 2,
+      "prompt": "my claude.md is like 300 lines and claude keeps ignoring half of it, can you fix it",
+      "expected_output": "Should assess the file as a refactor (high score on length, specificity, scope mixing), explain why it's recommending a refactor, call out specific anti-patterns (encyclopedia, wishlist, changelog, scope mixing), present a new structure before writing, produce output under 200 lines (ideally under 100), create AGENTS.md and symlink CLAUDE.md to it, warn about replacing existing CLAUDE.md with a symlink",
+      "files": ["evals/sample-refactor-claude.md"]
+    },
+    {
+      "id": 3,
+      "prompt": "i'm starting a new rust project, CLI tool for parsing logs. can you set up my agents file?",
+      "expected_output": "Should run the discovery script first to detect the stack, present discovery summary to the user, draft an AGENTS.md specific to a Rust CLI project (not a generic template), follow recommended section ordering from BEST_PRACTICES.md, create AGENTS.md with CLAUDE.md and GEMINI.md symlinks, be concise (new project = lean file), only ask about things the script can't discover",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "use the agents-md skill to check my AGENTS.md",
+      "expected_output": "Should assess the file, score it 6-7 (healthy), report 'No changes recommended', and STOP without proposing a patch or refactor",
+      "files": ["evals/sample-healthy-agents.md"]
+    },
+    {
+      "id": 5,
+      "prompt": "improve my AGENTS.md",
+      "expected_output": "Should assess the file, recognize the explicit change request ('improve'), skip the exit gate regardless of score, present findings, and propose a patch",
+      "files": ["evals/sample-healthy-agents.md"]
+    },
+    {
+      "id": 6,
+      "prompt": "use the agents-md skill on my project",
+      "expected_output": "Should assess the file, score it 8-10 (minor issues), present findings, and ask the user if they want changes rather than proposing a patch directly",
+      "files": ["evals/sample-patch-agents.md"]
+    }
+  ]
+}

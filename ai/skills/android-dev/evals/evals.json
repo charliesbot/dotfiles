@@ -1,0 +1,122 @@
+{
+  "skill_name": "android-dev",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I want to add a notifications feature to my app. Users should see a list of notifications on their phone and a summary on their Wear OS watch. Scaffold the feature and set up the basic structure.",
+      "expected_output": "Uses scaffold-feature.sh with --wear flag, creates correct module structure with platform submodules, follows naming conventions",
+      "files": [],
+      "assertions": [
+        { "text": "Uses the scaffold-feature.sh script (not manual file creation) to generate the feature", "type": "manual" },
+        { "text": "Passes the --wear flag to scaffold-feature.sh since the feature targets both phone and Wear OS", "type": "manual" },
+        { "text": "Feature is created under features/notifications/ with both app/ and wear/ submodules", "type": "manual" },
+        { "text": "Does not create a flat feature module (no features/notifications/src/ without platform submodules)", "type": "manual" },
+        { "text": "Mentions registering Koin DI modules in the platform's DI setup as a follow-up step", "type": "manual" },
+        { "text": "Mentions adding navigation routes in the platform modules as a follow-up step", "type": "manual" },
+        { "text": "Mentions adding strings in :core with English and Spanish translations", "type": "manual" },
+        { "text": "Does not add dependencies between feature modules", "type": "manual" }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I need a use case in :core that fetches the user's workout history from the repository and returns it sorted by date. Create the GetWorkoutHistory use case.",
+      "expected_output": "Uses scaffold-usecase.sh, places use case in :core, follows use case pattern with Result<T>, wires DI",
+      "files": [],
+      "assertions": [
+        { "text": "Uses the scaffold-usecase.sh script to generate the use case boilerplate", "type": "manual" },
+        { "text": "Use case is placed in :core (core/domain/usecase/), not in a feature module", "type": "manual" },
+        { "text": "Use case returns Result<T> (not raw types or nullable types)", "type": "manual" },
+        { "text": "Use case takes a repository as a constructor parameter (dependency injection)", "type": "manual" },
+        { "text": "Mentions registering the use case in Koin core DI module with factory { GetWorkoutHistoryUseCase(get()) }", "type": "manual" },
+        { "text": "Does not put business logic in a feature module", "type": "manual" },
+        { "text": "Mentions writing a test for the use case", "type": "manual" }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I have a data class called WorkoutSummary that's used by both the :features:dashboard and :features:profile features. Right now it's in features/dashboard/app/. Where should I move it?",
+      "expected_output": "Recommends moving to :core:domain:model, explains features can't depend on each other, only on :core",
+      "files": [],
+      "assertions": [
+        { "text": "Recommends moving WorkoutSummary to :core (specifically core/domain/model/)", "type": "manual" },
+        { "text": "Explains that feature modules cannot depend on each other — only on :core", "type": "manual" },
+        { "text": "Does not suggest adding a dependency between :features:dashboard and :features:profile", "type": "manual" },
+        { "text": "Does not suggest creating a new shared module between features (the answer is :core)", "type": "manual" },
+        { "text": "Mentions that Gradle enforces this compile-time boundary", "type": "manual" }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "We already have a :features:dashboard:app module for phone. I want to add watch support so users can see their dashboard on Wear OS too. Walk me through what I need to do.",
+      "expected_output": "Creates wear/ submodule alongside app/, uses Wear Material 3, separate ViewModel, wires in :wear module",
+      "files": [],
+      "assertions": [
+        { "text": "Creates a wear/ submodule alongside the existing app/ submodule (features/dashboard/wear/)", "type": "manual" },
+        { "text": "Wear submodule gets its own ViewModel (e.g., WearDashboardViewModel), not sharing the phone ViewModel", "type": "manual" },
+        { "text": "Uses Wear Material 3 components (androidx.wear.compose.material3), not regular Material 3", "type": "manual" },
+        { "text": "Creates a Wear-specific Koin DI module for the feature", "type": "manual" },
+        { "text": "Mentions wiring navigation in the :wear platform module (not in the feature module)", "type": "manual" },
+        { "text": "States that business logic in :core is already shared — no changes needed there", "type": "manual" },
+        { "text": "Does not suggest sharing UI or ViewModels between app/ and wear/ submodules", "type": "manual" }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "I want to add a home screen widget that shows today's step count. Set it up for me.",
+      "expected_output": "Creates :widget module at root level, depends only on :core, uses Glance or AppWidgetProvider, does not put code in :app",
+      "files": [],
+      "assertions": [
+        { "text": "Creates a :widget module at root level (widget/), not inside :app or a feature module", "type": "manual" },
+        { "text": "Widget module depends only on :core, not on :app, :wear, or any feature module", "type": "manual" },
+        { "text": "Uses Glance (Compose-based) or AppWidgetProvider for the widget implementation", "type": "manual" },
+        { "text": "Accesses step count data through a use case or repository from :core", "type": "manual" },
+        { "text": "Does not put widget code inside the :app module", "type": "manual" },
+        { "text": "Mentions adding the widget module to settings.gradle.kts", "type": "manual" }
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "I need a new settings feature — just for the phone app, no watch support needed. Users can toggle dark mode and change their language. Set up the feature module.",
+      "expected_output": "Uses scaffold-feature.sh WITHOUT --wear, still creates app/ submodule (not flat), adds strings_settings.xml in :core",
+      "files": [],
+      "assertions": [
+        { "text": "Uses scaffold-feature.sh without the --wear flag (phone-only feature)", "type": "manual" },
+        { "text": "Creates features/settings/app/ submodule, NOT a flat features/settings/src/ structure", "type": "manual" },
+        { "text": "Does NOT create a features/settings/wear/ submodule since Wear support was not requested", "type": "manual" },
+        { "text": "Uses Koin for DI (not Hilt/Dagger)", "type": "manual" },
+        { "text": "Uses StateFlow in the ViewModel (not LiveData)", "type": "manual" },
+        { "text": "Adds strings in :core as strings_settings.xml (not in the feature module's own resources)", "type": "manual" },
+        { "text": "Mentions that adding Wear support later is just adding a wear/ sibling submodule", "type": "manual" }
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "We built :features:feed as a phone-only feature 3 months ago. It has its own ViewModel, screens, and some string resources in the feature's app/ module. Now the PM wants the feed on Wear OS too. Walk me through the full refactor — what needs to move, what stays, and what's new.",
+      "expected_output": "Moves strings from feature to :core as strings_feed.xml, creates wear/ submodule with separate ViewModel, keeps core logic untouched, explains the string migration specifically",
+      "files": [],
+      "assertions": [
+        { "text": "Identifies that string resources currently in features/feed/app/res/ need to move to :core as strings_feed.xml", "type": "manual" },
+        { "text": "Creates features/feed/wear/ submodule alongside existing features/feed/app/", "type": "manual" },
+        { "text": "Wear submodule gets its own ViewModel (not sharing the phone ViewModel)", "type": "manual" },
+        { "text": "Uses Wear Material 3 components, not regular Material 3", "type": "manual" },
+        { "text": "States that business logic in :core does not need changes", "type": "manual" },
+        { "text": "Explains why strings must move to :core (shared across platforms) rather than duplicating them", "type": "manual" },
+        { "text": "Mentions updating the phone feature's code to reference the moved string resources", "type": "manual" },
+        { "text": "Does not suggest sharing ViewModels or UI between app/ and wear/", "type": "manual" }
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "I'm fetching articles from the API and caching them in Room. Should this caching logic live in the use case (GetArticlesUseCase) or in the repository (ArticleRepositoryImpl)? Also, after fetching I need to filter out articles the user has already read — where does that filtering go?",
+      "expected_output": "Caching in repository (data layer concern), filtering read articles in use case (business rule). Explains the boundary between data and domain layers in this architecture.",
+      "files": [],
+      "assertions": [
+        { "text": "Places caching logic (fetch from API + store in Room) in the repository, not in the use case", "type": "manual" },
+        { "text": "Places the 'filter out read articles' logic in the use case, not in the repository", "type": "manual" },
+        { "text": "Explains why: caching is a data-layer concern (how data is stored/retrieved), while filtering by read-status is a business rule (what data the user should see)", "type": "manual" },
+        { "text": "Repository method signature returns raw data without business filtering applied", "type": "manual" },
+        { "text": "Use case follows the project pattern: suspend operator fun invoke() returning Result<T>", "type": "manual" }
+      ]
+    }
+  ]
+}

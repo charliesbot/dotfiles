@@ -1,0 +1,60 @@
+{
+  "skill_name": "web-dev",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I want to start a new side project called recipe-box. It's a recipe organizer app. Set up the project for me.",
+      "expected_output": "Uses the scaffold script, correct conventions, defers Firebase",
+      "files": [],
+      "assertions": [
+        { "text": "Uses new-project.sh scaffold script instead of manual ng new", "type": "manual" },
+        { "text": "Project name is recipe-box", "type": "manual" },
+        { "text": "Does not install Tailwind, Sass, Angular Material, or @angular/fire", "type": "manual" },
+        { "text": "Defers Firebase setup — does not create Firebase project, install SDK, or set up DNS unless the user explicitly asked for it", "type": "manual" }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I need a bookmarks feature for my app. Users can save URLs with a title and tags, and see them in a list. Add the feature with the component, routing, and a Firestore service for persistence.",
+      "expected_output": "Creates bookmarks/ at top level with 2025 naming, OnPush, signals, Firebase JS SDK, security rules",
+      "files": [],
+      "assertions": [
+        { "text": "Feature folder is bookmarks/ at top level (not nested under features/ or pages/)", "type": "manual" },
+        { "text": "Uses 2025 naming convention (bookmarks.ts not bookmarks.component.ts, no Component/Service suffixes)", "type": "manual" },
+        { "text": "All components use ChangeDetectionStrategy.OnPush", "type": "manual" },
+        { "text": "Uses signals for state (signal/computed/effect, not BehaviorSubject/RxJS)", "type": "manual" },
+        { "text": "Uses Firebase JS SDK directly (not @angular/fire)", "type": "manual" },
+        { "text": "Includes Firestore security rules with auth-owns-data pattern", "type": "manual" },
+        { "text": "Firestore service injects from core/ wrapper (e.g. core/firebase), not raw Firebase imports", "type": "manual" },
+        { "text": "Uses DestroyRef to clean up onSnapshot listener if service is not providedIn root, or if component manages the listener lifecycle", "type": "manual" }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "My project mood-tracker is ready to go live. Set up Firebase App Hosting, configure the subdomain mood-tracker.charlies.bot, and deploy it.",
+      "expected_output": "Uses App Hosting, apphosting.yaml, gcloud MCP for DNS, charlies-bot zone",
+      "files": [],
+      "assertions": [
+        { "text": "Uses Firebase App Hosting (not classic firebase deploy --only hosting)", "type": "manual" },
+        { "text": "Creates or references apphosting.yaml with appropriate config", "type": "manual" },
+        { "text": "Uses run_gcloud_command MCP tool for DNS setup", "type": "manual" },
+        { "text": "DNS records target charlies-bot zone specifically", "type": "manual" },
+        { "text": "Uses firebase apphosting:backends:create CLI command for backend setup (Firebase MCP does not support App Hosting)", "type": "manual" },
+        { "text": "Warns user that the backends:create command will open their browser for GitHub connection via Developer Connect", "type": "manual" },
+        { "text": "Deploys via git push (not firebase deploy for hosting)", "type": "manual" }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "I need an API endpoint in my app that takes a URL and returns the page title and meta description. Add a server route for it.",
+      "expected_output": "Uses Angular server routes on App Hosting, not Cloud Functions",
+      "files": [],
+      "assertions": [
+        { "text": "Creates an Angular server route (not a Cloud Function)", "type": "manual" },
+        { "text": "Does not suggest firebase deploy --only functions for this endpoint", "type": "manual" },
+        { "text": "The endpoint runs on the same App Hosting Node.js server as the Angular app", "type": "manual" },
+        { "text": "Does not create a separate functions/ directory or firebase-functions dependency for this", "type": "manual" }
+      ]
+    }
+  ]
+}
