@@ -1,0 +1,77 @@
+set NERDTree
+set surround
+set commentary
+set highlightedyank
+set matchit
+set argtextobj
+set which-key
+set multiple-cursors
+set ideajoin
+set ideastatusicon=disabled
+
+set visualbell
+set noerrorbells
+
+set number
+set scrolloff=10 sidescrolloff=10
+set splitright
+set splitbelow
+
+set hlsearch
+set ignorecase
+set smartcase
+set incsearch
+set wrapscan
+
+set gdefault
+set history=10000
+set clipboard=unnamedplus,unnamed,ideaput
+
+let mapleader = " "
+
+" Edit ideavim config
+nnoremap <leader>vv :e ~/.ideavimrc<CR>
+nnoremap <leader>vr :source ~/.ideavimrc<CR>
+
+" Clear search highlighting
+nnoremap <Esc> :nohls<return><esc>
+
+" Window navigation (matches neovim <C-h/j/k/l>)
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+" Splits
+nnoremap <leader>v :vsplit<CR>
+nnoremap <leader>V :action SplitVertically<CR>
+
+" File tree
+map <C-b> :NERDTreeToggle<CR>
+
+" LSP-like bindings (matching neovim)
+map gd <Action>(GotoDeclaration)
+map gh <Action>(ShowErrorDescription)
+map grr <Action>(FindUsages)
+map grn <Action>(RenameElement)
+map gra <Action>(ShowIntentionActions)
+map gri <Action>(GotoImplementation)
+map gO <Action>(FileStructurePopup)
+
+" Diagnostics (matching neovim <leader>n / <leader>m)
+map <leader>n <Action>(GotoNextError)
+map <leader>m <Action>(GotoPreviousError)
+map <leader>q <Action>(ActivateProblemsViewToolWindow)
+
+" Search (matching neovim telescope bindings)
+map <leader>sf <Action>(SearchEverywhere)
+map <leader>sg <Action>(FindInPath)
+map <leader>sw <Action>(FindWordAtCaret)
+map <C-p> <Action>(SearchEverywhere)
+
+" Formatting
+map <leader>f <Action>(ReformatCode)
+
+" Completion
+imap <C-n> <ESC>:action HippieCompletion<CR>a
+imap <C-p> <ESC>:action HippieBackwardCompletion<CR>a

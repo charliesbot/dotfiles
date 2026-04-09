@@ -1,0 +1,14 @@
+# custom Android Studio VM options, see https://developer.android.com/studio/intro/studio-config.html
+
+# Initial and maximum heap size
+
+-Xms16384m
+-Xmx16384m
+
+# Increase the reserved code cache size
+
+-XX:ReservedCodeCacheSize=1024m
+
+# For Wayland rendering
+
+awt.toolkit.name=WLToolkit
