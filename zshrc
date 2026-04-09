@@ -53,6 +53,8 @@ export PATH=$PATH:$ANDROID_HOME/tools
 export PATH=$PATH:$ANDROID_HOME/tools/bin
 export PATH=$PATH:$ANDROID_HOME/platform-tools
 
+#Google Cloud
+export PATH=/opt/homebrew/share/google-cloud-sdk/bin:"$PATH"
 # Flutter
 export PATH="$PATH:`pwd`/flutter/bin"
 export PATH=~/.local/bin:$PATH
