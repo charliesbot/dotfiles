@@ -62,7 +62,9 @@ export LANG=en_US.UTF-8
 # GitHub Credentials
 GITHUB_USERNAME=charliesbot
 
-if [[ $OSTYPE = (linux)* ]]; then
+if [[ "$(uname)" == "Darwin" ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+else
   test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
   test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
@@ -86,5 +88,8 @@ fi
 
 export FZF_DEFAULT_COMMAND='rg --files --fixed-strings --hidden --follow --glob "!.git/*"'
 
-# Added by Antigravity
+# OpenCode
+export PATH="$HOME/.opencode/bin:$PATH"
+
+# Antigravity
 export PATH="$HOME/.antigravity/antigravity/bin:$PATH"

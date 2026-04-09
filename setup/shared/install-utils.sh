@@ -93,9 +93,8 @@ install_brew() {
         eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     fi
 
-    if [[ "$SHELL" == *"zsh" ]]; then
-        grep -q "brew shellenv" ~/.zshrc 2>/dev/null || echo 'eval "$(brew shellenv)"' >>~/.zshrc
-    else
+    # brew shellenv is already in config/zshrc — only append for non-zsh shells
+    if [[ "$SHELL" != *"zsh" ]]; then
         grep -q "brew shellenv" ~/.bashrc 2>/dev/null || echo 'eval "$(brew shellenv)"' >>~/.bashrc
     fi
 }
