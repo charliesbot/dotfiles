@@ -156,7 +156,32 @@ setup_macos() {
 
     setup_zsh_shell
 
+    setup_github_ssh
+
     print_completion
+}
+
+# Authenticate with GitHub and switch remote to SSH
+setup_github_ssh() {
+    if ! check_command gh; then
+        echo "gh not found, skipping GitHub SSH setup."
+        return
+    fi
+
+    if gh auth status &>/dev/null; then
+        echo "Already authenticated with GitHub."
+    else
+        echo "Setting up GitHub authentication..."
+        gh auth login --web --git-protocol ssh
+    fi
+
+    # Switch dotfiles remote from HTTPS to SSH if needed
+    local remote_url
+    remote_url=$(git -C ~/dotfiles remote get-url origin 2>/dev/null)
+    if [[ "$remote_url" == https://* ]]; then
+        echo "Switching dotfiles remote to SSH..."
+        git -C ~/dotfiles remote set-url origin git@github.com:charliesbot/dotfiles.git
+    fi
 }
 
 # Detect OS and run setup
