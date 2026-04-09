@@ -124,7 +124,6 @@ install_brew_packages() {
     brew update
 
     brew install jesseduffield/lazydocker/lazydocker
-    brew install lazydocker
     brew install neovim
     brew install zoxide
     brew install zsh-autosuggestions
