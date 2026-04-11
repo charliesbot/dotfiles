@@ -124,6 +124,7 @@ install_brew_packages() {
 
     brew install jesseduffield/lazydocker/lazydocker
     brew install neovim
+    brew install tree-sitter-cli
     brew install zoxide
     brew install zsh-autosuggestions
     brew install zsh-syntax-highlighting
