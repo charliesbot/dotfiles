@@ -102,7 +102,7 @@ install_brew() {
 # Create symlinks for dotfiles
 create_symlinks() {
     echo "Removing existing dotfiles..."
-    rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.config/nvim ~/.ideavimrc ~/.config/starship.toml ~/.config/ghostty 2>/dev/null
+    rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.config/nvim ~/.ideavimrc ~/.config/starship.toml ~/.config/ghostty ~/chai.toml 2>/dev/null
 
     echo "Creating symlinks..."
     mkdir -p ~/projects ~/.config ~/.config/tmux ~/.config/tmux/plugins
@@ -113,6 +113,7 @@ create_symlinks() {
     ln -s ~/dotfiles/config/ghostty ~/.config/ghostty
     ln -s ~/dotfiles/config/starship.toml ~/.config/starship.toml
     ln -s ~/dotfiles/config/ideavimrc ~/.ideavimrc
+    ln -s ~/dotfiles/config/chai.toml ~/chai.toml
 
     # Italics and true color profile for tmux
     tic -x ~/dotfiles/config/tmux.terminfo

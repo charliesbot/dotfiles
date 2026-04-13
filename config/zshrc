@@ -47,8 +47,6 @@ export PATH=/opt/homebrew/share/google-cloud-sdk/bin:"$PATH"
 # Go
 export GOPATH="$HOME/go"
 export PATH="$GOPATH/bin:$PATH"
-# Cargo
-export PATH="$HOME/.cargo/bin:$PATH"
 # Bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"

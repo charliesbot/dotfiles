@@ -22,6 +22,7 @@ correctness > simplicity > performance > readability
 ## Workflow
 
 Plans must include:
+
 - A clear breakdown of what will change and why.
 - Code snippets showing the key parts of the proposed solution.
 - Diagrams (ASCII/Mermaid) when they clarify architecture, data flow, or component relationships.

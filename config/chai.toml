@@ -1,0 +1,35 @@
+platforms = ["claude", "gemini"]
+
+instructions = "~/dotfiles/ai/instructions/AGENTS.md"
+
+[deps]
+angular-skills = "https://github.com/angular/skills"
+
+[skills]
+paths = ["~/dotfiles/ai/skills", "@angular-skills", "~/.gemini/extensions/workspace/skills"]
+
+[subagents]
+paths = ["~/dotfiles/ai/subagents"]
+
+[mcp.angular-cli]
+command = "npx"
+args = ["-y", "@angular/cli", "mcp"]
+
+[mcp.gcloud]
+command = "npx"
+args = ["-y", "@google-cloud/gcloud-mcp"]
+
+[mcp.pencil]
+command = "/Applications/Pencil.app/Contents/Resources/app.asar.unpacked/out/mcp-server-darwin-arm64"
+args = ["--app", "desktop"]
+
+[mcp.cloud-run]
+command = "npx"
+args = ["-y", "@google-cloud/cloud-run-mcp"]
+
+[mcp.firebase-mcp-server]
+command = "npx"
+args = ["-y", "firebase-tools@latest", "mcp"]
+
+[gemini.extensions]
+workspace = "https://github.com/gemini-cli-extensions/workspace"
