@@ -592,6 +592,7 @@ require('lazy').setup({
         'prettierd', -- Prettier daemon for faster formatting (used by gts)
         'clang-format', -- C/C++ formatter
         'shfmt', -- Shell script formatter
+        'taplo', -- TOML formatter
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -645,6 +646,7 @@ require('lazy').setup({
         bash = { 'shfmt' },
         sh = { 'shfmt' },
         zig = { 'zig' },
+        toml = { 'taplo' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
