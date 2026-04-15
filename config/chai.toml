@@ -15,7 +15,7 @@ paths = [
 ]
 
 [subagents]
-paths = ["~/dotfiles/ai/subagents"]
+paths = ["~/dotfiles/ai/subagents/*"]
 
 [mcp.angular-cli]
 command = "npx"
