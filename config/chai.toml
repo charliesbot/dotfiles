@@ -5,13 +5,15 @@ instructions = "~/dotfiles/ai/instructions/AGENTS.md"
 [deps]
 angular-skills = "https://github.com/angular/skills"
 material-3-skills = "https://github.com/hamen/material-3-skill"
+android-skills = "https://github.com/android/skills"
 
 [skills]
 paths = [
   "~/dotfiles/ai/skills/*",
-  "@angular-skills/*",
-  "@material-3-skills",
   "~/.gemini/extensions/workspace/skills/*",
+  "@angular-skills/*",
+  "@android-skills/*",
+  "@material-3-skills",
 ]
 
 [subagents]
