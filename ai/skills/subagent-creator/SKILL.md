@@ -15,6 +15,8 @@ Read `references/BEST_PRACTICES.md` before drafting any agent. It contains the d
 
 Read `references/PLATFORM_MAP.md` when you need to look up field compatibility, tool name mapping, or platform-specific features the user asks about.
 
+Use `assets/example-before.md` and `assets/example-after.md` as a concrete before/after reference when drafting or validating agents. The "before" shows common anti-patterns (vague instructions, no verification, no boundaries, no output format). The "after" shows the same agent rewritten following best practices.
+
 ## Core Workflow
 
 ### 1. Clarify the Role
@@ -84,6 +86,8 @@ After drafting, check the agent against the validation checklist in `references/
 | Token efficiency        | Terse output instruction included.                                                              |
 | Description quality     | Description is specific enough for automatic delegation routing. Includes example scenarios.    |
 | Portable fields only    | Frontmatter uses only `name`, `description`, `model`, and `tools`. No platform-specific fields. |
+
+**Line count check:** After drafting, run `wc -l` on the generated file to get the actual line count. Do not estimate — LLMs are unreliable at counting lines. If it exceeds 120, trim before proceeding.
 
 If any check fails, fix it before presenting to the user. Show the validation results alongside the draft so the user understands the reasoning.
 
