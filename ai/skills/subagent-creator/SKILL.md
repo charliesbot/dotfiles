@@ -40,12 +40,13 @@ model: inherit
 ---
 ```
 
-The `tools` field uses different names on each platform (Claude: `Read`, `Grep`, `Glob`; Gemini: `read_file`, `grep_search`, `glob`). Generate **two versions** of the file — one with Claude tool names, one with Gemini tool names. The body (system prompt) is identical in both.
+**Omit the `tools` field by default.** When `tools` is absent, both platforms grant all inherited tools — the agent works identically on Claude and Gemini from a single file. This is the most portable approach.
 
-Tell the user which file goes where:
+Only add `tools` when the user explicitly wants to restrict tool access (e.g., a read-only agent). When adding tools:
 
-- Claude version → `~/.claude/agents/<name>.md` or `.claude/agents/<name>.md`
-- Gemini version → `~/.gemini/agents/<name>.md` or `.gemini/agents/<name>.md`
+1. Use Claude tool names as the default (e.g., `tools: Read, Grep, Glob`)
+2. Warn the user: adding `tools` breaks Gemini portability because tool names differ between platforms
+3. Show the Gemini equivalent line so the user can adapt if needed (see `references/PLATFORM_MAP.md` for the full mapping)
 
 #### Writing the System Prompt (Body)
 
