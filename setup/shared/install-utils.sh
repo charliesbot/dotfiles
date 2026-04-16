@@ -115,6 +115,10 @@ create_symlinks() {
     ln -s ~/dotfiles/config/ideavimrc ~/.ideavimrc
     ln -s ~/dotfiles/config/chai.toml ~/chai.toml
 
+    # CLI tools
+    mkdir -p ~/.local/bin
+    ln -sf ~/dotfiles/config/scripts/discover.sh ~/.local/bin/discover
+
     # Italics and true color profile for tmux
     tic -x ~/dotfiles/config/tmux.terminfo
 }

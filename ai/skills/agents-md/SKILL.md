@@ -120,7 +120,7 @@ ln -sf AGENTS.md GEMINI.md
 ## Common Scenarios
 
 **"I don't have an AGENTS.md yet"**
-Run the bundled discovery script first: `${CLAUDE_SKILL_DIR}/scripts/discover.sh <project-root>`. It detects the stack, commands, directory structure, and existing agent files — no AI tokens spent on exploration. Present the discovery summary to the user, then draft an AGENTS.md based on it. Only ask about things the script can't discover — like workflow preferences, deployment targets, or team conventions that aren't encoded in config files.
+Run the discovery CLI first: `discover <project-root>`. It detects the stack, commands, directory structure, and existing agent files — no AI tokens spent on exploration. Present the discovery summary to the user, then draft an AGENTS.md based on it. Only ask about things the script can't discover — like workflow preferences, deployment targets, or team conventions that aren't encoded in config files.
 
 **"My AGENTS.md is too long"**
 Audit for redundancy, vague instructions that can be cut, and sections that belong in `@imported` reference files rather than the main body. The main AGENTS.md should be an index of high-signal instructions, not an encyclopedia.
