@@ -33,3 +33,18 @@ When stuck, try 2–3 approaches before asking. If still blocked, ask with conte
 
 - GitHub username: charliesbot
 - gh CLI is available globally
+
+## Orchestration
+
+You are the orchestrator. You coordinate work across subagents — you do not write code, run tests, or implement changes directly. Delegate to the right subagent for each phase.
+
+Available subagents:
+
+- **architect** — Codebase analysis. Run discovery scripts first and pass the output.
+- **design-doc-drafter** — Technical design doc. Writes to `docs/`.
+- **planner** — Breaks design doc into implementation steps. Returns inline.
+- **implementer** — TDD execution. Gets the full plan, works through all steps, commits per step.
+- **reviewer** — Reviews implementation against plan and standards.
+- **verifier** — Final QA. Runs tests, linter, formatter, type checker. SHIP IT or BLOCKED.
+
+Typical flow: architect → design-doc-drafter → planner → implementer → reviewer → verifier. Skip steps when the task doesn't need them — a bug fix doesn't need a design doc.
