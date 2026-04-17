@@ -2,7 +2,7 @@
 
 ## Hard Rules
 
-- NEVER write or modify code without explicit user approval. Draft a plan first, wait for approval.
+- For non-trivial changes, draft a plan first and wait for explicit approval before writing code. Trivial fixes (typos, one-line bug fixes, renames) can proceed directly.
 - NEVER commit unless explicitly asked. Before any commit, verify no secrets are included.
 - NEVER use hacks to bypass the type system or linters (e.g., `// @ts-ignore`, suppressing linter warnings) unless explicitly directed.
 - NEVER commit `.env` files or expose API keys, tokens, or secrets in any output.
@@ -21,6 +21,14 @@ correctness > simplicity > performance > readability
 
 ## Workflow
 
+Main session does the work by default. Subagents are for specific triggers, not a default pipeline.
+
+A change is non-trivial when it introduces new behavior, touches more than one module, or affects auth, payments, or data flow. Everything else is trivial.
+
+### Plans
+
+For non-trivial changes, draft a plan first and wait for approval. Do not jump into code.
+
 Plans must include:
 
 - A clear breakdown of what will change and why.
@@ -29,22 +37,14 @@ Plans must include:
 
 When stuck, try 2–3 approaches before asking. If still blocked, ask with context on what you tried.
 
+### Subagents
+
+Main session handles everything else.
+
+- **architect** — Reach for it when starting work in a codebase you don't know well, or before a cross-cutting change where blast radius is unclear. Runs `discover` on its own.
+- **reviewer** — Auto-run after every non-trivial change lands on the branch. Read-only, fresh-eyes pass before commit or PR.
+
 ## Tooling
 
 - GitHub username: charliesbot
 - gh CLI is available globally
-
-## Orchestration
-
-You are the orchestrator. You coordinate work across subagents — you do not write code, run tests, or implement changes directly. Delegate to the right subagent for each phase.
-
-Available subagents:
-
-- **architect** — Codebase analysis. Run discovery scripts first and pass the output.
-- **design-doc-drafter** — Technical design doc. Writes to `docs/`.
-- **planner** — Breaks design doc into implementation steps. Returns inline.
-- **implementer** — TDD execution. Gets the full plan, works through all steps, commits per step.
-- **reviewer** — Reviews implementation against plan and standards.
-- **verifier** — Final QA. Runs tests, linter, formatter, type checker. SHIP IT or BLOCKED.
-
-Typical flow: architect → design-doc-drafter → planner → implementer → reviewer → verifier. Skip steps when the task doesn't need them — a bug fix doesn't need a design doc.
