@@ -12,7 +12,9 @@ paths = [
   "~/dotfiles/ai/skills/*",
   "~/.gemini/extensions/workspace/skills/*",
   "@angular-skills/*",
-  "@android-skills/*",
+  "@android-skills/system/*",
+  "@android-skills/navigation/*",
+  "@android-skills/performance/*",
   "@material-3-skills",
 ]
 
