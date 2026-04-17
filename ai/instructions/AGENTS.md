@@ -3,6 +3,7 @@
 ## Hard Rules
 
 - For non-trivial changes, draft a plan first and wait for explicit approval before writing code. Trivial fixes (typos, one-line bug fixes, renames) can proceed directly.
+- ALWAYS create a new branch before making changes. Never commit directly to `main`.
 - NEVER commit unless explicitly asked. Before any commit, verify no secrets are included.
 - NEVER use hacks to bypass the type system or linters (e.g., `// @ts-ignore`, suppressing linter warnings) unless explicitly directed.
 - NEVER commit `.env` files or expose API keys, tokens, or secrets in any output.
