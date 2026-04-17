@@ -72,6 +72,11 @@ apply_git_config() {
 }
 
 install_catpuccin_themes() {
+    if [[ -d ~/.config/tmux/plugins/catppuccin/tmux ]]; then
+        echo "Catppuccin tmux theme is already installed."
+        return
+    fi
+
     mkdir -p ~/.config/tmux/plugins/catppuccin
     git clone -b v2.1.3 https://github.com/catppuccin/tmux.git ~/.config/tmux/plugins/catppuccin/tmux
 }
@@ -166,18 +171,52 @@ install_ai_tools() {
     echo "Installing AI CLI tools..."
 
     # Claude Code (native installer, auto-updates)
-    curl -fsSL https://claude.ai/install.sh | bash
+    if check_command claude; then
+        echo "Claude Code is already installed."
+    else
+        curl -fsSL https://claude.ai/install.sh | bash
+    fi
 
     # OpenCode
-    curl -fsSL https://opencode.ai/install | bash
+    if check_command opencode; then
+        echo "OpenCode is already installed."
+    else
+        curl -fsSL https://opencode.ai/install | bash
+    fi
 
     # Ollama
-    curl -fsSL https://ollama.com/install.sh | sh
+    if check_command ollama; then
+        echo "Ollama is already installed."
+    else
+        curl -fsSL https://ollama.com/install.sh | sh
+    fi
 
     # Gemini CLI (via Bun)
-    bun install -g @google/gemini-cli
+    if check_command gemini; then
+        echo "Gemini CLI is already installed."
+    else
+        bun install -g @google/gemini-cli
+    fi
 
     echo "AI CLI tools installed."
+}
+
+# Install Android CLI
+install_android_cli() {
+    if check_command android; then
+        echo "Android CLI is already installed."
+        return
+    fi
+
+    echo "Installing Android CLI..."
+
+    if [[ "$(uname)" == "Darwin" ]]; then
+        curl -fsSL https://dl.google.com/android/cli/latest/darwin_arm64/install.sh | bash
+    else
+        curl -fsSL https://dl.google.com/android/cli/latest/linux_x86_64/install.sh | bash
+    fi
+
+    echo "Android CLI installed."
 }
 
 # Setup ZSH as default shell

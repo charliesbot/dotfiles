@@ -68,7 +68,6 @@ install_brew_cask_packages() {
     brew install --cask google-chrome
     brew install --cask logi-options+
     brew install --cask jetbrains-toolbox
-    brew install --cask visual-studio-code
     brew install --cask raycast
     brew install --cask whatsapp
     brew install --cask ghostty
@@ -143,6 +142,8 @@ setup_macos() {
     install_macos_packages
 
     install_brew_cask_packages
+
+    install_android_cli
 
     apply_git_config
 

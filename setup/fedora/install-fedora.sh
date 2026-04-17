@@ -71,6 +71,11 @@ install_jetbrains_toolbox() {
 
 # Install Google Chrome Beta
 install_chrome() {
+    if check_command google-chrome-beta; then
+        echo "Google Chrome Beta is already installed."
+        return
+    fi
+
     echo "Installing Google Chrome Beta..."
 
     cd /tmp
@@ -83,21 +88,13 @@ install_chrome() {
     echo "Google Chrome Beta installed."
 }
 
-# Install Visual Studio Code
-install_vscode() {
-    echo "Installing Visual Studio Code..."
-
-    sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
-
-    sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
-
-    sudo dnf install -y code
-
-    echo "Visual Studio Code installed."
-}
-
 # Install 1Password
 install_1password() {
+    if check_command 1password; then
+        echo "1Password is already installed."
+        return
+    fi
+
     echo "Installing 1Password..."
 
     sudo rpm --import https://downloads.1password.com/linux/keys/1password.asc
@@ -259,9 +256,9 @@ setup_fedora() {
 
     install_jetbrains_toolbox
 
-    install_chrome
+    install_android_cli
 
-    install_vscode
+    install_chrome
 
     install_1password
 
