@@ -3,7 +3,7 @@
 ## Hard Rules
 
 - For non-trivial changes, draft a plan first and wait for explicit approval before writing code. Trivial fixes (typos, one-line bug fixes, renames) can proceed directly.
-- ALWAYS create a new branch before making changes. Never commit directly to `main`.
+- For non-trivial changes, create a new branch and open a PR. Trivial fixes can commit directly to `main`.
 - NEVER commit unless explicitly asked. Before any commit, verify no secrets are included.
 - NEVER use hacks to bypass the type system or linters (e.g., `// @ts-ignore`, suppressing linter warnings) unless explicitly directed.
 - NEVER commit `.env` files or expose API keys, tokens, or secrets in any output.
@@ -24,7 +24,8 @@ correctness > simplicity > performance > readability
 
 Main session does the work by default. Subagents are for specific triggers, not a default pipeline.
 
-A change is non-trivial when it introduces new behavior, touches more than one module, or affects auth, payments, or data flow. Everything else is trivial.
+Non-trivial: new features, refactors, cross-module changes, anything touching auth, payments, or data flow.
+Trivial: typos, one-line bug fixes, renames, comment or doc edits, AGENTS.md tweaks, dependency version bumps.
 
 ### Plans
 
@@ -40,10 +41,10 @@ When stuck, try 2–3 approaches before asking. If still blocked, ask with conte
 
 ### Subagents
 
-Main session handles everything else.
+Main session handles implementation. Delegate only when a trigger below matches.
 
-- **architect** — Reach for it when starting work in a codebase you don't know well, or before a cross-cutting change where blast radius is unclear. Runs `discover` on its own.
-- **reviewer** — Auto-run after every non-trivial change lands on the branch. Read-only, fresh-eyes pass before commit or PR.
+- **architect** — Use when starting work in an unfamiliar codebase, or before any change that spans multiple modules. Returns a dependency map and risk read so you plan against real structure, not guesses. Runs `discover` on its own.
+- **reviewer** — MUST run after every non-trivial change, before commit or PR. Read-only fresh-eyes pass catches issues the implementer is blind to.
 
 ## Tooling
 
