@@ -91,3 +91,5 @@ export PATH="$HOME/.opencode/bin:$PATH"
 
 # Antigravity
 export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
+export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+export PATH="$HOME/.cargo/bin:$PATH"
