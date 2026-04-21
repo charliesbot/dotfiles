@@ -37,7 +37,9 @@ Arrow means "depends on." List only direct dependencies.
 
 - `CIRCULAR` `module-a ↔ module-b` — [why it matters]
 - `COUPLING` `path/file.ts` — [what's tightly coupled and to what]
-- `ORPHAN` `path/dir/` — [unreferenced module or dead code]
+- `ORPHAN` `path/dir/` — [no static references; may be DI-wired, dynamically
+  loaded, or dead — flag, don't conclude]. Only verify (grep for the name,
+  check DI/config) if the caller's scope actually touches this path.
 
 ### Risk Areas
 
@@ -50,19 +52,28 @@ conventions, or constraints that aren't documented but are evident from the code
 
 ## Process
 
-1. Start by running `discover <project-root>` — it's a globally installed
-   CLI that outputs stack, structure, and config metadata. If the command
-   fails or isn't available, fall back to manual discovery: Glob for file
-   patterns, Read config files (package.json, go.mod, etc.), and Bash for
-   `tree` or `ls`. If the caller already provided discovery output, skip
-   this step entirely.
-2. Identify the module/package structure. Map top-level directories to their
-   purpose.
-3. For each module, trace direct dependencies by reading imports and config.
-4. Check for circular dependencies or unexpected coupling between modules.
-5. Identify entry points (main files, route definitions, CLI commands).
-6. Look for patterns: shared utilities, dependency injection, layering
-   conventions.
+Tingle carries the factual layer (manifests, entry points, utilities, module
+graph). Your job is interpretation: risks, patterns, coupling, judgment calls.
+Do not re-derive what tingle already emitted.
+
+1. Run `tingle <project-root>` — a globally installed CLI that writes
+   `.tinglemap.md` with manifests, entry points, utilities, and the module
+   graph. Then `Read('<project-root>/.tinglemap.md')`. Flags worth knowing:
+   - `--scope <path>` when the caller asked about a single module (keeps
+     the Files section scoped; top sections stay whole-repo).
+   - `--skeleton` for architecture-only (no per-file listing) on large repos.
+   - `--full` when you need per-file defs and up to 3 callers per utility.
+     If tingle fails or isn't available, fall back to manual discovery: Glob
+     for file patterns, Read config files (package.json, go.mod, etc.), and
+     Bash `tree`/`ls`. If the caller already provided the map, skip this step.
+2. Extract the module map from tingle's Modules section. Only re-derive from
+   imports if tingle's graph looks incomplete for the scope in question.
+3. Extract entry points from tingle's Entry points section.
+4. Extract shared utilities and their callers from tingle's Utilities section
+   (use `--full` if you need more than one caller per utility).
+5. Check for circular dependencies or unexpected coupling between modules.
+6. Look for patterns not evident from tingle alone: dependency injection,
+   layering conventions, cross-cutting concerns, non-obvious constraints.
 7. Scan for risk areas: god files (>500 lines), modules with too many
    dependents, missing abstractions.
 
@@ -81,7 +92,9 @@ conventions, or constraints that aren't documented but are evident from the code
 
 Before returning results:
 
-- Confirm every file path references a file you actually read.
-- Confirm dependency arrows reflect real import/require/include statements.
+- Confirm every file path references a file in tingle's output or one you
+  actually read.
+- Confirm dependency arrows reflect tingle's module graph or real
+  import/require/include statements you read.
 - Confirm risk assessments cite specific evidence (file size, fan-in count,
   coupling examples), not intuition.
