@@ -1,4 +1,4 @@
-platforms = ["claude", "gemini"]
+platforms = ["claude", "gemini", "antigravity", "opencode", "codex"]
 
 instructions = "~/dotfiles/ai/instructions/AGENTS.md"
 
@@ -6,16 +6,20 @@ instructions = "~/dotfiles/ai/instructions/AGENTS.md"
 angular-skills = "https://github.com/angular/skills"
 material-3-skills = "https://github.com/hamen/material-3-skill"
 android-skills = "https://github.com/android/skills"
+stitch-skills = "https://github.com/google-labs-code/stitch-skills"
 
 [skills]
 paths = [
   "~/dotfiles/ai/skills/*",
   "~/.gemini/extensions/workspace/skills/*",
+  "@material-3-skills",
   "@angular-skills/*",
   "@android-skills/system/*",
   "@android-skills/navigation/*",
   "@android-skills/performance/*",
-  "@material-3-skills",
+  "@stitch-skills/skills/design-md",
+  "@stitch-skills/skills/taste-design",
+  "@stitch-skills/skills/enhance-prompt",
 ]
 
 [subagents]
