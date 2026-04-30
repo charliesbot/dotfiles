@@ -115,7 +115,23 @@
         { "text": "Places the 'filter out read articles' logic in the use case, not in the repository", "type": "manual" },
         { "text": "Explains why: caching is a data-layer concern (how data is stored/retrieved), while filtering by read-status is a business rule (what data the user should see)", "type": "manual" },
         { "text": "Repository method signature returns raw data without business filtering applied", "type": "manual" },
-        { "text": "Use case follows the project pattern: suspend operator fun invoke() returning Result<T>", "type": "manual" }
+        { "text": "Use case follows the project pattern: suspend operator fun invoke() returning kotlin.Result<T> (not a custom wrapper type)", "type": "manual" }
+      ]
+    }
+    ,
+    {
+      "id": 9,
+      "prompt": "I need to add a Wear OS complication that shows today's step count on the user's watch face. How should I set this up?",
+      "expected_output": "Creates :complications module at root level, depends only on :core, uses SuspendingComplicationDataSourceService, does not put code in :wear",
+      "files": [],
+      "assertions": [
+        { "text": "Creates a :complications module at root level (complications/), not inside :wear or a feature module", "type": "manual" },
+        { "text": "Complications module depends only on :core, not on :wear, :app, or any feature module", "type": "manual" },
+        { "text": "Uses SuspendingComplicationDataSourceService to serve complication data", "type": "manual" },
+        { "text": "Accesses step count data through a use case or repository from :core", "type": "manual" },
+        { "text": "Does not put complication code inside the :wear module", "type": "manual" },
+        { "text": "Mentions adding the complications module to settings.gradle.kts with include(\":complications\")", "type": "manual" },
+        { "text": "Explains that complications are standalone OS entry points the watch face calls directly, outside the app's UI", "type": "manual" }
       ]
     }
   ]

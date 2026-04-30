@@ -60,7 +60,8 @@ import kotlinx.coroutines.flow.Flow
 class ${USE_CASE_NAME}UseCase(
     private val ${REPO_VAR}: ${REPOSITORY},
 ) {
-    operator fun invoke(): Flow<TODO("Return type")> =
+    // TODO: Replace Unit with the actual return type and repository call.
+    operator fun invoke(): Flow<Unit> =
         TODO("Call ${REPO_VAR} method")
 }
 KOTLIN
@@ -69,12 +70,12 @@ else
 package ${BASE_PACKAGE}.core.domain.usecase
 
 import ${BASE_PACKAGE}.core.domain.repository.${REPOSITORY}
-import ${BASE_PACKAGE}.core.common.Result
 
 class ${USE_CASE_NAME}UseCase(
     private val ${REPO_VAR}: ${REPOSITORY},
 ) {
-    suspend operator fun invoke(): Result<TODO("Return type")> =
+    // TODO: Replace Unit with the actual return type and repository call.
+    suspend operator fun invoke(): Result<Unit> =
         TODO("Call ${REPO_VAR} method")
 }
 KOTLIN

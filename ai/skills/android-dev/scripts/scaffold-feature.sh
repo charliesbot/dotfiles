@@ -28,16 +28,38 @@ if [[ "${3:-}" == "--wear" ]]; then
     WITH_WEAR=true
 fi
 
+# Validate inputs
+if ! [[ "$FEATURE" =~ ^[a-z][a-z0-9]*([-_][a-z0-9]+)*$ ]]; then
+    echo "Error: feature name must be lowercase, start with a letter, and use only hyphens or underscores as separators"
+    echo "  valid:   auth, fasting-timer, step_counter"
+    echo "  invalid: Auth, fasting-Timer, -timer"
+    exit 1
+fi
+if ! [[ "$BASE_PACKAGE" =~ ^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$ ]]; then
+    echo "Error: base package must be dot-separated lowercase identifier segments"
+    echo "  valid:   com.myapp, com.example.app"
+    echo "  invalid: com.MyApp, com, myapp"
+    exit 1
+fi
+
 # Derive names
-FEATURE_LOWER="${FEATURE}"
-FEATURE_CAPITALIZED="$(echo "${FEATURE:0:1}" | tr '[:lower:]' '[:upper:]')${FEATURE:1}"
+FEATURE_SLUG="$FEATURE"
+FEATURE_PACKAGE="$(printf '%s' "$FEATURE" | tr -d '_-')"
+FEATURE_CLASS="$(echo "$FEATURE" | awk -F'[-_]' '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) substr($i,2); print}' OFS='')"
+FEATURE_CAMEL="$(echo "$FEATURE" | awk -F'[-_]' '{for(i=2;i<=NF;i++) $i=toupper(substr($i,1,1)) substr($i,2); print}' OFS='')"
 PACKAGE_PATH="${BASE_PACKAGE//.//}"
 
-FEATURES_DIR="features/${FEATURE_LOWER}"
+FEATURES_DIR="features/${FEATURE_SLUG}"
+
+# Overwrite guard
+if [[ -e "$FEATURES_DIR" ]]; then
+    echo "Error: $FEATURES_DIR already exists"
+    exit 1
+fi
 
 # --- App submodule (always created) ---
 
-APP_SRC="${FEATURES_DIR}/app/src/main/kotlin/${PACKAGE_PATH}/features/${FEATURE_LOWER}"
+APP_SRC="${FEATURES_DIR}/app/src/main/kotlin/${PACKAGE_PATH}/features/${FEATURE_PACKAGE}"
 
 mkdir -p "${APP_SRC}/di"
 
@@ -49,7 +71,7 @@ plugins {
 }
 
 android {
-    namespace = "${BASE_PACKAGE}.features.${FEATURE_LOWER}"
+    namespace = "${BASE_PACKAGE}.features.${FEATURE_PACKAGE}"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
@@ -63,34 +85,40 @@ android {
 
 dependencies {
     implementation(project(":core"))
+    implementation(libs.androidx.lifecycle.viewmodel)
+    implementation(libs.koin.androidx.compose)
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.runtime)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.foundation)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.ui.tooling.preview)
+    debugImplementation(libs.compose.ui.tooling)
 }
 GRADLE
 
-cat >"${APP_SRC}/${FEATURE_CAPITALIZED}ViewModel.kt" <<KOTLIN
-package ${BASE_PACKAGE}.features.${FEATURE_LOWER}
+cat >"${APP_SRC}/${FEATURE_CLASS}ViewModel.kt" <<KOTLIN
+package ${BASE_PACKAGE}.features.${FEATURE_PACKAGE}
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
-data class ${FEATURE_CAPITALIZED}UiState(
+data class ${FEATURE_CLASS}UiState(
     val isLoading: Boolean = false,
     val error: String? = null,
 )
 
-class ${FEATURE_CAPITALIZED}ViewModel : ViewModel() {
+class ${FEATURE_CLASS}ViewModel : ViewModel() {
 
-    private val _uiState = MutableStateFlow(${FEATURE_CAPITALIZED}UiState())
-    val uiState: StateFlow<${FEATURE_CAPITALIZED}UiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(${FEATURE_CLASS}UiState())
+    val uiState: StateFlow<${FEATURE_CLASS}UiState> = _uiState.asStateFlow()
 }
 KOTLIN
 
-cat >"${APP_SRC}/${FEATURE_CAPITALIZED}Screen.kt" <<KOTLIN
-package ${BASE_PACKAGE}.features.${FEATURE_LOWER}
+cat >"${APP_SRC}/${FEATURE_CLASS}Screen.kt" <<KOTLIN
+package ${BASE_PACKAGE}.features.${FEATURE_PACKAGE}
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -104,39 +132,40 @@ import androidx.compose.ui.tooling.preview.Preview
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun ${FEATURE_CAPITALIZED}Screen(
-    viewModel: ${FEATURE_CAPITALIZED}ViewModel = koinViewModel(),
+fun ${FEATURE_CLASS}Screen(
+    viewModel: ${FEATURE_CLASS}ViewModel = koinViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    ${FEATURE_CAPITALIZED}Content(uiState = uiState)
+    ${FEATURE_CLASS}Content(uiState = uiState)
 }
 
 @Composable
-private fun ${FEATURE_CAPITALIZED}Content(uiState: ${FEATURE_CAPITALIZED}UiState) {
+private fun ${FEATURE_CLASS}Content(uiState: ${FEATURE_CLASS}UiState) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
-        Text(text = "${FEATURE_CAPITALIZED}")
+        Text(text = "${FEATURE_CLASS}")
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun ${FEATURE_CAPITALIZED}ScreenPreview() {
-    ${FEATURE_CAPITALIZED}Content(uiState = ${FEATURE_CAPITALIZED}UiState())
+private fun ${FEATURE_CLASS}ScreenPreview() {
+    ${FEATURE_CLASS}Content(uiState = ${FEATURE_CLASS}UiState())
 }
 KOTLIN
 
-cat >"${APP_SRC}/di/${FEATURE_CAPITALIZED}Module.kt" <<KOTLIN
-package ${BASE_PACKAGE}.features.${FEATURE_LOWER}.di
+cat >"${APP_SRC}/di/${FEATURE_CLASS}Module.kt" <<KOTLIN
+package ${BASE_PACKAGE}.features.${FEATURE_PACKAGE}.di
 
-import ${BASE_PACKAGE}.features.${FEATURE_LOWER}.${FEATURE_CAPITALIZED}ViewModel
+import ${BASE_PACKAGE}.features.${FEATURE_PACKAGE}.${FEATURE_CLASS}ViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
-val ${FEATURE_LOWER}Module = module {
-    viewModel { ${FEATURE_CAPITALIZED}ViewModel() }
+val ${FEATURE_CAMEL}Module = module {
+    // Add get() arguments here when the ViewModel takes use cases.
+    viewModel { ${FEATURE_CLASS}ViewModel() }
 }
 KOTLIN
 
@@ -145,7 +174,7 @@ echo "Created: ${FEATURES_DIR}/app/"
 # --- Wear submodule (optional) ---
 
 if [[ "${WITH_WEAR}" == true ]]; then
-    WEAR_SRC="${FEATURES_DIR}/wear/src/main/kotlin/${PACKAGE_PATH}/features/${FEATURE_LOWER}/wear"
+    WEAR_SRC="${FEATURES_DIR}/wear/src/main/kotlin/${PACKAGE_PATH}/features/${FEATURE_PACKAGE}/wear"
 
     mkdir -p "${WEAR_SRC}/di"
 
@@ -157,7 +186,7 @@ plugins {
 }
 
 android {
-    namespace = "${BASE_PACKAGE}.features.${FEATURE_LOWER}.wear"
+    namespace = "${BASE_PACKAGE}.features.${FEATURE_PACKAGE}.wear"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
@@ -171,34 +200,38 @@ android {
 
 dependencies {
     implementation(project(":core"))
+    implementation(libs.androidx.lifecycle.viewmodel)
+    implementation(libs.koin.androidx.compose)
+    implementation(libs.wear.compose.material3)
+    implementation(libs.wear.compose.foundation)
+    implementation(libs.compose.ui.tooling.preview)
+    debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.wear.tooling.preview)
 }
 GRADLE
 
-    cat >"${WEAR_SRC}/Wear${FEATURE_CAPITALIZED}ViewModel.kt" <<KOTLIN
-package ${BASE_PACKAGE}.features.${FEATURE_LOWER}.wear
+    cat >"${WEAR_SRC}/Wear${FEATURE_CLASS}ViewModel.kt" <<KOTLIN
+package ${BASE_PACKAGE}.features.${FEATURE_PACKAGE}.wear
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
-data class Wear${FEATURE_CAPITALIZED}UiState(
+data class Wear${FEATURE_CLASS}UiState(
     val isLoading: Boolean = false,
     val error: String? = null,
 )
 
-class Wear${FEATURE_CAPITALIZED}ViewModel : ViewModel() {
+class Wear${FEATURE_CLASS}ViewModel : ViewModel() {
 
-    private val _uiState = MutableStateFlow(Wear${FEATURE_CAPITALIZED}UiState())
-    val uiState: StateFlow<Wear${FEATURE_CAPITALIZED}UiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(Wear${FEATURE_CLASS}UiState())
+    val uiState: StateFlow<Wear${FEATURE_CLASS}UiState> = _uiState.asStateFlow()
 }
 KOTLIN
 
-    cat >"${WEAR_SRC}/Wear${FEATURE_CAPITALIZED}Screen.kt" <<KOTLIN
-package ${BASE_PACKAGE}.features.${FEATURE_LOWER}.wear
+    cat >"${WEAR_SRC}/Wear${FEATURE_CLASS}Screen.kt" <<KOTLIN
+package ${BASE_PACKAGE}.features.${FEATURE_PACKAGE}.wear
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -211,40 +244,41 @@ import androidx.wear.tooling.preview.devices.WearDevices
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun Wear${FEATURE_CAPITALIZED}Screen(
-    viewModel: Wear${FEATURE_CAPITALIZED}ViewModel = koinViewModel(),
+fun Wear${FEATURE_CLASS}Screen(
+    viewModel: Wear${FEATURE_CLASS}ViewModel = koinViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    Wear${FEATURE_CAPITALIZED}Content(uiState = uiState)
+    Wear${FEATURE_CLASS}Content(uiState = uiState)
 }
 
 @Composable
-private fun Wear${FEATURE_CAPITALIZED}Content(uiState: Wear${FEATURE_CAPITALIZED}UiState) {
+private fun Wear${FEATURE_CLASS}Content(uiState: Wear${FEATURE_CLASS}UiState) {
     ScalingLazyColumn(
         modifier = Modifier,
     ) {
         item {
-            Text(text = "${FEATURE_CAPITALIZED}")
+            Text(text = "${FEATURE_CLASS}")
         }
     }
 }
 
 @Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
 @Composable
-private fun Wear${FEATURE_CAPITALIZED}ScreenPreview() {
-    Wear${FEATURE_CAPITALIZED}Content(uiState = Wear${FEATURE_CAPITALIZED}UiState())
+private fun Wear${FEATURE_CLASS}ScreenPreview() {
+    Wear${FEATURE_CLASS}Content(uiState = Wear${FEATURE_CLASS}UiState())
 }
 KOTLIN
 
-    cat >"${WEAR_SRC}/di/Wear${FEATURE_CAPITALIZED}Module.kt" <<KOTLIN
-package ${BASE_PACKAGE}.features.${FEATURE_LOWER}.wear.di
+    cat >"${WEAR_SRC}/di/Wear${FEATURE_CLASS}Module.kt" <<KOTLIN
+package ${BASE_PACKAGE}.features.${FEATURE_PACKAGE}.wear.di
 
-import ${BASE_PACKAGE}.features.${FEATURE_LOWER}.wear.Wear${FEATURE_CAPITALIZED}ViewModel
+import ${BASE_PACKAGE}.features.${FEATURE_PACKAGE}.wear.Wear${FEATURE_CLASS}ViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
-val wear${FEATURE_CAPITALIZED}Module = module {
-    viewModel { Wear${FEATURE_CAPITALIZED}ViewModel() }
+val wear${FEATURE_CLASS}Module = module {
+    // Add get() arguments here when the ViewModel takes use cases.
+    viewModel { Wear${FEATURE_CLASS}ViewModel() }
 }
 KOTLIN
 

@@ -1,26 +1,23 @@
 ---
 name: android-dev
 description: >
-  Architecture guide for a multi-module Android project targeting phone, Wear OS, TV, and Auto from a
-  single codebase. MUST use this skill whenever the user mentions: features/ or :features: module paths,
-  :core module, :app/:wear/:widget/:complications modules, Koin DI wiring, scaffold-feature.sh or
-  scaffold-usecase.sh scripts, Wear OS support (tiles, complications, watch UI), Navigation 3 or Wear
-  Compose Navigation, StateFlow/MVVM patterns, Spotless/ktfmt formatting, or any question about where
-  code belongs across modules. Also trigger on Android build errors (unresolved references, circular
-  dependencies, Gradle sync failures) and when adding new features, use cases, widgets, or platform
-  variants. If the user is working on ANY Android code in a multi-module project — scaffolding features,
-  writing ViewModels/Composables, configuring Gradle/Room/Retrofit, running tests, or asking about
-  architecture decisions — use this skill. When in doubt, use it.
+  Architecture guide for a multi-module Android project targeting phone, Wear OS, TV, and Auto from one
+  codebase. Use for features/ or :features: module paths, :core, :app/:wear/:widget/:complications,
+  Koin DI, scaffold-feature.sh or scaffold-usecase.sh, Wear OS tiles/complications/watch UI,
+  Navigation 3 or Wear Compose Navigation, StateFlow/MVVM, Spotless/ktfmt, Gradle sync/build errors,
+  and decisions about whether code belongs in :core or a feature module.
 ---
 
 You are working on a multi-platform Android project following this architecture and conventions. Read `references/ARCHITECTURE.md` for the full module structure and dependency rules before making architectural decisions.
 
 ## Before You Write Any Code
 
-When creating a new feature or use case, **run the scaffold script first** — before creating any files, directories, or `build.gradle.kts` manually. The scripts are bundled in this skill's `scripts/` directory — do not copy them into the project. They enforce the correct module structure and save time:
+When creating a new feature or use case, **run the scaffold script first** — before creating any files, directories, or `build.gradle.kts` manually. The scripts are bundled in this skill's `scripts/` directory — do not copy them into the project. They enforce the correct module structure and save time.
 
-- **New feature:** `${CLAUDE_SKILL_DIR}/scripts/scaffold-feature.sh <name> <package>` (add `--wear` for Wear OS support)
-- **New use case:** `${CLAUDE_SKILL_DIR}/scripts/scaffold-usecase.sh <Name> <package> <Repository>` (add `--flow` for reactive streams)
+Resolve `<android-dev-skill-dir>` to the directory containing this `SKILL.md`. Claude Code exposes it as `$CLAUDE_SKILL_DIR`; other runtimes differ (consult your runtime's skill documentation).
+
+- **New feature:** `<android-dev-skill-dir>/scripts/scaffold-feature.sh <name> <package>` (add `--wear` for Wear OS support)
+- **New use case:** `<android-dev-skill-dir>/scripts/scaffold-usecase.sh <Name> <package> <Repository>` (add `--flow` for reactive streams)
 
 Then fill in the generated TODOs. Details on post-scaffold steps are in the Scaffolding sections below.
 
@@ -69,6 +66,44 @@ Features are **business capabilities** (auth, profile, cart), not individual scr
 
 Do not add third-party dependencies without asking first — every dependency is a long-term maintenance commitment, and the chosen stack already covers most needs.
 
+## Required Version Catalog Aliases
+
+The scaffold scripts generate `build.gradle.kts` files that reference these `libs.versions.toml` keys. Verify they exist in your catalog or adjust the generated files to match your naming.
+
+**Plugins:**
+
+- `libs.plugins.android.library`
+- `libs.plugins.kotlin.android`
+- `libs.plugins.kotlin.compose`
+
+**Version keys** (read directly in generated Gradle files):
+
+- `libs.versions.compileSdk`
+- `libs.versions.minSdk`
+- `libs.versions.wearMinSdk` (Wear modules only)
+
+**Phone (`app/`) dependencies:**
+
+- `libs.androidx.lifecycle.viewmodel`
+- `libs.koin.androidx.compose`
+- `libs.compose.bom`
+- `libs.compose.runtime`
+- `libs.compose.ui`
+- `libs.compose.foundation`
+- `libs.compose.material3`
+- `libs.compose.ui.tooling.preview` (implementation)
+- `libs.compose.ui.tooling` (debugImplementation)
+
+**Wear (`wear/`) dependencies:**
+
+- `libs.androidx.lifecycle.viewmodel`
+- `libs.koin.androidx.compose`
+- `libs.wear.compose.material3`
+- `libs.wear.compose.foundation`
+- `libs.compose.ui.tooling.preview` (implementation)
+- `libs.compose.ui.tooling` (debugImplementation)
+- `libs.wear.tooling.preview` (debugImplementation)
+
 ## Module Structure
 
 - **`:core`** — business logic, data layer (Room, Retrofit, repositories), domain models, use cases, shared UI (theme, components), DI for core infrastructure, and all string resources (split by feature file for organization).
@@ -85,8 +120,12 @@ Widgets and complications are **not** features — they're standalone entry poin
 New feature modules are auto-registered via wildcard include in `settings.gradle.kts`:
 
 ```kotlin
-file("features").listFiles()?.filter { it.isDirectory }?.forEach {
-    include(":features:${it.name}")
+file("features").listFiles()?.filter { it.isDirectory }?.forEach { feature ->
+    listOf("app", "wear", "tv", "auto").forEach { platform ->
+        if (feature.resolve(platform).isDirectory) {
+            include(":features:${feature.name}:$platform")
+        }
+    }
 }
 ```
 
@@ -294,10 +333,10 @@ class DashboardViewModelTest {
 
 ```bash
 # Phone only
-${CLAUDE_SKILL_DIR}/scripts/scaffold-feature.sh <feature-name> <base-package>
+<android-dev-skill-dir>/scripts/scaffold-feature.sh <feature-name> <base-package>
 
 # Phone + Wear
-${CLAUDE_SKILL_DIR}/scripts/scaffold-feature.sh <feature-name> <base-package> --wear
+<android-dev-skill-dir>/scripts/scaffold-feature.sh <feature-name> <base-package> --wear
 ```
 
 This creates the full directory structure with `build.gradle.kts`, ViewModel (StateFlow), Screen (Composable + Preview), and Koin DI module for each platform submodule — even for phone-only features (they still get the `app/` submodule).
@@ -315,17 +354,17 @@ Use the bundled script to generate a use case in `:core`:
 
 ```bash
 # Suspend function returning Result<T>
-${CLAUDE_SKILL_DIR}/scripts/scaffold-usecase.sh <UseCaseName> <base-package> <RepositoryName>
+<android-dev-skill-dir>/scripts/scaffold-usecase.sh <UseCaseName> <base-package> <RepositoryName>
 
 # Flow-based (reactive, non-suspend)
-${CLAUDE_SKILL_DIR}/scripts/scaffold-usecase.sh <UseCaseName> <base-package> <RepositoryName> --flow
+<android-dev-skill-dir>/scripts/scaffold-usecase.sh <UseCaseName> <base-package> <RepositoryName> --flow
 ```
 
 Examples:
 
 ```bash
-${CLAUDE_SKILL_DIR}/scripts/scaffold-usecase.sh GetArticles com.myapp FeedRepository
-${CLAUDE_SKILL_DIR}/scripts/scaffold-usecase.sh ObserveAuthState com.myapp AuthRepository --flow
+<android-dev-skill-dir>/scripts/scaffold-usecase.sh GetArticles com.myapp FeedRepository
+<android-dev-skill-dir>/scripts/scaffold-usecase.sh ObserveAuthState com.myapp AuthRepository --flow
 ```
 
 After running the script:
