@@ -14,10 +14,8 @@ You are working on a multi-platform Android project following this architecture 
 
 When creating a new feature or use case, **run the scaffold script first** — before creating any files, directories, or `build.gradle.kts` manually. The scripts are bundled in this skill's `scripts/` directory — do not copy them into the project. They enforce the correct module structure and save time.
 
-Resolve `<android-dev-skill-dir>` to the directory containing this `SKILL.md`. Claude Code exposes it as `$CLAUDE_SKILL_DIR`; other runtimes differ (consult your runtime's skill documentation).
-
-- **New feature:** `<android-dev-skill-dir>/scripts/scaffold-feature.sh <name> <package>` (add `--wear` for Wear OS support)
-- **New use case:** `<android-dev-skill-dir>/scripts/scaffold-usecase.sh <Name> <package> <Repository>` (add `--flow` for reactive streams)
+- **New feature:** `scripts/scaffold-feature.sh <name> <package>` (add `--wear` for Wear OS support)
+- **New use case:** `scripts/scaffold-usecase.sh <Name> <package> <Repository>` (add `--flow` for reactive streams)
 
 Then fill in the generated TODOs. Details on post-scaffold steps are in the Scaffolding sections below.
 
@@ -333,10 +331,10 @@ class DashboardViewModelTest {
 
 ```bash
 # Phone only
-<android-dev-skill-dir>/scripts/scaffold-feature.sh <feature-name> <base-package>
+scripts/scaffold-feature.sh <feature-name> <base-package>
 
 # Phone + Wear
-<android-dev-skill-dir>/scripts/scaffold-feature.sh <feature-name> <base-package> --wear
+scripts/scaffold-feature.sh <feature-name> <base-package> --wear
 ```
 
 This creates the full directory structure with `build.gradle.kts`, ViewModel (StateFlow), Screen (Composable + Preview), and Koin DI module for each platform submodule — even for phone-only features (they still get the `app/` submodule).
@@ -354,17 +352,17 @@ Use the bundled script to generate a use case in `:core`:
 
 ```bash
 # Suspend function returning Result<T>
-<android-dev-skill-dir>/scripts/scaffold-usecase.sh <UseCaseName> <base-package> <RepositoryName>
+scripts/scaffold-usecase.sh <UseCaseName> <base-package> <RepositoryName>
 
 # Flow-based (reactive, non-suspend)
-<android-dev-skill-dir>/scripts/scaffold-usecase.sh <UseCaseName> <base-package> <RepositoryName> --flow
+scripts/scaffold-usecase.sh <UseCaseName> <base-package> <RepositoryName> --flow
 ```
 
 Examples:
 
 ```bash
-<android-dev-skill-dir>/scripts/scaffold-usecase.sh GetArticles com.myapp FeedRepository
-<android-dev-skill-dir>/scripts/scaffold-usecase.sh ObserveAuthState com.myapp AuthRepository --flow
+scripts/scaffold-usecase.sh GetArticles com.myapp FeedRepository
+scripts/scaffold-usecase.sh ObserveAuthState com.myapp AuthRepository --flow
 ```
 
 After running the script:
