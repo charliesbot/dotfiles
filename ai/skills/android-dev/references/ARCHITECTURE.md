@@ -1,258 +1,316 @@
-# Simple Multi-Platform Architecture
+# Multi-Platform Tiered Core Architecture
 
 ## Overview
 
-Multi-platform Android app architecture with **1 shared module**, **feature modules**, and **multiple platform modules**.
+Multi-module Android architecture targeting `:app` (phone/tablet), Wear OS, and optionally TV/Auto from a single codebase. The core layer is split into three sub-modules so feature modules don't pull in the full data layer, and so business logic can be tested as pure Kotlin.
 
-**Shared module:**
+**Core sub-modules:**
 
-- `:core` - Business logic, data, shared UI
+- `:core:domain` — pure Kotlin (`kotlin("jvm")`): domain models, repository interfaces, use cases. No Android dependencies.
+- `:core:data` — Android library: Room, DataStore, repository implementations, DI wiring.
+- `:core:strings` — Android library, resources only: every user-facing string.
+
+**Platform shells:**
+
+- `:app` — Android phone/tablet
+- `:wear` — Wear OS
+- `:tv` — Android TV (optional)
+- `:auto` — Android Auto (optional)
+
+**Standalone OS entry points:**
+
+- `:widget` — home screen widget (Glance)
+- `:complications` — Wear OS data providers
+- `:tiles` — Wear OS tile services
 
 **Feature modules:**
 
-- `:features:dashboard` - Dashboard / today screen
-- `:features:profile` - User profile and fasting history
-- `:features:settings` - App settings
-
-**Platform modules:**
-
-- `:app` - Mobile Android
-- `:wear` - WearOS
-- `:tv` - Android TV (optional)
-- `:auto` - Android Auto (optional)
-
-**Standalone entry point modules:**
-
-- `:widget` - Home screen widget (Glance or AppWidgetProvider)
-- `:complications` - Wear OS complication data providers
+- `:features:<name>:app` — `:app` presentation
+- `:features:<name>:wear` — `:wear` presentation
 
 ## What is a Feature?
 
-A **feature** is a complete user journey or business capability, not just a single screen. This distinction is crucial for creating a clean and maintainable structure.
+A **feature** is a complete user journey or business capability, not just a single screen.
 
 ### Good Features (Business Capabilities)
 
-- **auth**: The entire authentication flow (login, register, forgot password).
-- **profile**: User profile management (view, edit, settings).
-- **cart**: The complete shopping cart and checkout process.
+- **auth** — login, register, forgot password
+- **profile** — view, edit, settings
+- **cart** — shopping cart and checkout
 
 ### Poor Features (Just Screens)
 
-- **login-screen**: Too granular. This should be part of the `auth` feature.
-- **settings-screen**: Should be part of the `profile` feature.
+- **login-screen** — too granular, belongs in `auth`
+- **settings-screen** — belongs in `profile`
 
-Each feature is its own Gradle module under `features/`. Features enforce compile-time boundaries — they cannot depend on each other, only on `:core`.
+Each feature is its own Gradle module under `features/<name>/<platform>/`. Features cannot depend on each other — only on `:core:domain` and `:core:strings`. Gradle enforces this at compile time.
 
 ## Module Structure
 
-Every feature always uses platform submodules (`app/`, `wear/`, etc.) for consistency — even if it only targets one platform today. This keeps the structure predictable and makes adding a new platform variant trivial.
+Every feature uses platform submodules (`app/`, `wear/`, etc.) — even when it only targets one platform today. Adding a new platform variant later is just adding a sibling submodule.
 
 ```
-android-dojo/
-├── app/                      # Mobile Android app module
-│   └── src/main/kotlin/com/yourpackage/
-│       ├── MainActivity.kt
+my-app/
+├── settings.gradle.kts          # auto-discovers :core:* and :features:*:*
+├── build.gradle.kts             # plugin aliases, Spotless config
+├── gradle.properties            # includes android.basePackage (read by generate.sh)
+│
+├── app/                         # :app — phone/tablet shell
+│   └── src/main/kotlin/com/myapp/
+│       ├── AppApplication.kt        # Koin Application class
+│       ├── MainActivity.kt          # ComponentActivity, Compose entry point
 │       ├── di/
-│       │   └── AppModule.kt          # Loads all DI modules (core + features)
-│       └── navigation/           # Navigation 3 setup
-│           ├── AppNavigation.kt      # NavDisplay, entryProvider, sceneStrategy
-│           ├── NavigationRoutes.kt   # Defines all serializable NavKey objects
-│           └── scenes/
-│               └── DashboardScene.kt
+│       │   └── AppModule.kt         # loads coreDataModule + feature DI modules
+│       ├── navigation/              # Navigation 3 setup
+│       │   └── AppNavigation.kt
+│       └── theme/
+│           └── AppTheme.kt          # MaterialTheme + dynamic colors
 │
-├── wear/                     # WearOS app module
-│   └── src/main/kotlin/com/yourpackage/wear/
-│       ├── MainActivity.kt
+├── wear/                        # :wear — Wear OS shell
+│   └── src/main/kotlin/com/myapp/wear/
+│       ├── WearAppApplication.kt
+│       ├── MainActivity.kt          # uses WearAppTheme
 │       ├── di/
-│       │   └── WearAppModule.kt      # Loads DI modules for wear platform
-│       └── navigation/           # WearOS-specific navigation (Wear Compose Navigation)
-│           ├── WearNavigation.kt     # Contains SwipeDismissableNavHost
-│           └── WearRoutes.kt         # Sealed class routes for type safety
+│       │   └── WearAppModule.kt
+│       ├── navigation/              # Wear Compose Navigation (SwipeDismissableNavHost)
+│       │   └── WearNavigation.kt
+│       └── theme/
+│           └── WearAppTheme.kt      # Wear MaterialTheme
 │
-├── core/                     # SINGLE unified core module
-│   └── src/main/kotlin/com/yourpackage/core/
-│       ├── common/           # Pure Kotlin utilities, Result class, extensions
-│       ├── data/             # ALL repositories, DAOs, network APIs, Room/Retrofit setup
-│       │   ├── local/        # Room database, DAOs, entities
-│       │   ├── remote/       # Retrofit APIs, DTOs, network layer
-│       │   └── repository/   # Repository implementations
-│       ├── domain/           # ALL domain models and use cases
-│       │   ├── model/        # Business models (User, etc.)
-│       │   ├── repository/   # Repository interfaces
-│       │   └── usecase/      # Use cases
-│       ├── ui/               # Shared design system
-│       │   ├── theme/        # App theme, colors, typography
-│       │   ├── component/    # Reusable UI components
-│       │   └── util/         # UI utilities
-│       └── di/               # Core infrastructure DI (repositories, network, database)
+├── core/
+│   ├── domain/                  # :core:domain — pure Kotlin (kotlin("jvm"))
+│   │   └── src/main/kotlin/com/myapp/domain/
+│   │       ├── model/               # domain models (User, Article, etc.)
+│   │       ├── repository/          # repository interfaces
+│   │       └── usecase/             # use cases
+│   │
+│   ├── data/                    # :core:data — Android library
+│   │   └── src/main/kotlin/com/myapp/data/
+│   │       ├── local/               # Room database, DAOs, entities
+│   │       ├── remote/              # Retrofit interfaces, DTOs (when needed)
+│   │       ├── repository/          # repository implementations
+│   │       └── di/
+│   │           └── CoreDataModule.kt    # Koin bindings for repositories, Room, DataStore
+│   │
+│   └── strings/                 # :core:strings — Android library, resources only
+│       └── src/main/res/
+│           ├── values/strings.xml       # all user-facing strings
+│           └── values-es/strings.xml    # translations (per locale folder)
 │
-└── features/                 # Parent directory for feature modules
-    ├── dashboard/            # :features:dashboard
-    │   ├── app/              # :features:dashboard:app — Phone UI (Material 3)
-    │   │   └── src/main/kotlin/com/yourpackage/features/dashboard/
-    │   │       ├── di/
-    │   │       │   └── DashboardModule.kt
-    │   │       ├── component/        # Feature-scoped composables (not shared with :core)
-    │   │       │   └── StatCard.kt
-    │   │       ├── DashboardViewModel.kt
-    │   │       └── DashboardScreen.kt
-    │   │
-    │   └── wear/             # :features:dashboard:wear — Wear UI (Wear Material 3)
-    │       └── src/main/kotlin/com/yourpackage/features/dashboard/wear/
-    │           ├── di/
-    │           │   └── WearDashboardModule.kt
-    │           ├── component/        # Wear-specific feature components
-    │           │   └── WearStatChip.kt
-    │           ├── WearDashboardViewModel.kt
-    │           └── WearDashboardScreen.kt
-    │
-    ├── profile/              # :features:profile (phone-only today, but still uses app/ submodule)
-    │   └── app/              # :features:profile:app
-    │       └── src/main/kotlin/com/yourpackage/features/profile/
-    │           ├── di/
-    │           │   └── ProfileModule.kt
-    │           ├── component/        # Feature-scoped composables
-    │           │   └── ProfileHeader.kt
-    │           ├── ProfileViewModel.kt
-    │           └── ProfileScreen.kt
-    │
-    └── settings/             # :features:settings
-        └── app/              # :features:settings:app
-            └── src/main/kotlin/com/yourpackage/features/settings/
-                ├── di/
-                │   └── SettingsModule.kt
-                ├── SettingsViewModel.kt
-                └── SettingsScreen.kt
+├── features/
+│   └── dashboard/
+│       ├── app/                 # :features:dashboard:app
+│       │   └── src/main/kotlin/com/myapp/features/dashboard/
+│       │       ├── DashboardViewModel.kt
+│       │       ├── DashboardScreen.kt
+│       │       ├── component/        # feature-local widgets (lazy-promote later)
+│       │       └── di/
+│       │           └── DashboardModule.kt
+│       │
+│       └── wear/                # :features:dashboard:wear
+│           └── src/main/kotlin/com/myapp/features/dashboard/wear/
+│               ├── WearDashboardViewModel.kt
+│               ├── WearDashboardScreen.kt
+│               ├── component/
+│               └── di/
+│                   └── WearDashboardModule.kt
+│
+├── widget/                      # :widget (optional) — Glance home screen widget
+│   └── src/main/kotlin/com/myapp/widget/
+│       ├── AppWidgetReceiver.kt
+│       └── AppWidget.kt
+│
+├── complications/               # :complications (optional) — Wear OS data providers
+│   └── src/main/kotlin/com/myapp/complications/
+│       └── AppComplicationService.kt
+│
+└── tiles/                       # :tiles (optional) — Wear OS tile services
+    └── src/main/kotlin/com/myapp/tiles/
+        └── AppTileService.kt
 ```
-
-## Feature-Scoped Components
-
-Features can have their own composables in a `component/` package inside the platform submodule. Use this for UI elements that are specific to a single feature — e.g., a `StatCard` composable used only on the dashboard. If multiple features need the same component, promote it to `:core:ui:component`.
-
-## What Platform Submodules Do NOT Share
-
-The `app/` and `wear/` submodules within a feature are intentionally isolated from each other. They share `:core` (use cases, repositories, domain models) but nothing else:
-
-- **No shared UI** — phone uses `androidx.compose.material3`, Wear uses `androidx.wear.compose.material3`. These are different libraries with different components (a `Button` on phone is a `Chip` on Wear). Sharing composables would mean pulling in both toolkits.
-- **No shared ViewModels** — even when two ViewModels call the same use case, the UI state they manage is typically different. A phone dashboard might show charts in a grid; a Wear dashboard shows 3 items in a `ScalingLazyColumn`. Different screen shape = different state = different ViewModel. The duplication is minimal (a thin class with a StateFlow) and not worth a shared module.
-
-The only thing platform submodules share is `:core`. That's where the real reuse happens.
-
-## Platform-Specific Navigation
-
-A key strength of this architecture is how it isolates platform-specific implementations. Navigation is a perfect example of this.
-
-**`:app` Module**: Uses the Navigation 3 library (`androidx.navigation3`) to handle adaptive layouts with scenes, a savable back stack with keys, and a central `NavDisplay`.
-
-**`:wear` Module**: Uses the specialized Wear Compose Navigation library (`androidx.wear.compose:compose-navigation`), which provides components tailored for watches, like the `SwipeDismissableNavHost`.
-
-The feature modules simply provide the `@Composable` screens. The `:app` and `:wear` modules are independently responsible for calling those screens using the correct navigation library for their platform.
-
-## Why This Works
-
-**Build Cache Isolation**: Each feature module is compiled independently. Changing one feature doesn't recompile the others.
-
-**Compile-Time Boundaries**: Features cannot depend on each other — only on `:core`. This is enforced by Gradle, not just convention.
-
-**Multi-platform Ready**: All platform modules (`:app`, `:wear`, `:tv`, `:auto`, etc.) can share feature code from day one without any additional setup.
-
-**Keeps Clean Dependencies**: Feature modules cannot depend on each other, only on `:core`. This prevents your project from becoming a "ball of mud."
-
-**Easy to Add Features**: Adding a new feature means creating a new module under `features/` with a `build.gradle.kts`. Auto-discovery in `settings.gradle.kts` picks it up automatically.
-
-**Consistent Structure**: Every feature always uses platform submodules (`app/`, `wear/`, etc.), even if it only targets one platform. No guessing whether a feature is flat or nested — it's always nested. Adding a Wear variant later is just adding a `wear/` submodule.
 
 ## Dependency Flow
 
 The dependency direction is strictly enforced:
 
 ```
-app           ──→ features:dashboard:app  ──→ core
-              ──→ features:profile:app    ──→ core
-              ──→ features:settings:app   ──→ core
+:app             ──→ :core:data        ──→ :core:domain
+                 ──→ :core:strings
+                 ──→ :features:*:app   ──→ :core:domain + :core:strings
 
-wear          ──→ features:dashboard:wear ──→ core
-              ──→ core
+:wear            ──→ :core:data        ──→ :core:domain
+                 ──→ :core:strings
+                 ──→ :features:*:wear  ──→ :core:domain + :core:strings
 
-widget        ──→ core
-complications ──→ core
+:widget          ──→ :core:data        ──→ :core:domain
+                 ──→ :core:strings
+
+:complications   ──→ :core:domain
+:tiles           ──→ :core:domain
 ```
 
-Widgets and complications are standalone OS entry points — the system launches them independently of the app. They depend only on `:core` for data access (use cases, repositories) and never go through feature modules or platform navigation.
+**Key rules:**
+
+1. **Feature modules never depend on `:core:data`.** They depend only on `:core:domain` (for use cases and interfaces) and `:core:strings` (for resources). Concrete data implementations are wired by platform shells via Koin.
+
+2. **`:core:domain` is pure Kotlin.** Uses `kotlin("jvm")` plugin, not `android.library`. Cannot import Android types — this is enforced at compile time, not by convention.
+
+3. **`:core:data` and `:core:strings` are Android libraries**, but they don't depend on each other. `:core:data` depends on `:core:domain`. `:core:strings` is a leaf module containing only `res/values/strings.xml`.
+
+4. **Platform shells (`:app`, `:wear`) own DI wiring.** They load `coreDataModule` (from `:core:data`) plus their feature modules' Koin modules to provide concrete implementations to the use cases features depend on. This is dependency inversion at the module boundary.
+
+5. **Widgets, complications, and tiles are sibling root modules**, not features. The OS launches them independently of the main app. They depend only on the core layer they need.
+
+## Why kotlin("jvm") for :core:domain
+
+The single most important compile-time barrier in this architecture is making `:core:domain` a pure Kotlin module. Consequences:
+
+- **No `Context`, no `Uri`, no `R` class.** If you need them, the logic doesn't belong in domain.
+- **Tests run as plain JVM tests.** No Robolectric, no instrumentation, no emulator. Milliseconds per test.
+- **Multi-platform reuse.** A pure Kotlin domain layer can later move to a `commonMain` source set if you ever go Compose Multiplatform.
+
+If `:core:domain` were `android.library`, an agent (or a careless dev) could `import android.content.Context` and the architecture would silently leak Android into the supposed-pure layer. With `kotlin("jvm")` the build fails immediately.
+
+## Why Centralized Strings (Pocket Casts Pattern)
+
+All user-facing strings live in `:core:strings`, a leaf Android library that platform shells, feature modules, and OS surfaces all depend on. This is the same pattern Pocket Casts uses (their `:modules:services:localization` module).
+
+Trade-offs:
+
+- **Pro:** Single source of truth. Adding a translation means editing one file. No "where does this string go?" decision tree.
+- **Pro:** Resource shrinking strips unused strings from each APK (Wear APK doesn't ship strings only used by phone features).
+- **Pro:** Wear and `:app` naturally share identical text without ceremony. Per-platform overrides via `titles.xml` only when wording must differ.
+- **Con:** Changing one string invalidates the build cache for every consumer. Acceptable for solo projects where strings change far less often than code.
+
+The alternative pattern (per-feature strings, NiA-style) gives finer build cache invalidation but spreads strings across many `strings.xml` files. For a solo developer, centralization wins on ergonomics.
+
+## What Platform Submodules Do NOT Share
+
+The `app/` and `wear/` submodules within a feature are intentionally isolated from each other. They share `:core:domain` (use cases, models) and `:core:strings` (resources) but nothing else:
+
+- **No shared UI** — `:app` uses `androidx.compose.material3`, `:wear` uses `androidx.wear.compose.material3`. Different libraries with different components (a `Button` on phone is a `Chip` on Wear). Sharing composables would mean pulling in both toolkits.
+- **No shared ViewModels** — even when two ViewModels call the same use case, the UI state they manage is typically different. A phone dashboard might show charts in a grid; a Wear dashboard shows three items in a `ScalingLazyColumn`. Different shape = different state = different ViewModel. The duplication is minimal (a thin class with a StateFlow) and not worth a shared module.
+
+## Lazy Widget Promotion
+
+Feature-local Composable widgets start in `features/<name>/<platform>/component/`. When a *second* feature needs the same widget, promote it to a shared module:
+
+- For `:app` widgets: create `:core:ui:app` (Material 3, depends on `:core:domain`)
+- For `:wear` widgets: create `:core:ui:wear` (Wear Material 3, depends on `:core:domain`)
+
+These modules don't exist at project init — create them by hand when actually needed. The point of lazy promotion is that the module's existence is justified by real reuse.
+
+Strings tied to a promoted widget can move out of `:core:strings` into the new `:core:ui:*` module's resources only when they're inseparable from the widget. Most stay in `:core:strings`.
+
+## Platform-Specific Navigation
+
+A key strength of this architecture is how it isolates platform-specific implementations. Navigation is a perfect example.
+
+- **`:app`** uses Navigation 3 (`androidx.navigation3`) — adaptive layouts with scenes, savable back stack with keys, central `NavDisplay`.
+- **`:wear`** uses Wear Compose Navigation (`androidx.wear.compose:compose-navigation`) — `SwipeDismissableNavHost` and watch-tailored components.
+
+Feature modules just provide `@Composable` screens. Platform shells call those screens using their own navigation library. Features don't know which platform they're on.
+
+## Theme
+
+Each platform shell defines its own theme that wraps `MaterialTheme` with dynamic colors. There's no shared `:core:designsystem` module by default — for a project using vanilla Material 3 + dynamic colors, designsystem would be a "ghost" module containing nothing.
+
+If a project ever needs custom brand tokens (specific colors, custom typography, semantic palette overrides) shared across platforms, create a `:core:designsystem` module then. Until that point, trivial duplication of a few hex values across platform shells is cheaper than the module.
 
 ## Example Module Dependencies
 
 ```kotlin
-// In app/build.gradle.kts
+// app/build.gradle.kts
 dependencies {
-    implementation(project(":core"))
+    implementation(project(":core:data"))
+    implementation(project(":core:strings"))
     implementation(project(":features:dashboard:app"))
     implementation(project(":features:profile:app"))
-    implementation(project(":features:settings:app"))
+    // Compose, Koin, Navigation 3, etc.
 }
 
-// In wear/build.gradle.kts
+// wear/build.gradle.kts
 dependencies {
-    implementation(project(":core"))
+    implementation(project(":core:data"))
+    implementation(project(":core:strings"))
     implementation(project(":features:dashboard:wear"))
+    // Wear Compose, Koin, Wear Compose Navigation, etc.
 }
 
-// In features/dashboard/app/build.gradle.kts (same pattern for all features)
+// features/dashboard/app/build.gradle.kts
 dependencies {
-    // Feature modules depend ONLY on the core module
-    implementation(project(":core"))
-
-    // NO dependency on app/wear modules allowed!
-    // NO dependency on other feature modules allowed!
+    implementation(project(":core:domain"))
+    implementation(project(":core:strings"))
+    // NO :core:data
+    // NO dependency on app/, wear/, or other feature modules
+    // Compose, Koin Compose, ViewModel
 }
 
-// In widget/build.gradle.kts
+// features/dashboard/wear/build.gradle.kts
 dependencies {
-    implementation(project(":core"))
-    // NO dependency on :app, :wear, or feature modules
+    implementation(project(":core:domain"))
+    implementation(project(":core:strings"))
+    // Wear Compose, Koin Compose, ViewModel
 }
 
-// In complications/build.gradle.kts
+// widget/build.gradle.kts
 dependencies {
-    implementation(project(":core"))
-    // NO dependency on :wear or feature modules
+    implementation(project(":core:data"))
+    implementation(project(":core:strings"))
+    // Glance
 }
 
-// In core/build.gradle.kts
+// complications/build.gradle.kts
 dependencies {
-    // Core has no dependency on other project modules
-    // Only external libraries (Retrofit, Room, etc.)
+    implementation(project(":core:domain"))
+    // androidx.wear.watchface.complications
+}
+
+// core/data/build.gradle.kts
+dependencies {
+    implementation(project(":core:domain"))
+    // Room, DataStore, Koin
+}
+
+// core/domain/build.gradle.kts
+dependencies {
+    implementation(libs.kotlinx.coroutines.core)
+    // No project dependencies. Pure Kotlin.
+}
+
+// core/strings/build.gradle.kts
+dependencies {
+    // No dependencies. Just resources.
 }
 ```
 
 ## Tech Stack
 
-- **Dependency Injection**: Koin
-- **Networking**: Retrofit
-- **Database**: Room
-- **Serialization**: Kotlinx Serialization
-- **Image Loading**: Coil
-- **Navigation**:
-  - Mobile: Navigation 3 (`androidx.navigation3`)
-  - WearOS: Wear Compose Navigation (`androidx.wear.compose:compose-navigation`)
-- **State Management**: StateFlow + MVVM
-- **Formatting**: Spotless
-- **Testing**: MockK
-- **Build**: Gradle KTS + version catalogs (`libs.versions.toml`)
-- **Platforms**: Mobile Android + WearOS (+ TV, Auto optional)
+- **Dependency Injection:** Koin
+- **Database:** Room
+- **DataStore Preferences:** for simple key-value storage
+- **Networking:** Retrofit (add to `:core:data` when needed)
+- **Serialization:** Kotlinx Serialization
+- **Image Loading:** Coil
+- **Navigation:** Navigation 3 (`:app`), Wear Compose Navigation (`:wear`)
+- **State Management:** StateFlow + MVVM
+- **Formatting:** Spotless + ktfmt (Google style)
+- **Testing:** MockK
+- **Build:** Gradle KTS + version catalogs
 
 ## Benefits
 
-- **Solo Development Optimized**: Minimal overhead while maintaining architectural benefits
-- **Multi-platform Code Sharing**: Features work across all platforms (mobile, wear, TV, auto) from day one
-- **Faster Builds**: Gradle caches unchanged modules independently
-- **Platform Flexibility**: Each platform uses optimal navigation solution
-- **Feature Isolation**: Each feature is a separate module with compile-time boundary enforcement
+- **Compile-time architecture enforcement.** Pure-Kotlin domain layer can't accidentally import Android. Feature modules can't accidentally depend on the data layer.
+- **Watch APK isn't bloated.** Wear pulls in `:core:data` (Room, etc.) but not the feature modules' Material 3 phone widgets, and not `:app` shell code.
+- **Tests run instantly.** Domain layer is JVM-only — no Robolectric, no instrumentation.
+- **Single source of truth for strings.** Pocket Casts pattern. One file to localize.
+- **Multi-platform from day one.** Adding `:wear` after building `:app`-only is one `generate.sh wear` call.
+- **No premature abstraction.** No `:core:ui:*`, no `:core:designsystem` until real reuse demands them.
 
 ## Getting Started
 
-1. **Create unified core**: Build single `:core` module with all shared logic
-2. **Create first feature module**: Create `features/dashboard/app/` with its own `build.gradle.kts`
-3. **Add auto-discovery**: Use `settings.gradle.kts` to auto-discover feature modules
-4. **Platform setup**: Implement platform modules (`:app`, `:wear`, `:tv`, etc.) with appropriate navigation, depending on feature modules
-5. **Iterate**: Add more feature modules as needed, each containing only presentation layer
+1. **Initialize:** `scripts/init.sh <name> <package>` — creates root + `:core:domain` + `:core:data` + `:core:strings`.
+2. **Add platform shells:** `scripts/generate.sh app` and/or `scripts/generate.sh wear`.
+3. **Add features:** `scripts/generate.sh feature dashboard --wear`.
+4. **Add OS surfaces as needed:** `scripts/generate.sh widget` / `complications` / `tiles`.
+5. **Iterate:** generate more features and modules as needed.
