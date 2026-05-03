@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Scaffold a new Angular + Firebase side project with all conventions pre-configured.
-# Requires: ng (Angular CLI), npm, git
-# Assumes: ../assets/reset.css and ../assets/.prettierrc.json exist relative to this script.
+# Scaffold a new TanStack Start + Firebase side project with all conventions pre-configured.
+# Requires: npx, npm, git
+# Assumes: ../assets/ exists alongside this script with reset.css, .prettierrc.json,
+#          firestore.rules, and templates/ for our locked configs.
 #
 # Usage:
 #   ./new-project.sh <project-name>
@@ -12,13 +13,23 @@ set -euo pipefail
 #   ./new-project.sh my-app
 #
 # Creates:
-#   <project-name>/  — Angular project with CSS reset, ESLint, Prettier, and git initialized.
+#   <project-name>/  — TanStack Start project with our locked stack:
+#                      - Vite + tanstackStart plugin
+#                      - TanStack Router (file-based)
+#                      - TanStack Query
+#                      - Zod
+#                      - CSS reset + tokens + globals
+#                      - ESLint flat config + Prettier
+#                      - Firebase wrapper (lib/firebase.ts) ready to receive config
+#                      - apphosting.yaml ready for App Hosting deploy
+#                      - firestore.rules locked down
+#                      - git initialized
 #
-# Firebase, Firestore, auth, environments, etc. are added on demand
+# Firebase project, DNS subdomain, App Hosting backend, etc. are added on demand
 # as the project needs them — guided by the web-dev skill.
 
 # --- Prerequisite checks ---
-for cmd in ng npm git; do
+for cmd in npx npm git; do
     command -v "$cmd" &>/dev/null || {
         echo "Error: '$cmd' is not installed."
         exit 1
@@ -45,71 +56,108 @@ if [[ -d "$PROJECT_NAME" ]]; then
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-RESET_CSS="$SCRIPT_DIR/../assets/reset.css"
-PRETTIER_RC="$SCRIPT_DIR/../assets/.prettierrc.json"
+ASSETS="$SCRIPT_DIR/../assets"
+TEMPLATES="$ASSETS/templates"
 
-if [[ ! -f "$RESET_CSS" ]]; then
-    echo "Error: Could not find reset.css at $RESET_CSS"
-    exit 1
-fi
-
-if [[ ! -f "$PRETTIER_RC" ]]; then
-    echo "Error: Could not find .prettierrc.json at $PRETTIER_RC"
-    exit 1
-fi
+for required in \
+    "$ASSETS/reset.css" \
+    "$ASSETS/.prettierrc.json" \
+    "$ASSETS/firestore.rules" \
+    "$TEMPLATES/apphosting.yaml" \
+    "$TEMPLATES/eslint.config.js" \
+    "$TEMPLATES/vite.config.ts" \
+    "$TEMPLATES/.env.example" \
+    "$TEMPLATES/src/lib/firebase.ts" \
+    "$TEMPLATES/src/lib/firebase-admin.ts" \
+    "$TEMPLATES/src/lib/query-client.ts" \
+    "$TEMPLATES/src/styles/tokens.css" \
+    "$TEMPLATES/src/styles/globals.css" \
+    "$TEMPLATES/src/routes/__root.tsx"; do
+    if [[ ! -f "$required" ]]; then
+        echo "Error: Missing required template: $required"
+        exit 1
+    fi
+done
 
 trap 'echo "Error: Setup failed. Cleaning up..."; rm -rf "$PROJECT_NAME"' ERR
 
-echo -n "==> Creating Angular project: $PROJECT_NAME "
-ng new "$PROJECT_NAME" --style=css --ssr --skip-git --skip-install --defaults --zoneless >/dev/null &
-NG_PID=$!
-while kill -0 $NG_PID 2>/dev/null; do
-    printf '.'
-    sleep 1
-done
-echo
-# wait propagates ng new's exit code — ERR trap will fire on failure
-wait $NG_PID
+# --- Create the TanStack Start project (alpha CLI) ---
+# `tanstack create` is the official scaffolder. It's alpha; if flags change,
+# fall back to `npm create vite@latest` + manual @tanstack/start install.
+echo "==> Creating TanStack Start project: $PROJECT_NAME"
+npx --yes @tanstack/create-start@latest "$PROJECT_NAME" --template typescript --no-git --skip-install
 
 cd "$PROJECT_NAME"
-# Update trap now that we've cd'd into the project directory
 trap 'echo "Error: Setup failed. Cleaning up..."; cd ..; rm -rf "$PROJECT_NAME"' ERR
 
-# --- CSS reset + custom properties ---
-echo "==> Writing CSS reset and custom properties"
-cp "$RESET_CSS" src/styles.css
+# --- Drop in our locked configs (overwriting CLI defaults) ---
+echo "==> Applying locked configs"
+
+mkdir -p src/lib src/styles src/routes src/components src/features
+
+cp "$TEMPLATES/vite.config.ts" vite.config.ts
+cp "$TEMPLATES/eslint.config.js" eslint.config.js
+cp "$TEMPLATES/.env.example" .env.example
+cp "$TEMPLATES/apphosting.yaml" apphosting.yaml
+cp "$ASSETS/firestore.rules" firestore.rules
+cp "$ASSETS/.prettierrc.json" .prettierrc.json
+
+cp "$ASSETS/reset.css" src/styles/reset.css
+cp "$TEMPLATES/src/styles/tokens.css" src/styles/tokens.css
+cp "$TEMPLATES/src/styles/globals.css" src/styles/globals.css
+
+cp "$TEMPLATES/src/lib/firebase.ts" src/lib/firebase.ts
+cp "$TEMPLATES/src/lib/firebase-admin.ts" src/lib/firebase-admin.ts
+cp "$TEMPLATES/src/lib/query-client.ts" src/lib/query-client.ts
+
+cp "$TEMPLATES/src/routes/__root.tsx" src/routes/__root.tsx
+
+# --- gitignore additions ---
+{
+    echo ''
+    echo '# Local env'
+    echo '.env.local'
+    echo ''
+    echo '# Generated route tree'
+    echo 'src/routeTree.gen.ts'
+    echo ''
+    echo '# Build output'
+    echo '.output'
+} >>.gitignore
 
 # --- Install dependencies ---
-# First pass: installs Angular deps so ng add schematics can run.
 echo "==> Installing dependencies"
 npm install
+npm install firebase zod
+npm install --save-dev \
+    @eslint/js \
+    typescript-eslint \
+    eslint-plugin-react \
+    eslint-plugin-react-hooks \
+    eslint-config-prettier \
+    prettier \
+    vite-tsconfig-paths
 
-# --- Linting + Formatting ---
-echo "==> Setting up ESLint and Prettier"
-ng add angular-eslint --skip-confirmation --skip-installation
-# Second pass: installs ESLint + Prettier after ng add updates package.json.
-npm install prettier eslint-config-prettier --save-dev
-cp "$PRETTIER_RC" .prettierrc.json
-
-# --- Ensure .gitignore covers node_modules ---
-if ! grep -q 'node_modules' .gitignore 2>/dev/null; then
-    echo '/node_modules' >>.gitignore
-fi
+# --- Server-side admin SDK (used only inside *.server.ts) ---
+npm install firebase-admin
 
 # --- Git init ---
-echo "==> Initializing git repository"
-git init
+echo "==> Initializing git"
+git init -q
 git add -A
-git commit -m "Initial project setup
+git commit -qm "Initial project setup
 
-Scaffolded with new-project.sh. Angular with CSS reset, ESLint, and Prettier."
+Scaffolded with new-project.sh — TanStack Start + Firebase, locked stack."
 
-echo ""
-echo "==> Done! Project '$PROJECT_NAME' is ready."
-echo ""
-echo "Next steps:"
-echo "  1. cd $PROJECT_NAME"
-echo "  2. ng serve — start building"
-echo ""
-echo "The web-dev skill will guide you when you need Firebase, Firestore,"
-echo "auth, environments, subdomain setup, or deployment."
+cat <<EOF
+
+==> Done! Project '$PROJECT_NAME' is ready.
+
+Next steps:
+  1. cd $PROJECT_NAME
+  2. cp .env.example .env.local  # then fill in Firebase config (use firebase_get_sdk_config MCP)
+  3. npm run dev
+
+Firebase project, App Hosting backend, DNS, Cloud Functions, and Firestore rules
+deploy are added on demand — guided by the web-dev skill.
+EOF

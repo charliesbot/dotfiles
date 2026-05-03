@@ -23,7 +23,7 @@ All projects use **Firebase App Hosting** — SPA and SSR alike. Git-push deploy
 
    **⚠️ This opens your browser** to connect the GitHub repo via Developer Connect (one-time step per repo). Always warn the user before running this command so they're prepared for the browser prompt. Select the repo and branch to deploy from.
 
-2. App Hosting auto-detects Angular and builds accordingly (SSR is enabled by default).
+2. App Hosting runs the project as a generic Node.js app. The scaffold's `apphosting.yaml` configures `npm run build` (which runs `vite build`) and `npm start` (which runs the server output produced by the `tanstackStart` Vite plugin).
 
 3. To trigger a manual rollout (e.g., after connecting):
    ```bash
@@ -49,17 +49,23 @@ runConfig:
   concurrency: 100 # Handle up to 100 requests per instance
 
 env:
-  # Static environment variables
-  - variable: STORAGE_BUCKET
-    value: my-app.appspot.com
-    availability: [RUNTIME]
+  # Firebase client config (from firebase_get_sdk_config MCP) — exposed to the browser
+  - variable: VITE_FIREBASE_API_KEY
+    value: <api-key>
+    availability: [BUILD]
+  - variable: VITE_FIREBASE_PROJECT_ID
+    value: <project-id>
+    availability: [BUILD]
+  # ... other VITE_FIREBASE_* values
 
-  # Secrets from Cloud Secret Manager
+  # Server-side secrets from Cloud Secret Manager
   # Set via: firebase apphosting:secrets:set API_KEY
   - variable: API_KEY
     secret: API_KEY
-    availability: [BUILD, RUNTIME]
+    availability: [RUNTIME]
 ```
+
+`VITE_*` variables need `availability: [BUILD]` because Vite inlines them at build time. Server-only secrets use `[RUNTIME]`.
 
 ### Custom domain
 
@@ -74,7 +80,7 @@ env:
 
 ## Backend Logic
 
-**Angular server routes** are the default for API endpoints — they run on the same App Hosting Node.js server, deploy with the app, and need zero extra infrastructure.
+**TanStack server functions** (`createServerFn`) are the default for API endpoints — they run on the same App Hosting Node.js server, deploy with the app, and need zero extra infrastructure. They're typed RPC: client and server share the same TS types, with Zod validating the input at the boundary.
 
 **Cloud Functions** are for logic that must run independently: Firestore triggers, auth triggers, scheduled tasks, or reusable services shared across multiple apps. Use Cloud Functions v2 (`firebase-functions/v2`). Import from `firebase-functions/v2/https`, `firebase-functions/v2/firestore`, `firebase-functions/v2/identity`, or `firebase-functions/v2/scheduler` as needed.
 
@@ -141,4 +147,4 @@ gcloud run deploy <service-name> \
   --allow-unauthenticated
 ```
 
-Map to subdomain via Cloud DNS (same process as above). This should be rare — Angular server routes and Cloud Functions cover the vast majority of backend needs.
+Map to subdomain via Cloud DNS (same process as above). This should be rare — TanStack server functions and Cloud Functions cover the vast majority of backend needs.

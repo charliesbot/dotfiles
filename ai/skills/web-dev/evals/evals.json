@@ -7,53 +7,67 @@
       "expected_output": "Uses the scaffold script, correct conventions, defers Firebase",
       "files": [],
       "assertions": [
-        { "text": "Uses new-project.sh scaffold script instead of manual ng new", "type": "manual" },
+        { "text": "Uses new-project.sh scaffold script instead of running tanstack create directly or scaffolding manually", "type": "manual" },
         { "text": "Project name is recipe-box", "type": "manual" },
-        { "text": "Does not install Tailwind, Sass, Angular Material, or @angular/fire", "type": "manual" },
-        { "text": "Defers Firebase setup — does not create Firebase project, install SDK, or set up DNS unless the user explicitly asked for it", "type": "manual" }
+        { "text": "Does not install Tailwind, Sass, CSS-in-JS, Redux, Zustand, Jotai, React Hook Form, SWR, or Axios", "type": "manual" },
+        { "text": "Defers Firebase project setup — does not create a Firebase project, set up DNS, or run firebase apphosting:backends:create unless the user explicitly asked", "type": "manual" }
       ]
     },
     {
       "id": 2,
-      "prompt": "I need a bookmarks feature for my app. Users can save URLs with a title and tags, and see them in a list. Add the feature with the component, routing, and a Firestore service for persistence.",
-      "expected_output": "Creates bookmarks/ at top level with 2025 naming, OnPush, signals, Firebase JS SDK, security rules",
+      "prompt": "I need a bookmarks feature for my app. Users can save URLs with a title and tags, and see them in a list. Add the feature with routes, the page component, and a Firestore-backed data layer.",
+      "expected_output": "Creates features/bookmarks/ with data.ts + types.ts + components/, thin route file in routes/, Zod schemas, useSuspenseQuery + loader, locked Firestore rules",
       "files": [],
       "assertions": [
-        { "text": "Feature folder is bookmarks/ at top level (not nested under features/ or pages/)", "type": "manual" },
-        { "text": "Uses 2025 naming convention (bookmarks.ts not bookmarks.component.ts, no Component/Service suffixes)", "type": "manual" },
-        { "text": "All components use ChangeDetectionStrategy.OnPush", "type": "manual" },
-        { "text": "Uses signals for state (signal/computed/effect, not BehaviorSubject/RxJS)", "type": "manual" },
-        { "text": "Uses Firebase JS SDK directly (not @angular/fire)", "type": "manual" },
-        { "text": "Includes Firestore security rules with auth-owns-data pattern", "type": "manual" },
-        { "text": "Firestore service injects from core/ wrapper (e.g. core/firebase), not raw Firebase imports", "type": "manual" },
-        { "text": "Uses DestroyRef to clean up onSnapshot listener if service is not providedIn root, or if component manages the listener lifecycle", "type": "manual" }
+        { "text": "Feature lives in src/features/bookmarks/ with data.ts, types.ts, and components/", "type": "manual" },
+        { "text": "Route file in src/routes/ contains createFileRoute config only — no JSX in the route file", "type": "manual" },
+        { "text": "Uses kebab-case filenames (e.g. bookmarks-page.tsx) with PascalCase exports (BookmarksPage)", "type": "manual" },
+        { "text": "types.ts uses Zod schemas with z.infer for TypeScript types", "type": "manual" },
+        { "text": "data.ts exports a query key factory, queryOptions function, and at least one createServerFn for data access", "type": "manual" },
+        { "text": "Page component uses useSuspenseQuery; route loader prefetches via queryClient.ensureQueryData", "type": "manual" },
+        { "text": "Server function imports from ~/lib/firebase-admin (Admin SDK), not ~/lib/firebase (client SDK)", "type": "manual" },
+        { "text": "Includes Firestore security rules with auth-owns-data pattern (request.auth.uid match), not open rules", "type": "manual" },
+        { "text": "No barrel files (no index.ts re-exports)", "type": "manual" }
       ]
     },
     {
       "id": 3,
-      "prompt": "My project mood-tracker is ready to go live. Set up Firebase App Hosting, configure the subdomain mood-tracker.charlies.bot, and deploy it.",
-      "expected_output": "Uses App Hosting, apphosting.yaml, gcloud MCP for DNS, charlies-bot zone",
+      "prompt": "Add Firebase Auth with Google sign-in to my app. Lock dashboard routes behind auth.",
+      "expected_output": "Router context-based auth with beforeLoad guard, no React Context provider, createRootRouteWithContext",
       "files": [],
       "assertions": [
-        { "text": "Uses Firebase App Hosting (not classic firebase deploy --only hosting)", "type": "manual" },
-        { "text": "Creates or references apphosting.yaml with appropriate config", "type": "manual" },
-        { "text": "Uses run_gcloud_command MCP tool for DNS setup", "type": "manual" },
-        { "text": "DNS records target charlies-bot zone specifically", "type": "manual" },
-        { "text": "Uses firebase apphosting:backends:create CLI command for backend setup (Firebase MCP does not support App Hosting)", "type": "manual" },
-        { "text": "Warns user that the backends:create command will open their browser for GitHub connection via Developer Connect", "type": "manual" },
-        { "text": "Deploys via git push (not firebase deploy for hosting)", "type": "manual" }
+        { "text": "Auth state lives in TanStack Router context via createRootRouteWithContext, not in a React Context provider", "type": "manual" },
+        { "text": "_authed/route.tsx uses beforeLoad to redirect when context.user is null — does not check auth in a component or useEffect", "type": "manual" },
+        { "text": "client.tsx subscribes to onAuthStateChanged and calls router.invalidate() (or equivalent) on user change", "type": "manual" },
+        { "text": "Components read user via useRouteContext() from a route, not via a useAuth hook backed by React Context", "type": "manual" },
+        { "text": "Uses signInWithPopup with GoogleAuthProvider from firebase/auth (not @angular/fire, not a custom Auth class)", "type": "manual" }
       ]
     },
     {
       "id": 4,
-      "prompt": "I need an API endpoint in my app that takes a URL and returns the page title and meta description. Add a server route for it.",
-      "expected_output": "Uses Angular server routes on App Hosting, not Cloud Functions",
+      "prompt": "My project mood-tracker is ready to go live. Set up Firebase App Hosting, configure the subdomain mood-tracker.charlies.bot, and deploy it.",
+      "expected_output": "Uses App Hosting, apphosting.yaml with VITE_FIREBASE_* BUILD vars, gcloud MCP for DNS, charlies-bot zone, git-push deploy",
       "files": [],
       "assertions": [
-        { "text": "Creates an Angular server route (not a Cloud Function)", "type": "manual" },
+        { "text": "Uses Firebase App Hosting (not classic firebase deploy --only hosting)", "type": "manual" },
+        { "text": "Creates or references apphosting.yaml; VITE_FIREBASE_* env vars use availability: [BUILD]", "type": "manual" },
+        { "text": "Uses run_gcloud_command MCP tool for DNS setup in the charlies-bot zone", "type": "manual" },
+        { "text": "Uses firebase apphosting:backends:create CLI for backend setup (Firebase MCP does not support App Hosting backend creation)", "type": "manual" },
+        { "text": "Warns the user that backends:create opens the browser for GitHub connection via Developer Connect before running it", "type": "manual" },
+        { "text": "Deploys via git push to the connected branch (not firebase deploy for hosting)", "type": "manual" }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "I need an API endpoint that takes a URL and returns the page title and meta description. Add it.",
+      "expected_output": "Uses TanStack server function (createServerFn), not Cloud Function or separate functions/ directory",
+      "files": [],
+      "assertions": [
+        { "text": "Uses createServerFn from @tanstack/start (not a Cloud Function, not a separate API route)", "type": "manual" },
+        { "text": "Validates input with .validator(zSchema) — Zod schema for the URL input", "type": "manual" },
+        { "text": "Does not create a separate functions/ directory or add firebase-functions dependency", "type": "manual" },
         { "text": "Does not suggest firebase deploy --only functions for this endpoint", "type": "manual" },
-        { "text": "The endpoint runs on the same App Hosting Node.js server as the Angular app", "type": "manual" },
-        { "text": "Does not create a separate functions/ directory or firebase-functions dependency for this", "type": "manual" }
+        { "text": "Server function lives in src/features/<name>/data.ts (or src/lib/ if cross-feature), not co-located in a route file", "type": "manual" }
       ]
     }
   ]

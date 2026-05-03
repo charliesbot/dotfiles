@@ -1,11 +1,11 @@
 ---
 name: web-dev
-description: Use this skill whenever the user wants to build, modify, deploy, or maintain ANY web app or side project — even if they don't say "Angular" or "Firebase" explicitly. Trigger on new project setup, adding features/pages/components, refactoring code to signals, Firebase deploy, Firestore rules/security, Cloud Functions, Google sign-in/auth, subdomain setup (*.charlies.bot), CSS styling, Vitest/testing, ESLint/Prettier/linting, ng lint, ng generate, ng serve, or any mention of a charlies.bot project. Also trigger when the user asks to "build an app", "start a project", "add a page", "deploy my app", "fix my tests", or "lock down rules". If in doubt and the task involves web development, use this skill.
+description: Use this skill whenever the user wants to build, modify, deploy, or maintain ANY web app or side project — even if they don't say "React" or "TanStack" explicitly. Trigger on new project setup, adding features/routes/pages/components, server functions (createServerFn), TanStack Router/Query/Form/Store, route loaders, useSuspenseQuery, Firebase deploy, Firestore rules/security, Cloud Functions, Google sign-in/auth, subdomain setup (*.charlies.bot), CSS Modules/styling, Vitest/testing, ESLint/Prettier/linting, or any mention of a charlies.bot project. Also trigger when the user asks to "build an app", "start a project", "add a page", "deploy my app", "fix my tests", or "lock down rules". If in doubt and the task involves web development, use this skill.
 ---
 
-You are working on a web side project following Charlie's Angular + Firebase conventions. Every project deploys as a subdomain of `charlies.bot`.
+You are working on a web side project following Charlie's TanStack Start + Firebase conventions. Every project deploys as a subdomain of `charlies.bot`. The architecture mirrors Charlie's Android app at `~/projects/ares` — `routes/` is the nav graph, `features/` owns each user journey, `lib/` is the shared infrastructure (the equivalent of Ares's `:core` module).
 
-- Read `references/ARCHITECTURE.md` when deciding where to place new files or creating a new feature folder.
+- Read `references/ARCHITECTURE.md` when deciding where files go, when adding a feature, or when in doubt about the `routes/` vs `features/` split.
 - Read `references/DEPLOYMENT.md` before any deploy, DNS, or Cloud Functions work.
 - Read `references/AUTH.md` when adding Firebase Auth to a project for the first time.
 
@@ -15,23 +15,18 @@ Every side project is `projectname.charlies.bot`. Firebase handles everything �
 
 ```
 All projects     → Firebase App Hosting → projectname.charlies.bot
-API endpoints    → Angular server routes (same deploy, zero extra infra)
+API endpoints    → TanStack server functions (createServerFn — same deploy)
 Triggers/cron    → Cloud Functions    (separate deploy, event-driven)
 Data             → Firestore          (free tier)
 Auth             → Firebase Auth      (when needed)
 DNS              → Cloud DNS          (*.charlies.bot)
 ```
 
+The skill exists to remove "where does this go?" decisions, not to add ceremony. Conventions are written, not enforced — solo dev, not enterprise.
+
 ## MCP Integration
 
-Three MCP servers cover the full workflow. Use them proactively — don't do things manually.
-
-**Angular CLI MCP** — for patterns this skill doesn't cover:
-
-- Use `get_best_practices` when working with Angular APIs not covered in this skill (e.g., animations, i18n, service workers). Skip it for signals, OnPush, standalone, routing — those are already defined here.
-- Use `find_examples` when unsure about a specific modern Angular pattern.
-- Use `search_documentation` for Angular API details.
-- Use `angular-cli__list_projects` to discover workspace structure.
+Two MCP servers cover the workflow. Use them proactively — don't do things manually.
 
 **Firebase MCP** — project lifecycle, data, auth, hosting:
 
@@ -50,166 +45,209 @@ Three MCP servers cover the full workflow. Use them proactively — don't do thi
 
 ## Do Not
 
-- **No Zone.js** — use Zoneless change detection (`provideZonelessChangeDetection()`). Avoid `NgZone` and RxJS `async` pipes where Signals are viable.
-- **No Tailwind, Sass, CSS-in-JS, or CSS frameworks** — modern CSS with Angular component scoping is enough.
-- **No NgModules** — standalone components only. The entire codebase uses standalone.
-- **No Vercel, Netlify, or non-Google hosting** — Firebase ecosystem only. Everything stays in one console.
-- **No third-party libraries without asking** — the current stack covers most needs. Explain what's missing first.
-- **No open Firestore security rules** — lock down from day one, even for prototypes. Validate with MCP before deploying.
-- **No deploy without subdomain configured** — every project gets `projectname.charlies.bot`. No exceptions.
-- **No RxJS for simple state** — use signals. RxJS only for complex async streams (WebSocket feeds, debounced search, combineLatest patterns).
-- **No Firebase Hosting (classic)** — Firebase App Hosting ONLY. Do not run `firebase deploy` for hosting. App Hosting is git-push only and configured via `apphosting.yaml`.
-- **No Cloud Run unless Cloud Functions genuinely can't handle it** — Angular server routes handle API endpoints, Cloud Functions handle triggers and cron. Cloud Run is the rare escape hatch.
+- **No JSX in route files.** Route files are wiring only — they hold `createFileRoute()` config (component pointer, `validateSearch`, `loader`, `beforeLoad`, error/pending) and import the page component from `features/<name>/components/`. If you find yourself writing JSX in `src/routes/`, you're in the wrong file.
+- **No Next.js patterns.** No `'use server'` directive idioms, no app-router thinking, no `getServerSideProps`. Server boundaries cross via `createServerFn`, explicitly.
+- **No Redux, Zustand, Jotai.** TanStack Store covers shared client state. `useState`/`useReducer` for local. Most side projects need neither.
+- **No React Hook Form, no SWR, no Axios, no raw fetch in components.** TanStack Form for forms, TanStack Query for async data, server functions for the server boundary.
+- **No Tailwind, Sass, CSS-in-JS, or CSS frameworks.** CSS Modules + modern CSS (nesting, `:has()`, container queries, `@layer`).
+- **No Vercel, Netlify, Cloudflare hosting.** Firebase App Hosting only — everything stays in one console.
+- **No third-party libraries without asking.** The TanStack family + Firebase + Zod cover most needs. Explain what's missing first.
+- **No open Firestore security rules.** Lock down from day one, even for prototypes. Validate with MCP before deploying.
+- **No deploy without subdomain configured.** Every project gets `projectname.charlies.bot`. No exceptions.
+- **No Firebase Hosting (classic).** Firebase App Hosting ONLY. Do not run `firebase deploy` for hosting. App Hosting is git-push only and configured via `apphosting.yaml`.
+- **No Cloud Run unless Cloud Functions genuinely can't handle it.** Server functions handle API endpoints, Cloud Functions handle triggers and cron. Cloud Run is the rare escape hatch.
+- **No barrel files (`index.ts` re-exports).** Vite tree-shaking gets confused. Direct imports only.
+- **No editing `routeTree.gen.ts`.** It's auto-generated by the `tanstackStart` Vite plugin during dev — gitignored.
+- **No `app.config.ts` or Vinxi references.** TanStack Start is Vite-only. Config lives in `vite.config.ts`.
 
 ## Tech Stack
 
-| Concern         | Choice                                                |
-| --------------- | ----------------------------------------------------- |
-| Framework       | Angular 21+ (Signals-first, **Zoneless**, standalone) |
-| Hosting         | Firebase App Hosting (git-push deploys)               |
-| API endpoints   | Angular server routes (on App Hosting)                |
-| Triggers/cron   | Cloud Functions for Firebase                          |
-| Database        | Firestore (free tier focus)                           |
-| Auth            | Firebase Auth (when needed)                           |
-| DNS             | Cloud DNS (`*.charlies.bot`)                          |
-| CSS             | Modern CSS (component-scoped) + CSS reset             |
-| Package manager | npm                                                   |
-| Email           | sudo@charlies.bot (Google Workspace)                  |
-| Testing         | **Vitest** (Angular default)                          |
-| Linting         | ESLint via `angular-eslint`                           |
-| Formatting      | Prettier                                              |
+| Concern         | Choice                                                          |
+| --------------- | --------------------------------------------------------------- |
+| Framework       | TanStack Start (latest, Vite-only)                              |
+| Routing         | TanStack Router (file-based, type-safe)                         |
+| Server state    | TanStack Query (mandatory for async)                            |
+| Server endpoints| TanStack server functions (`createServerFn`)                    |
+| Local state     | `useState` / `useReducer`                                       |
+| Shared state    | TanStack Store (only when shared across distant trees)          |
+| Forms           | TanStack Form (when forms get nontrivial)                       |
+| Validation      | Zod (mandatory — search params, server fn input, Firestore docs)|
+| Hosting         | Firebase App Hosting (git-push deploys)                         |
+| API endpoints   | Server functions (on App Hosting)                               |
+| Triggers/cron   | Cloud Functions for Firebase                                    |
+| Database        | Firestore (free tier focus)                                     |
+| Auth            | Firebase Auth (when needed)                                     |
+| DNS             | Cloud DNS (`*.charlies.bot`)                                    |
+| CSS             | CSS Modules + modern CSS                                        |
+| Package manager | npm                                                             |
+| Email           | sudo@charlies.bot (Google Workspace)                            |
+| Testing         | Vitest                                                          |
+| Linting         | ESLint (flat config)                                            |
+| Formatting      | Prettier                                                        |
 
-## Project Structure
+## Project Structure (Summary)
 
-Use `ng generate` to create all code — it handles file placement, naming, and boilerplate. Angular 21 projects use **Zoneless** by default and the **2025 file naming convention** (`dashboard.ts` not `dashboard.component.ts`).
+For the full tree and the Ares parallel, see `references/ARCHITECTURE.md`. Quick version:
 
-- **`core/`** — app-wide infrastructure (auth, layout, interceptors). Not a feature.
-- **Features at top level** — each feature is its own directory (`dashboard/`, `profile/`). Self-contained with own routes, components, and services.
-- **`ui/`** — reusable dumb components, created on demand when shared across 2+ features.
-
-```bash
-ng generate component dashboard            # Feature component
-ng generate component ui/button            # Reusable UI component
-ng generate service core/auth              # Global service
 ```
+src/
+├── routes/                    # Nav graph (Ares: app/navigation/)
+├── features/<name>/           # Feature owns its UI + data + types (Ares: features/<name>/)
+│   ├── data.ts                # Server fns + queryOptions + key factory
+│   ├── types.ts               # Zod schemas + TS types
+│   └── components/
+├── components/                # Shared UI (extract on 2+ feature reuse)
+├── lib/                       # Cross-cutting infra (Ares: :core)
+│   ├── firebase.ts            # Client SDK
+│   ├── firebase-admin.ts      # Admin SDK (server-only)
+│   └── query-client.ts
+└── styles/                    # reset.css, tokens.css, globals.css
+```
+
+**File naming:** kebab-case files, PascalCase exports. `feed-page.tsx` exports `FeedPage`. Hooks: `use-feed.ts` exports `useFeed`.
 
 **"Where does this go?"**
-`core/` for infrastructure (auth, layout, interceptors). Top-level folder for features. `ui/` for components reused across features. Start in the feature, extract to `ui/` when reused.
+| If it's...                              | Put it in...                              |
+| --------------------------------------- | ----------------------------------------- |
+| Route registration (URL, loader, guard) | `src/routes/...`                          |
+| The actual screen/page component        | `src/features/<name>/components/`         |
+| Feature data layer (queries, server fns)| `src/features/<name>/data.ts`             |
+| Feature types/schemas                   | `src/features/<name>/types.ts`            |
+| A component used by 2+ features         | `src/components/`                         |
+| Cross-cutting infrastructure            | `src/lib/`                                |
+| Design tokens or global CSS             | `src/styles/`                             |
 
-## Component Pattern
+## Routes — Wiring Only
 
-**Inline templates for small components** (Angular best practice), external files for large ones:
+A route file holds `createFileRoute()` config and imports the page from `features/`. No JSX.
 
-```typescript
-// Small component — inline template + styles (single file)
-@Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: "app-dashboard-stats",
-  template: `
-    <div class="stats">
-      @for (stat of stats(); track stat.label) {
-        <span>{{ stat.label }}: {{ stat.value }}</span>
-      }
-    </div>
-  `,
-  styles: `
-    .stats {
-      display: flex;
-      gap: 1rem;
-    }
-  `,
-})
-export class DashboardStats {
-  readonly stats = input.required<Stat[]>();
-}
+```tsx
+// src/routes/_authed/feed.tsx
+import { createFileRoute } from '@tanstack/react-router';
+import { z } from 'zod';
+import { FeedPage } from '~/features/feed/components/feed-page';
+import { feedQueryOptions } from '~/features/feed/data';
 
-// Large component — external template + styles
-@Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: "app-dashboard",
-  templateUrl: "./dashboard.html",
-  styleUrl: "./dashboard.css",
-})
-export class Dashboard {
-  private router = inject(Router);
-
-  items = httpResource<Item[]>(() => "/api/items");
-  itemCount = computed(() => this.items.value()?.length ?? 0);
-  searchQuery = signal("");
-  selectedCategory = linkedSignal(
-    () => this.items.value()?.[0]?.category ?? "all",
-  );
-}
+export const Route = createFileRoute('/_authed/feed')({
+  component: FeedPage,
+  validateSearch: z.object({ filter: z.string().optional() }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(feedQueryOptions()),
+});
 ```
-
-Components use signals for all reactive state. Use built-in control flow (`@if`, `@for`, `@switch`).
 
 ## State Management
 
-**Signals by default.** Use Angular signals (`signal()`, `computed()`, `linkedSignal()`, `effect()`) for all component and service state. Use `computed()` for read-only derived state, `linkedSignal()` for writable derived state (e.g., a selection that resets when its source changes), and `effect()` sparingly as a last resort for side effects. Angular 21 favors **Zoneless** change detection — avoid `NgZone` and manual change detection calls.
+**Default async pattern:** route `loader` calls `queryClient.ensureQueryData(...)`, the page component reads via `useSuspenseQuery(...)`. No manual `isLoading` ladders.
 
-**Async data loading:** Use `httpResource()` (experimental) for reactive HTTP data fetching instead of manual `isLoading`/`error`/`data` signal triplets. It wraps `HttpClient` and exposes status and response as signals. For non-HTTP async data, use `resource()`. Requires `provideHttpClient()` in `app.config.ts` providers.
+```tsx
+// src/features/feed/data.ts
+import { queryOptions } from '@tanstack/react-query';
+import { createServerFn } from '@tanstack/start';
+import { z } from 'zod';
 
-**Firestore real-time listeners:** Use `DestroyRef` to clean up `onSnapshot` subscriptions. Even if the store service is `providedIn: 'root'`, the **component** that starts listening should own the cleanup — otherwise navigating away and back creates duplicate listeners:
+export const feedKeys = {
+  all: ['feed'] as const,
+  detail: (id: string) => ['feed', id] as const,
+};
 
-```typescript
-// In the component that starts listening
-private store = inject(BookmarkStore);
-private destroyRef = inject(DestroyRef);
+export const getFeed = createServerFn({ method: 'GET' })
+  .validator(z.object({ limit: z.number().default(20) }))
+  .handler(async ({ data }) => {
+    const { db } = await import('~/lib/firebase-admin');
+    const snap = await db.collection('articles').limit(data.limit).get();
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  });
 
-ngOnInit(): void {
-  const unsub = this.store.listen();
-  this.destroyRef.onDestroy(() => unsub());
+export const feedQueryOptions = () =>
+  queryOptions({
+    queryKey: feedKeys.all,
+    queryFn: () => getFeed({ data: { limit: 20 } }),
+  });
+```
+
+```tsx
+// src/features/feed/components/feed-page.tsx
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { feedQueryOptions } from '../data';
+
+export function FeedPage() {
+  const { data: articles } = useSuspenseQuery(feedQueryOptions());
+  return <ul>{articles.map((a) => <li key={a.id}>{a.title}</li>)}</ul>;
 }
 ```
 
-The store's `listen()` method returns the unsubscribe function so the caller controls the lifecycle. Root singleton services don't need `DestroyRef` internally — they live for the app lifetime.
+**Server function naming:** verb-noun. `getFeed`, `createPost`, `deletePost`, `updateUser`. Mark server-only modules `*.server.ts` when they import the Admin SDK directly without `createServerFn` wrapping (rare — most code uses `createServerFn`).
+
+**Local state:** `useState` / `useReducer`. Don't reach for Store unless 2+ distant components need to share writable state.
+
+**Firestore real-time listeners:** clean up via `useEffect` return:
+
+```tsx
+useEffect(() => {
+  const unsub = onSnapshot(query, (snap) => setItems(snap.docs.map((d) => d.data())));
+  return unsub;
+}, []);
+```
 
 ## CSS Conventions
 
-Component-scoped modern CSS via Angular's default `ViewEncapsulation.Emulated`. Small components use inline `styles`; large components use external `.css` files.
+CSS Modules per component. The component file imports its sibling `.module.css`:
 
-**Global `styles.css`** contains only:
+```tsx
+// src/features/feed/components/feed-page.tsx
+import styles from './feed-page.module.css';
+export function FeedPage() {
+  return <article className={styles.article}>...</article>;
+}
+```
 
-- CSS reset
-- Custom properties (design tokens: colors, spacing, typography)
-- Base typography
+```css
+/* feed-page.module.css */
+.article {
+  padding: var(--spacing-md);
+  &:has(img) { padding-block: var(--spacing-lg); }
+}
+```
 
-**In component CSS**, use:
+**Global `src/styles/`** contains only:
+- `reset.css` — modern CSS reset
+- `tokens.css` — design tokens (CSS custom properties)
+- `globals.css` — imports the above + base typography
 
-- Native CSS nesting
-- `:has()` selector
-- Container queries
-- `@layer` for cascade management
-- Semantic class names — no utility classes
-
-No Tailwind, no Sass, no CSS-in-JS. Modern CSS is enough.
+In component CSS, use native nesting, `:has()`, container queries, `@layer`. Semantic class names — no utility classes.
 
 ## Firebase Setup (on demand)
 
 When a project needs Firebase (Firestore, Auth, Cloud Functions, etc.):
 
-1. `npm install firebase` — install the Firebase JS SDK directly. No `@angular/fire` — it's an unnecessary abstraction with standalone components and `inject()`.
+1. `npm install firebase` — install the Firebase JS SDK directly.
 2. Use `firebase_get_sdk_config` to get config values — never copy-paste from console.
-3. Create a `core/firebase.ts` service that wraps `initializeApp()` and exposes `Firestore`, `Auth`, etc. as injectable singletons. All feature services inject from this wrapper — never import raw Firebase SDK in feature code.
+3. Store the config in `.env.local` (gitignored) as `VITE_FIREBASE_*` variables.
+4. `src/lib/firebase.ts` is the single client-side entry point — feature code imports `auth`, `db` from here, never raw Firebase SDK.
 
-```typescript
-// core/firebase.ts — the single Firebase entry point
-import { Injectable } from "@angular/core";
-import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-import { environment } from "../../environments/environment";
+```ts
+// src/lib/firebase.ts
+import { initializeApp, getApps } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
-@Injectable({ providedIn: "root" })
-export class Firebase {
-  private app = initializeApp(environment.firebase);
-  readonly db = getFirestore(this.app);
-  readonly auth = getAuth(this.app);
-}
+// HMR-safe: reuse the existing app on hot reload.
+const app =
+  getApps()[0] ??
+  initializeApp({
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  });
+
+export const auth = getAuth(app);
+export const db = getFirestore(app);
 ```
 
-Store the config from `firebase_get_sdk_config` in `src/environments/environment.ts` under a `firebase` key.
+For server functions that need privileged access (writing to admin-only collections, reading any user's data), use `src/lib/firebase-admin.ts` with the Admin SDK. Server functions import from `firebase-admin`; client components import from `firebase`. Never the other way around.
 
 ## Firestore Conventions
 
@@ -237,7 +275,7 @@ match /posts/{postId} {
 
 ## Backend Logic
 
-App Hosting runs Angular SSR on Node.js — so you already have a backend. Use **Angular server routes** as the default for API endpoints. They deploy with your app (zero extra infra) and share the same App Hosting instance.
+App Hosting runs Node — so you already have a backend. Use **server functions** (`createServerFn`) as the default for API endpoints. They deploy with your app, share the same App Hosting instance, and give typed RPC with Zod validation at the boundary.
 
 Use **Cloud Functions** only when the logic needs to run independently of the app:
 
@@ -248,38 +286,35 @@ Use **Cloud Functions** only when the logic needs to run independently of the ap
 
 Keep functions small and focused — one function per concern. Deploy with `firebase deploy --only functions`. Debug with `mcp__plugin_firebase_firebase__functions_get_logs`.
 
+## Auth
+
+See `references/AUTH.md` for the full pattern. Quick version: auth state lives in **TanStack Router context**, not React Context. The `_authed/route.tsx` layout uses `beforeLoad` to redirect unauthed users — guards run before the route renders, no flash of protected UI. Components read the user via `useRouteContext()`.
+
 ## Testing
 
-**Vitest** is the default test runner (`ng test`). Tests live next to the code they test (e.g., `dashboard.spec.ts` alongside `dashboard.ts`).
+**Vitest** is the default test runner (`npm test`). Tests live next to the code they test (e.g., `feed-page.test.tsx` alongside `feed-page.tsx`).
 
-- Use `TestBed` for component tests with `provideHttpClient()` and `provideHttpClientTesting()`.
-- Test `httpResource` via `HttpTestingController` — flush requests and assert on signal values.
-- Test signals directly: update with `.set()` / `.update()`, assert with `()`.
-- Use `fixture.componentRef.setInput()` for signal inputs.
-
-```typescript
-TestBed.configureTestingModule({
-  providers: [provideHttpClient(), provideHttpClientTesting()],
-});
-const mockBackend = TestBed.inject(HttpTestingController);
-// ... flush requests, assert signal values
-```
+- Use Vitest's `expect` API; React Testing Library for component tests.
+- Server functions can be unit-tested by importing them directly — they're plain async functions outside the request lifecycle.
+- Mock Firebase via Vitest's module mocking when needed; prefer integration tests against the Firestore emulator for repository-level code.
 
 ## Linting & Formatting
 
-**ESLint** is added via `ng add angular-eslint` (flat config, `eslint.config.js`). The scaffold script handles this. Run with `ng lint`.
+**ESLint** with flat config (`eslint.config.js`). The scaffold script sets up `@eslint/js` + `typescript-eslint` + the React plugins. Run with `npm run lint`.
 
-**Prettier** is added manually for formatting. Install with `npm install prettier --save-dev` and add a `.prettierrc` config. Use `eslint-config-prettier` to avoid rule conflicts.
+**Prettier** for formatting. The scaffold drops in `.prettierrc.json` and `eslint-config-prettier` to avoid rule conflicts.
+
+Conventions in the skill (no cross-feature imports, `firebase-admin` only on server) are written rules, not enforced lint failures. Solo dev — discipline > automation overhead.
 
 ## Scaffolding a New Project
 
-Use the bundled script to create a lean Angular project:
+Use the bundled script to scaffold a TanStack Start project with all conventions baked in:
 
 ```bash
 ./scripts/new-project.sh <project-name>
 ```
 
-This creates an Angular project with CSS reset, routing, SSR, and git initialized. Nothing else — don't create a Firebase project, install the Firebase SDK, set up DNS, or configure `apphosting.yaml` until the user asks for a specific feature that needs them. Just `cd` in and start building with `ng serve`.
+The script runs `@tanstack/create-start` (the official TanStack scaffolder, currently alpha), then drops in the locked configs (`apphosting.yaml`, `lib/firebase.ts`, `tokens.css`, `__root.tsx`, `eslint.config.js`, `.env.example`, Firestore rules, CSS reset, Prettier config) and installs `firebase`, `zod`, and `firebase-admin`. The `apphosting.yaml` is created upfront with placeholders, but **don't create a Firebase project, run `firebase apphosting:backends:create`, or configure DNS until the user asks for the feature that needs them**. Just `cd` in and start with `npm run dev`.
 
 ## Deploying
 
@@ -287,13 +322,9 @@ All projects use Firebase App Hosting with git-push deploys:
 
 1. **Create the backend** via CLI: `firebase apphosting:backends:create --project <project-id> --backend <name> --primary-region us-central1`
    - **Heads up: this opens your browser** for GitHub repo connection (one-time interactive step via Developer Connect). Tell the user before running the command.
-2. **Create `apphosting.yaml`** in the project root (see DEPLOYMENT.md for config)
+2. **Create `apphosting.yaml`** in the project root (the scaffold does this — see DEPLOYMENT.md for the runtime config)
 3. **Push to the connected branch** — App Hosting builds and deploys automatically
 4. **Triggers/cron** → Cloud Functions: `firebase deploy --only functions`
 5. **Custom containers (rare)** → Cloud Run via `run_gcloud_command`
 
 Every project deploys as `projectname.charlies.bot`. See `references/DEPLOYMENT.md` for DNS and detailed instructions.
-
-## Reference
-
-For deployment, hosting, and infrastructure details, read `references/DEPLOYMENT.md`.

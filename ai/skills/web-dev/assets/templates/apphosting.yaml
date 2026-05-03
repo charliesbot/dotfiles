@@ -1,0 +1,26 @@
+runConfig:
+  cpu: 1
+  memoryMiB: 1024
+  minInstances: 0
+  maxInstances: 10
+  concurrency: 100
+
+env:
+  - variable: VITE_FIREBASE_API_KEY
+    value: REPLACE_ME
+    availability: [BUILD]
+  - variable: VITE_FIREBASE_AUTH_DOMAIN
+    value: REPLACE_ME
+    availability: [BUILD]
+  - variable: VITE_FIREBASE_PROJECT_ID
+    value: REPLACE_ME
+    availability: [BUILD]
+  - variable: VITE_FIREBASE_STORAGE_BUCKET
+    value: REPLACE_ME
+    availability: [BUILD]
+  - variable: VITE_FIREBASE_MESSAGING_SENDER_ID
+    value: REPLACE_ME
+    availability: [BUILD]
+  - variable: VITE_FIREBASE_APP_ID
+    value: REPLACE_ME
+    availability: [BUILD]
