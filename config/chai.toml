@@ -15,6 +15,7 @@ paths = [
   "@android-skills/system/*",
   "@android-skills/navigation/*",
   "@android-skills/performance/*",
+  "@android-skills/devtools/android-cli",
   "@stitch-skills/skills/design-md",
   "@stitch-skills/skills/taste-design",
   "@stitch-skills/skills/enhance-prompt",
