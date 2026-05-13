@@ -441,6 +441,18 @@ class DashboardViewModelTest {
 }
 ```
 
+## Inspecting the Project
+
+When you need to know something about the build — library versions, what a module depends on, where a transitive dependency comes from — read the build files or ask Gradle. Do not extract archives.
+
+- **Library versions:** read `gradle/libs.versions.toml`.
+- **Module dependencies:** read the module's `build.gradle.kts`.
+- **Resolved dependency tree:** `./gradlew :<module>:dependencies` (narrow with `--configuration releaseRuntimeClasspath` when noisy).
+- **Why a specific dependency is on the classpath:** `./gradlew :<module>:dependencyInsight --dependency <name>`.
+- **Third-party class or API:** use the IDE's "Go to declaration" or the library's public docs and source repo.
+
+**Never unzip a JAR or AAR.** Not to read versions, not to find classes, not to debug. The information is always available from the build files, Gradle tasks, or upstream docs. Unpacking archives is slow, produces enormous output, and there is no scenario in this project where it is the right move.
+
 ## Common Commands
 
 ```bash
