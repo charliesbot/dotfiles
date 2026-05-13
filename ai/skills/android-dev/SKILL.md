@@ -1,12 +1,11 @@
 ---
 name: android-dev
 description: >
-  Architecture guide for a multi-module Android project targeting :app (phone/tablet), Wear OS, and
-  optionally TV/Auto from one codebase. Use for features/ or :features: module paths, :core:domain /
-  :core:data / :core:strings, :app/:wear/:widget/:complications/:tiles modules, Koin DI, init.sh or
-  generate.sh scripts, Wear OS tiles/complications/watch UI, Navigation 3 or Wear Compose Navigation,
-  StateFlow/MVVM, Spotless/ktfmt, Gradle sync/build errors, and decisions about whether code belongs
-  in a core sub-module or a feature module.
+  Architecture and conventions for multi-module Android projects with Jetpack Compose, Wear OS,
+  Koin DI, and Gradle. Use when the user works on Android, Kotlin, Compose, or Gradle —
+  including :features:, :core:domain / :core:data / :core:strings,
+  :app / :wear / :widget / :complications / :tiles modules, Wear tiles/complications,
+  StateFlow/MVVM, Navigation 3, or Spotless/ktfmt.
 ---
 
 You are working on a multi-platform Android project following this architecture and conventions. Read `references/ARCHITECTURE.md` for the full module structure and dependency rules before making architectural decisions.
