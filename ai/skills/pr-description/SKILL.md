@@ -1,31 +1,56 @@
 ---
 name: pr-description
-description: Write and open a pull request for a solo personal project. Use whenever the user wants to ship the current branch ("open a pr", "create pr", "push and pr"). Produces a Conventional Commits title and concise body, then runs gh pr create.
+description: Write and open a pull request for a solo personal project. Use whenever the user wants to ship the current branch ("open a pr", "create pr", "push and pr"). Produces a bracketed-type title (e.g. "[feat] ...") and a concise body, then runs gh pr create.
 ---
 
-You write PR descriptions for the user's solo projects and open the PR with `gh pr create`. The audience is the user themselves, looking back at the PR a few weeks later. Optimize for: a future-self who wants to know *what* this PR was about in 10 seconds.
+You write PR descriptions for the user's solo projects and open the PR with `gh pr create`. The audience is the user themselves, looking back at the PR a few weeks later. Optimize for a future self who wants to know _what_ this PR was about in 10 seconds.
 
 ## Core principles
 
-- **Describe the PR, not the implementation.** "Add a skill for drafting solo-project PRs." Not "introduce `SKILL.md` with frontmatter and a workflow section."
-- **Concise beats comprehensive.** A tight one-paragraph PR is better than a structured-but-padded one. If you can say it in one sentence, say it in one sentence.
-- **No reviewer filler.** No "please review", no "cc @anyone", no "let me know what you think". Solo PR — no audience to address.
+- **Describe the PR, not the implementation.** Good: "Add a skill for drafting solo-project PRs." Bad: "Introduce SKILL.md with frontmatter and a workflow section." Avoid naming specific classes, files, or methods unless the name is load-bearing for understanding the change.
+
+- **Plain punctuation, no AI-tell.** Use periods and commas. Do not use em-dashes (—) or semicolons (;). They make prose feel dense and AI-written. If you would reach for an em-dash, use a period and start a new sentence. If you would reach for a semicolon, the same.
+
+- **Break ideas across sentences and paragraphs.** Short sentences beat long compound ones. Two distinct points means two sentences. When the topic shifts (for example from "what changed" to "known follow-up"), use a blank-line paragraph break. Spacing aids readability.
+
+- **Concise, but not crammed.** Cut filler words. Do not pack three ideas into one sentence to save space. A two-paragraph body of short sentences reads better than one dense paragraph of the same length.
+
+- **No reviewer filler.** No "please review", no "cc @anyone", no "let me know what you think". Solo PR, no audience to address.
+
 - **No emojis. No badges. No decorative headers.** Plain markdown.
-- **Bullets only when they earn their place.** Use prose by default. Use a bullet list only if there are 3+ genuinely distinct items that would read worse as a sentence.
-- **No test plan if there are no tests** — or if the change is trivial enough that the test plan would be "click around and see if it works". Skip the section entirely; don't write a stub.
 
-## Title — Conventional Commits
+- **Default to prose, not bullets.** PR bodies read as paragraphs. If the items could be a comma-separated sentence, write the sentence. A three-item list almost always belongs as prose, not as a bullet list. Reach for bullets only when each item is long enough to need its own line, such as a multi-part PR where each piece has its own short description.
 
-Format: `<type>: <imperative, lowercase summary>`
+  Bad (three short verbs that should be a sentence):
+
+  ```
+  The reader now:
+  - applies publisher-free legibility defaults
+  - pins line length and indent at the reading-system level
+  - ships bundled Inter and Noto Serif faces
+  ```
+
+  Good (same content, as prose):
+
+  ```
+  The reader now applies legibility defaults independent of the publisher, pins line length and indent at the reader level, and ships bundled Inter and Noto Serif faces.
+  ```
+
+- **No test plan if there are no tests.** Or if the change is trivial enough that the test plan would be "click around and see if it works". Skip the section entirely. Do not write a stub.
+
+## Title format
+
+Format: `[<type>] <Imperative summary in sentence case>`
+
+The type goes in square brackets at the front. The summary is imperative ("Add", "Fix") and uses sentence case (first word capitalized, rest lowercase unless they are proper nouns or identifiers).
 
 Types: `feat`, `fix`, `chore`, `docs`, `refactor`, `perf`, `test`, `build`, `ci`, `style`.
 
-Use a scope only if the PR is strictly isolated to a single module (e.g. `feat(android-dev): …`). If the PR touches multiple modules or is generic, skip the scope.
-
 Examples:
-- `feat: add pr-description skill for solo projects`
-- `fix: handle empty branch name in deploy script`
-- `chore: bump dependencies and drop unused angular skills`
+
+- `[feat] Add pr-description skill for solo projects`
+- `[fix] Handle empty branch name in deploy script`
+- `[chore] Bump dependencies and drop unused angular skills`
 
 Keep titles under ~70 characters. No trailing period.
 
@@ -42,37 +67,48 @@ git diff main...HEAD
 gh pr view --json url 2>/dev/null  # check if a PR already exists
 ```
 
-Also draw from the current conversation — what the user just built is usually the clearest source for the "what is this about" framing.
+Also draw from the current conversation. What the user just built is usually the clearest source for the "what is this about" framing.
 
-Bail conditions — check before drafting:
+Bail conditions to check before drafting:
 
-- **On the base branch.** If `git status` shows the current branch is `main` (or the repo's default), stop and tell the user. PRs go from feature branches; the skill doesn't make sense on `main` itself.
-- **A PR already exists.** If `gh pr view` returns a URL, stop and surface it. Don't create a duplicate — offer `gh pr edit` if they want to update it.
-- **Uncommitted changes.** `git diff main...HEAD` only sees committed work. If `git status` shows modified/untracked files, surface them and ask whether to commit them into the PR or leave them aside. Don't silently ship a PR missing the user's latest changes.
+- **On the base branch.** If `git status` shows the current branch is `main` (or the repo's default), stop and tell the user. PRs go from feature branches, not from `main` itself.
+- **A PR already exists.** If `gh pr view` returns a URL, stop and surface it. Do not create a duplicate. Offer `gh pr edit` if they want to update it.
+- **Uncommitted changes.** `git diff main...HEAD` only sees committed work. If `git status` shows modified or untracked files, surface them and ask whether to commit them into the PR or leave them aside. Do not silently ship a PR missing the user's latest changes.
 
 ### 2. Decide if the diff is clear
 
 The diff is **clear** when:
+
 - It's a focused change on a single concern.
 - The conversation context or commit messages already name the intent plainly.
 - The Conventional Commits type is obvious (one of feat/fix/chore fits cleanly).
 
 The diff is **uncertain** when:
+
 - It spans multiple unrelated concerns and you'd have to guess the framing.
 - The intent isn't obvious from commits or the conversation (e.g. a refactor that could be described several ways).
 - You're unsure whether something is `feat` vs `refactor`, or whether to mention something that may be incidental.
 
 ### 3. Draft
 
-Write the title and body. The body should answer: *what is this PR about?*
+Write the title and body. The body answers one question: _what is this PR about?_
 
-A good body is usually 1–3 sentences of prose. For larger or multi-part PRs, allow up to a short paragraph plus an optional tight bullet list of the distinct pieces.
+Shape:
 
-Do **not** include:
-- Implementation details ("uses `useEffect` with a cleanup function")
+- Most PRs: 2 to 4 short sentences of prose, split into 1 or 2 paragraphs.
+- Multi-part PRs: a short framing paragraph followed by a tight bullet list of the distinct pieces.
+- One-line trivia (rename, typo, dep bump): a single short sentence is fine.
+
+Use blank-line paragraph breaks when the body shifts topic, for example moving from "what changed" to "known follow-up" or "context that won't be obvious later".
+
+Re-read the draft and strip these before printing:
+
+- Implementation details like class names, function names, or file names that a future self could rediscover from the diff
 - File-by-file walkthroughs
-- "Why" sections unless the motivation is genuinely non-obvious from the title
-- Test plan, unless the project has tests *and* this PR changes behavior worth a checklist
+- "Why" framing when the motivation is already obvious from the title
+- Test plan unless the project actually has tests and this PR changes behavior worth a checklist
+- Any em-dash or semicolon that slipped in
+- Any bullet list whose items could have been written as a single sentence
 
 ### 4. Confirm only if uncertain
 
@@ -85,8 +121,8 @@ Do **not** include:
 # Push if the branch has no upstream yet
 git push -u origin HEAD
 
-# Create the PR — body via heredoc to preserve formatting
-gh pr create --title "<type>: <summary>" --body "$(cat <<'EOF'
+# Create the PR. Body via heredoc to preserve formatting.
+gh pr create --title "[<type>] <Summary>" --body "$(cat <<'EOF'
 <body>
 EOF
 )"
