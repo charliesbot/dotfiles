@@ -443,13 +443,15 @@ class DashboardViewModelTest {
 
 ## Inspecting the Project
 
-When you need to know something about the build — library versions, what a module depends on, where a transitive dependency comes from — read the build files or ask Gradle. Do not extract archives.
+When you need to know something about the build — library versions, what a module depends on, where a transitive dependency comes from, what classes a library exposes — read the build files or ask Gradle. The Gradle cache is not part of the investigation.
 
 - **Library versions:** read `gradle/libs.versions.toml`.
 - **Module dependencies:** read the module's `build.gradle.kts`.
 - **Resolved dependency tree:** `./gradlew :<module>:dependencies` (narrow with `--configuration releaseRuntimeClasspath` when noisy).
 - **Why a specific dependency is on the classpath:** `./gradlew :<module>:dependencyInsight --dependency <name>`.
 - **Third-party class or API:** use the IDE's "Go to declaration" or the library's public docs and source repo.
+
+**Stay out of `~/.gradle/caches/` entirely.** No `find`, no `ls`, no `grep`. The cache is a machine-wide artifact pool shared across every project and branch on the machine. It holds many versions of the same library side by side, so anything you see there is downstream evidence about what has been downloaded at some point, not what the current build resolves or ships. Going in there to "just check" is the start of the unzip workflow and answers the wrong question regardless. Ask Gradle through the tasks above instead.
 
 **Never unzip a JAR or AAR.** Not to read versions, not to find classes, not to debug. The information is always available from the build files, Gradle tasks, or upstream docs. Unpacking archives is slow, produces enormous output, and there is no scenario in this project where it is the right move.
 
