@@ -3,31 +3,55 @@ name: android-dev
 description: >
   Architecture and conventions for multi-module Android projects with Jetpack Compose, Wear OS,
   Koin DI, and Gradle. Use when the user works on Android, Kotlin, Compose, or Gradle —
-  including :features:, :core:domain / :core:data / :core:strings,
+  including :features:, :core:model / :core:domain / :core:data / :core:strings / :core:designsystem,
   :app / :wear / :widget / :complications / :tiles modules, Wear tiles/complications,
   StateFlow/MVVM, Navigation 3, or Spotless/ktfmt.
 ---
 
 You are working on a multi-platform Android project following this architecture and conventions. Read `references/ARCHITECTURE.md` for the full module structure and dependency rules before making architectural decisions.
 
+**Tooling vs architecture.** This skill defines architecture and conventions. For Android CLI operations — SDK management, creating a base project (`android create`), emulator control, deploying APKs (`android run`), capturing screenshots, inspecting UI layouts — use the **android-cli** skill. Cross-references appear inline where workflows hand off between the two.
+
+## Day 0: Modules, Not Packages
+
+The architecture is enforced by **five Gradle modules**, not by folder names inside one `:core` module:
+
+- `:core:model` (`kotlin("jvm")`)
+- `:core:domain` (`kotlin("jvm")`)
+- `:core:data` (`android.library`)
+- `:core:strings` (`android.library`, strings only)
+- `:core:designsystem:common` (`android.library`, non-string resources: drawables, color values, etc.)
+
+Before writing any feature code, run `./gradlew projects` and confirm these five modules show up. If they don't, your first task is to bootstrap them — see the next section. **Do not fence by package inside one `:core` module as a substitute.** Package fencing doesn't give you `kotlin("jvm")` on model and domain, so `import androidx.room.*` would silently compile in code that's supposed to be Android-free. The build wall is the whole point.
+
 ## Before You Write Any Code
 
 This skill ships two scripts in its `scripts/` directory:
 
-- **New project:** `scripts/init.sh <name> <package>` — creates project root, `:core:domain`, `:core:data`, `:core:strings`. Run once per project.
-- **New module:** `scripts/generate.sh <type> [<name>] [--wear]` — adds platform shells (`app`, `wear`), OS surfaces (`widget`, `complications`, `tiles`), or feature modules (`feature <name>`). Idempotent for shells/surfaces, errors on feature name collisions.
+- **Bootstrap a new project:** `scripts/bootstrap.sh` — run after `android create empty-activity ...` (see below). Adds the five `:core:*` modules.
+- **Add modules:** `scripts/generate.sh <type> [<name>] [--wear]` — platform shells (`app`, `wear`), OS surfaces (`widget`, `complications`, `tiles`), or feature modules (`feature <name>`). Idempotent for shells/surfaces, errors on feature name collisions.
 
 Run these from the project root. Do not copy them into the project — they live in the skill directory and the runtime resolves the path.
 
-## Initializing a New Project
+## Bootstrapping a Project
 
 ```bash
-scripts/init.sh fasting com.charliesbot.fasting
+# Step 1: create the base Android project (android-cli skill)
+android create empty-activity --name="MyApp" --output=./myapp
+cd myapp
+
+# Step 2: add the five :core:* modules (this skill)
+<skill-path>/scripts/bootstrap.sh
+
+# Step 3: merge the libs.versions.toml and root build.gradle.kts additions
+# the script prints. Sync Gradle in Android Studio.
+
+# Step 4: add platform shells and features
+<skill-path>/scripts/generate.sh app
+<skill-path>/scripts/generate.sh feature dashboard
 ```
 
-Creates the project directory with `settings.gradle.kts`, root `build.gradle.kts`, `gradle.properties` (containing `android.basePackage` for later script invocations), and the three core modules. Errors hard if the target directory is non-empty or already initialized.
-
-After init, add platform shells and modules with `generate.sh`.
+`bootstrap.sh` reads the `:app` namespace, writes it as `android.basePackage` to `gradle.properties`, creates the five core modules with the right plugins, and updates `settings.gradle.kts`. It prints version-catalog and root-build additions to apply by hand — TOML and the plugins block are too risky to splice from a script, but an agent reading the output can merge them semantically. The script is idempotent (no-op when all five modules exist), refuses to run on partial states, and rejects a non-canonical single-`:core` layout.
 
 ## Generating Modules
 
@@ -45,32 +69,39 @@ scripts/generate.sh feature dashboard --wear   # add :features:dashboard:app + :
 
 Each invocation does one thing. Re-running with the same type for an existing platform shell or OS surface skips with a notice (idempotent). Re-running with the same feature name errors hard — features are user-named so a collision is almost always a typo.
 
-The script reads `android.basePackage` from `gradle.properties` so you never re-type the package after init.
+The script reads `android.basePackage` from `gradle.properties` so you never re-type the package after bootstrap.
+
+**About the bare `:app` from `android create`:** the `app/` module produced by `android create empty-activity` is a standalone Compose app — it doesn't depend on `:core:data` or feature modules and has no Koin setup. To get the skill's wired-up shell, delete the `app/` directory and run `scripts/generate.sh app`. That regenerates `:app` with `AppApplication` (Koin), `AppTheme`, navigation wiring, and dependencies on `:core:data`, `:core:strings`, and `:features:*:app`.
 
 ## Core Principles
 
 The architecture supports multiple Android platforms (`:app` for phone/tablet, `:wear`, optionally `:tv`, `:auto`) from a single codebase. Dependencies flow in one direction:
 
 ```
-:app           → :features:*:app  → :core:domain + :core:strings
-               → :core:data       → :core:domain
-:wear          → :features:*:wear → :core:domain + :core:strings
-               → :core:data       → :core:domain
-:widget        → :core:data       → :core:domain
-               + :core:strings
-:complications → :core:domain
-:tiles         → :core:domain
+:core:model              (no deps — pure Kotlin)
+:core:domain             → :core:model
+:core:data               → :core:domain (→ :core:model)
+:core:strings            (leaf — Android lib, strings only)
+:core:designsystem:common (leaf — Android lib, drawables + non-string resources)
+
+:features:*:*     → :core:domain + :core:strings + :core:designsystem:common
+:app, :wear       → :core:data + :core:strings + :core:designsystem:common + :features:*:*
+:widget           → :core:data + :core:strings + :core:designsystem:common
+:complications    → :core:domain    (no Room/Ktor on classpath)
+:tiles            → :core:domain
 ```
 
-**Feature modules never depend on `:core:data`.** They only know `:core:domain` (and `:core:strings` for resources). Platform shells (`:app`, `:wear`) wire concrete data implementations into Koin and inject them into the use cases features depend on. This is dependency inversion at the module boundary — the feature compiles, tests, and reasons about behaviour without knowing which database, network library, or sync mechanism backs its use cases.
+**Feature modules never depend on `:core:data`.** They only know `:core:domain` (and `:core:strings` for resources, plus `:core:model` transitively). Platform shells (`:app`, `:wear`) wire concrete data implementations into Koin and inject them into the use cases features depend on. This is dependency inversion at the module boundary — the feature compiles, tests, and reasons about behaviour without knowing which database, network library, or sync mechanism backs its use cases.
 
-`:core:domain` uses the `kotlin("jvm")` plugin, not `android.library`. This makes it a pure Kotlin module — Android types (`Context`, `Uri`, anything from `android.*`) won't compile there. The boundary is enforced at build time, not by convention.
+`:core:model` and `:core:domain` use the `kotlin("jvm")` plugin, not `android.library`. They're pure Kotlin modules — Android types (`Context`, `Uri`, anything from `android.*`) won't compile there. The boundary is enforced at build time, not by convention. Models live in `:core:model` (consumable from everywhere); repository interfaces and use cases live in `:core:domain`.
 
 ## Module Structure
 
-- **`:core:domain`** — pure Kotlin (`kotlin("jvm")`): domain models, repository interfaces, use cases. No Android dependencies. Both `:features:*:app` and `:features:*:wear` depend on this.
-- **`:core:data`** — Android library: Room database, DataStore, repository implementations, DI wiring. Platform shells (`:app`, `:wear`, `:widget`) depend on this to wire implementations.
-- **`:core:strings`** — Android library, resources only: every user-facing string in the app. Both platform shells and feature modules depend on this.
+- **`:core:model`** — pure Kotlin (`kotlin("jvm")`): domain models and value types (data classes, enums, sealed hierarchies). No logic, no dependencies. Consumable from everywhere — domain, data, features, and platform shells all transitively pick it up.
+- **`:core:domain`** — pure Kotlin (`kotlin("jvm")`): repository interfaces and use cases. Depends on `:core:model`. No Android dependencies. Both `:features:*:app` and `:features:*:wear` depend on this.
+- **`:core:data`** — Android library: Room database, Retrofit/Ktor, DataStore, repository implementations, network/connectivity, credential storage, DI wiring (`CoreDataModule`). Platform shells (`:app`, `:wear`, `:widget`) depend on this to wire implementations.
+- **`:core:strings`** — Android library, resources only: every user-facing string in the app, with translations per locale (`values/`, `values-es/`, etc.). Both platform shells and feature modules depend on this.
+- **`:core:designsystem:common`** — Android library, non-string resources: drawables (vector icons, illustrations, app logo), color values (XML-referenced from manifest theme, splash screen), typography and shape values. Platform shells, feature modules, and `:widget` all depend on this. Two carve-outs: launcher icons (`mipmap/`) live in platform shells (manifest requirement), notification icons live in `:core:data` (the data layer code references them and shouldn't depend on `:core:designsystem:common`).
 - **`:features:<name>:app`** — `:app` presentation: ViewModel, Composable screens (Material 3), feature-scoped DI module, optional `component/` package for feature-local widgets.
 - **`:features:<name>:wear`** — `:wear` presentation: ViewModel, Composable screens (Wear Material 3), feature-scoped DI module.
 - **`:app`**, **`:wear`** — platform shells that wire navigation, theming, and DI. Each platform uses its own navigation library (Navigation 3 for `:app`, Wear Compose Navigation for `:wear`).
@@ -82,14 +113,21 @@ Every feature uses platform submodules (`app/`, `wear/`, etc.) — even when it 
 
 Widgets, complications, and tiles are **not** features — they're standalone entry points the OS launches independently. They sit at the root level alongside platform shells.
 
-`settings.gradle.kts` (created by `init.sh`) auto-discovers `:core:*` and `:features:*:*` so new modules don't need manual `include()` calls there. Platform shells and OS surfaces are added explicitly by `generate.sh`.
+**What `core/` is not:**
+
+- Not a home for capability slices. `library`, `reader`, `auth`, `cart` are features (`:features:<name>:<platform>`), not core. If a directory name reads like a user-facing thing, it's a feature.
+- Not a place for concern-named sibling packages. No top-level `core/network/`, `core/security/`, `core/connection/` as siblings of `model/`/`domain/`/`data/`. Network plumbing lives inside `:core:data`. Credential storage lives inside `:core:data`. Pure policy/rules can live in `:core:domain`.
+- Not a substitute for module boundaries. If you find yourself making `core/<x>/` folders to "organize" code, ask whether `<x>` is really a feature, or whether the code belongs _inside_ one of the four core modules.
 
 ## Do Not
 
-- **Make feature modules depend on `:core:data`** — features only know `:core:domain` and `:core:strings`. Data implementations are wired by platform shells via DI.
+- **Fence by package inside one `:core` module instead of using the four modules** — `:core:model` / `:core:domain` / `:core:data` / `:core:strings` are the enforcement. A single `:core` with `model/`, `domain/`, `data/`, `strings/` subpackages looks similar but has no compile-time wall and lets Android types leak into domain code.
+- **Put capability-named directories under `core/`** (`core/library/`, `core/reader/`, `core/auth/`) — capabilities are sliced via `:features:<name>:<platform>`. If a name reads like a user-facing thing, it's a feature, not core.
+- **Make feature modules depend on `:core:data`** — features only know `:core:domain` and `:core:strings` (and `:core:model` transitively). Data implementations are wired by platform shells via DI.
 - **Put strings outside `:core:strings`** — every user-facing string lives there. The only exception is `app_name` in each platform shell's `res/values/titles.xml` when the launcher label needs to differ per surface.
-- **Add Android types to `:core:domain`** — the `kotlin("jvm")` plugin will reject `Context`, `Uri`, etc. at compile time. If you need them, the logic belongs in `:core:data`.
-- **Add dependencies between feature modules** — features depend only on `:core:domain` and `:core:strings`. If two features need the same type, move it to `:core:domain`.
+- **Add Android types to `:core:model` or `:core:domain`** — the `kotlin("jvm")` plugin will reject `Context`, `Uri`, etc. at compile time. If you need them, the logic belongs in `:core:data`.
+- **Put models inside `:core:domain`** — models live in `:core:model`. Domain holds repository interfaces and use cases that depend on those models. Keeping them split means a `:complications` or `:tiles` module that just reads pre-computed state can depend on `:core:model` alone.
+- **Add dependencies between feature modules** — features depend only on `:core:domain` and `:core:strings`. If two features need the same type, move it to `:core:model`.
 - **Add third-party libraries without asking** — the current stack covers most needs. Explain what's missing before adding anything.
 - **Create feature modules for single screens** — a feature is a complete user journey (e.g., `:features:auth` covers login, register, and forgot password).
 - **Create flat feature modules** — always use platform submodules (`app/`, `wear/`), even for `:app`-only features.
@@ -97,7 +135,7 @@ Widgets, complications, and tiles are **not** features — they're standalone en
 - **Use LiveData** — the entire codebase uses StateFlow + coroutines.
 - **Skip writing tests** — follow red-green TDD. Write the failing test first.
 - **Skip `@Preview`** — every `@Composable` needs one.
-- **Manually create modules** — always use `init.sh` and `generate.sh`. They enforce structure.
+- **Manually create modules** — always use `bootstrap.sh` and `generate.sh`. They enforce structure.
 
 ## Tech Stack
 
@@ -118,168 +156,17 @@ Widgets, complications, and tiles are **not** features — they're standalone en
 
 Do not add third-party dependencies without asking first.
 
-## Required Version Catalog Aliases
+## Version Catalog & Build Plumbing
 
-The scripts generate `build.gradle.kts` files that reference these `libs.versions.toml` keys. Verify they exist in your catalog or adjust the generated files.
+`bootstrap.sh` and `generate.sh` generate `build.gradle.kts` files that reference specific `libs.versions.toml` keys. AGP 9.0+ bundles Kotlin support, so `libs.plugins.kotlin.android` is **not** applied alongside `android.application` or `android.library` (it triggers a build error). The pure-Kotlin modules (`:core:model`, `:core:domain`) still use `kotlin.jvm`.
 
-**Plugins:**
+For the full list of required plugin aliases, version keys, and per-module dependency requirements, read `references/TOOLING.md`.
 
-- `libs.plugins.android.application`
-- `libs.plugins.android.library`
-- `libs.plugins.kotlin.android`
-- `libs.plugins.kotlin.jvm` (for `:core:domain`)
-- `libs.plugins.kotlin.compose`
-- `libs.plugins.ksp` (for `:core:data` Room)
-- `libs.plugins.spotless`
+## Implementation Patterns
 
-**Versions:**
+ViewModels live in their platform submodule and use StateFlow. Use cases live in `:core:domain/usecase/<capability>/`, return `Result<T>` (or `Flow<T>`), and group by capability. Repository interfaces live in `:core:domain/repository/`; implementations in `:core:data/repository/`. Models live in `:core:model`. Koin bindings (repositories + use cases) go in `:core:data/di/CoreDataModule.kt`.
 
-- `libs.versions.compileSdk`
-- `libs.versions.minSdk`
-- `libs.versions.wearMinSdk`
-
-**`:core:domain` deps:**
-
-- `libs.kotlinx.coroutines.core`
-
-**`:core:data` deps:**
-
-- `libs.androidx.room.runtime`, `libs.androidx.room.ktx`, `libs.androidx.room.compiler`
-- `libs.androidx.datastore.preferences`
-- `libs.koin.android`
-
-**Platform shell (`:app`, `:wear`) deps:**
-
-- `libs.androidx.core.ktx`, `libs.androidx.activity.compose`, `libs.androidx.lifecycle.viewmodel.compose`
-- `libs.koin.android`, `libs.koin.androidx.compose`
-- `libs.compose.bom`, `libs.compose.runtime`, `libs.compose.ui`, `libs.compose.foundation`, `libs.compose.ui.tooling.preview`, `libs.compose.ui.tooling`
-- `:app`: `libs.compose.material3`, `libs.androidx.navigation3`
-- `:wear`: `libs.wear.compose.material3`, `libs.wear.compose.foundation`, `libs.wear.compose.navigation`, `libs.wear.tooling.preview`
-
-**Feature module deps** (same for `app/` and `wear/` submodules):
-
-- `libs.androidx.lifecycle.viewmodel`
-- `libs.koin.androidx.compose`
-- Compose BOM + runtime/ui/foundation
-- `app/` adds `libs.compose.material3`, `libs.compose.ui.tooling.preview`, `libs.compose.ui.tooling`
-- `wear/` adds `libs.wear.compose.material3`, `libs.wear.compose.foundation`, `libs.wear.tooling.preview`
-
-## ViewModel Pattern
-
-Each platform submodule has its own ViewModel. ViewModels use StateFlow and live in their platform submodule (e.g., `features/dashboard/app/` has `DashboardViewModel`, `features/dashboard/wear/` has `WearDashboardViewModel`).
-
-```kotlin
-class DashboardViewModel(
-    private val getDashboardUseCase: GetDashboardUseCase
-) : ViewModel() {
-
-    private val _uiState = MutableStateFlow(DashboardUiState())
-    val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
-
-    fun onRefresh() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            getDashboardUseCase()
-                .onSuccess { data -> _uiState.update { it.copy(data = data, isLoading = false) } }
-                .onFailure { error -> _uiState.update { it.copy(error = error.message, isLoading = false) } }
-        }
-    }
-}
-```
-
-## Use Case Pattern
-
-Use cases live in `:core:domain` under `domain/usecase/` and encapsulate a single business operation. They use Kotlin's built-in `Result<T>` (from `kotlin.Result`) — not a custom wrapper. One-shot operations use `suspend` + `Result<T>`. Reactive streams use `Flow`.
-
-There's no scaffold script for use cases — they're a single Kotlin file you copy and adapt. Full file template (suspend variant):
-
-```kotlin
-package com.myapp.domain.usecase
-
-import com.myapp.domain.repository.ArticleRepository
-
-class GetArticlesUseCase(
-    private val articleRepository: ArticleRepository,
-) {
-    suspend operator fun invoke(): Result<List<Article>> = runCatching {
-        articleRepository.getArticles().sortedByDescending { it.date }
-    }
-}
-```
-
-Flow variant:
-
-```kotlin
-package com.myapp.domain.usecase
-
-import com.myapp.domain.repository.AuthRepository
-import kotlinx.coroutines.flow.Flow
-
-class ObserveAuthStateUseCase(
-    private val authRepository: AuthRepository,
-) {
-    operator fun invoke(): Flow<AuthState> = authRepository.observeAuthState()
-}
-```
-
-Register in the `:core:data` Koin module (`core/data/src/main/kotlin/<package>/data/di/CoreDataModule.kt`):
-
-```kotlin
-val coreDataModule = module {
-    factory { GetArticlesUseCase(get()) }
-    factory { ObserveAuthStateUseCase(get()) }
-    // ... repositories and other use cases
-}
-```
-
-## Data Layer
-
-Repository **interfaces** live in `:core:domain` under `domain/repository/`. Repository **implementations** live in `:core:data` under `data/repository/`. Room entities and DAOs live in `:core:data` under `data/local/`. Retrofit interfaces live in `:core:data` under `data/remote/`.
-
-```kotlin
-// :core:domain — domain/repository/ArticleRepository.kt
-package com.myapp.domain.repository
-
-interface ArticleRepository {
-    suspend fun getArticles(): List<Article>
-}
-
-// :core:data — data/repository/ArticleRepositoryImpl.kt
-package com.myapp.data.repository
-
-class ArticleRepositoryImpl(
-    private val articleDao: ArticleDao,
-    private val articleApi: ArticleApi,
-) : ArticleRepository {
-    override suspend fun getArticles(): List<Article> =
-        articleDao.getAll().map { it.toDomain() }
-}
-
-// :core:data — data/local/ArticleDao.kt
-@Dao
-interface ArticleDao {
-    @Query("SELECT * FROM articles ORDER BY date DESC")
-    suspend fun getAll(): List<ArticleEntity>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(articles: List<ArticleEntity>)
-}
-
-// :core:data — data/remote/ArticleApi.kt
-interface ArticleApi {
-    @GET("articles")
-    suspend fun getArticles(): List<ArticleDto>
-}
-```
-
-Wire the implementation in `coreDataModule`:
-
-```kotlin
-val coreDataModule = module {
-    single<ArticleRepository> { ArticleRepositoryImpl(get(), get()) }
-    // Room database, DAOs, Retrofit instances bound here too
-}
-```
+For full templates and copy-paste examples (ViewModel, Use Case, Data Layer, Koin wiring), read `references/PATTERNS.md` before writing code in any of these layers.
 
 ## Composable Conventions
 
@@ -289,7 +176,11 @@ val coreDataModule = module {
 - **Feature-scoped components live in a `component/` package inside the platform submodule** (e.g., `features/dashboard/app/component/StatCard.kt`). Promote to a shared `:core:ui:app` module only when a _second_ feature needs the same component (lazy promotion, see below).
 - The `app/` and `wear/` submodules within a feature do not share UI or ViewModels. Different Compose toolkits, different UI shape, different state. The shared code is in `:core:domain` (use cases, repositories, models).
 
-## Strings
+## Resources
+
+Two leaf modules hold every shared resource: **`:core:strings`** for user-facing text, **`:core:designsystem:common`** for everything else (drawables, color values, typography, dimens, shape values, raw assets). The split exists because strings change frequently and have heavy translation needs, while drawables and value resources are more stable. Combining them would mean every string edit invalidates the build cache for designsystem consumers.
+
+### Strings
 
 All strings live in `:core:strings/src/main/res/values/strings.xml`. Translations go in sibling locale folders (`values-es/`, `values-ja/`, etc.). One file, one place to look.
 
@@ -316,6 +207,27 @@ The platform shell's resource overrides the value from `:core:strings` for that 
 
 - `android.R.string.cancel`, `android.R.string.ok`, `android.R.string.yes`, `android.R.string.no`
 - Material 3 ships its own translated strings for many component-internal labels
+
+### Drawables and other resources
+
+Everything non-string goes in `:core:designsystem:common`:
+
+```
+core/designsystem/common/src/main/res/
+├── drawable/                # vector drawables — app logo, brand icons, illustrations
+├── values/colors.xml        # color VALUES referenced from XML (manifest theme, splash)
+├── values/dimens.xml        # shared dimens (optional)
+└── font/                    # custom font families (when you have any)
+```
+
+Drawables are vector XML (Android's SVG equivalent) — one file renders correctly on phone, tablet, and wear at any size. No need for density-specific folders.
+
+**Carve-outs that don't live in `:core:designsystem:common`:**
+
+- **Launcher icons (`mipmap/`)** → platform shells (`:app/src/main/res/mipmap-*/`, `:wear/src/main/res/mipmap-*/`). The manifest references them, they're adaptive icons with foreground/background layers, and they often differ per platform.
+- **Notification icons** → `:core:data/src/main/res/drawable/`. The notification code in the data layer references them; keeping them in `:core:data` avoids inverting the dependency direction (data shouldn't depend on designsystem).
+
+**Prefer Material Icons over custom drawables** when possible. `androidx.compose.material.icons.*` ships hundreds of vector icons that are theme-aware and free. Only reach for `:core:designsystem:common/res/drawable/` when you need a brand-specific or app-specific drawable that doesn't exist in Material Symbols.
 
 ## Theme
 
@@ -348,18 +260,17 @@ fun WearAppTheme(content: @Composable () -> Unit) {
 }
 ```
 
-There's no shared `:core:designsystem` module by default. If your project ever needs custom brand tokens (specific colors, custom typography, semantic palette overrides) shared across platforms, create a `:core:designsystem` module then. Until then, the trivial duplication of a few hex values across platform shells is cheaper than the module.
+By default each platform shell defines its own theme — `:core:designsystem:common` is resources only and doesn't ship Compose components. When you want themes to live in shared code instead of duplicated in shells, promote (see below).
 
-## Lazy Widget Promotion
+## Lazy Module Promotions
 
-Feature-local widgets start in `features/<name>/<platform>/component/`. When a _second_ feature needs the same component, promote it to a shared module:
+`bootstrap.sh` creates five core modules. Two more can be added later when a concrete trigger fires — never on speculation.
 
-- For `:app` widgets: promote to `:core:ui:app` (Material 3, depends on `:core:domain`)
-- For `:wear` widgets: promote to `:core:ui:wear` (Wear Material 3, depends on `:core:domain`)
+**`:core:designsystem:app`** — sibling of `:core:designsystem:common`. Holds the phone-side Material 3 layer: `AppTheme.kt`, brand-flavored Material primitives (`KanshuButton`, `KanshuTopBar`), and shared composables that know domain types (e.g., `BookCard(book: Book)`, `ChapterListItem(chapter: Chapter)`). Depends on `:core:designsystem:common` + `:core:model`. **Trigger:** any one of — you build a brand-flavored Material primitive worth sharing, OR a second feature needs the same domain-aware composable, OR you want the theme out of `:app/`'s code. Until then, theme lives inline in `:app/`, and feature-local composables live in `features/<name>/app/component/`.
 
-These modules don't exist at project init — create them by hand when you actually need them. Strings tied to a promoted widget come along with it (move them out of `:core:strings` into the new `:core:ui:*` module's `res/values/strings.xml` only when they're inseparable from the widget).
+**`:core:designsystem:wear`** — same scope but for Wear Material 3. Trigger and contents mirror `:app`. Can't share code with `:designsystem:app` because the two Compose toolkits are different libraries.
 
-Don't create empty `:core:ui:*` modules on speculation. The point of lazy promotion is that the module's existence is justified by real reuse.
+The reason these aren't starters: a project on stock Material with no brand-specific composables doesn't need them. Adding them on speculation creates near-empty modules.
 
 ## Formatting
 
@@ -372,74 +283,9 @@ Spotless with ktfmt (Google style) enforces consistent formatting across all Kot
 
 ## Testing
 
-Follow red-green TDD: write failing tests first, then implement until they pass. Run tests after every change.
+Follow red-green TDD: write failing tests first, then implement until they pass. Run tests after every change. Use MockK. Prefer module-scoped test commands (`./gradlew :features:dashboard:app:test`) over `./gradlew test` when working on a single feature. `:core:model` and `:core:domain` tests run as plain JVM tests — instant feedback.
 
-- Use MockK for mocking.
-- Prefer module-scoped test commands (`./gradlew :features:dashboard:app:test`) over `./gradlew test` when working on a single feature — leverages the modular architecture for faster feedback.
-- `:core:domain` tests run as plain JVM tests (no Android dependencies, no instrumentation) — instant feedback.
-
-**Use case test:**
-
-```kotlin
-class GetArticlesUseCaseTest {
-
-    private val repository: ArticleRepository = mockk()
-    private val useCase = GetArticlesUseCase(repository)
-
-    @Test
-    fun `returns articles sorted by date`() = runTest {
-        val articles = listOf(
-            Article(id = "1", title = "Old", date = LocalDateTime.of(2026, 1, 1, 0, 0)),
-            Article(id = "2", title = "New", date = LocalDateTime.of(2026, 3, 1, 0, 0)),
-        )
-        coEvery { repository.getArticles() } returns articles
-
-        val result = useCase()
-
-        assertTrue(result.isSuccess)
-        assertEquals("2", result.getOrThrow().first().id)
-    }
-
-    @Test
-    fun `returns failure when repository throws`() = runTest {
-        coEvery { repository.getArticles() } throws RuntimeException("Network error")
-
-        val result = useCase()
-
-        assertTrue(result.isFailure)
-    }
-}
-```
-
-**ViewModel test:**
-
-```kotlin
-@OptIn(ExperimentalCoroutinesApi::class)
-class DashboardViewModelTest {
-
-    private val testDispatcher = StandardTestDispatcher()
-    private val getDashboardUseCase: GetDashboardUseCase = mockk()
-
-    @Before
-    fun setup() { Dispatchers.setMain(testDispatcher) }
-
-    @After
-    fun tearDown() { Dispatchers.resetMain() }
-
-    @Test
-    fun `loads data on refresh`() = runTest {
-        coEvery { getDashboardUseCase() } returns Result.success(DashboardData(/* ... */))
-
-        val viewModel = DashboardViewModel(getDashboardUseCase)
-        viewModel.onRefresh()
-        advanceUntilIdle()
-
-        val state = viewModel.uiState.value
-        assertFalse(state.isLoading)
-        assertNotNull(state.data)
-    }
-}
-```
+For use case and ViewModel test templates (MockK setup, coroutine dispatchers, assertions), read `references/TESTING.md`.
 
 ## Inspecting the Project
 
@@ -459,18 +305,21 @@ When you need to know something about the build — library versions, what a mod
 
 ```bash
 ./gradlew build                            # Build all modules
-./gradlew :app:installDebug                # Install :app
+./gradlew :app:installDebug                # Install :app (or use `android run` from android-cli)
 ./gradlew :wear:installDebug               # Install :wear
 ./gradlew test                             # Run all tests
 ./gradlew :features:<name>:app:test        # Run single feature tests
 ./gradlew :core:domain:test                # Run pure-Kotlin domain tests (fast)
+./gradlew :core:model:test                 # Run pure-Kotlin model tests (fast)
 ./gradlew spotlessApply                    # Format code
 ```
+
+For deploying APKs, capturing screenshots, inspecting layouts, or managing emulators, prefer the `android` CLI (see the android-cli skill) over raw ADB or Gradle install tasks — it's the standard tooling layer in this environment.
 
 ## Common Scenarios
 
 **"I need to share a data class between two features"**
-Move it to `:core:domain/domain/model/`. Features only depend on `:core:domain`, so any shared type must live there. Do not add a dependency between features — Gradle will reject it, and even if it didn't, it would break the isolation that keeps builds fast.
+Move it to `:core:model`. Features depend on `:core:domain`, which depends on `:core:model`, so the shared type is reachable. Do not add a dependency between features — Gradle will reject it, and even if it didn't, it would break the isolation that keeps builds fast.
 
 **"Where should I put this new screen?"**
 First decide which feature (business capability) it belongs to. A "forgot password" screen belongs in `:features:auth`, not a new `:features:forgot-password` module. Then place it in the appropriate platform submodule (`app/` or `wear/`).
@@ -485,7 +334,7 @@ StateFlow. The entire codebase uses StateFlow + coroutines for reactive state. L
 Ask first. The current stack covers most needs. If you think something is missing, explain what problem it solves and why the existing stack can't handle it.
 
 **"I need to add a home screen widget"**
-Run `scripts/generate.sh widget`. Creates `:widget` at the root with a Glance-based receiver and an example widget Composable. Depends on `:core:data` + `:core:strings`.
+Run `scripts/generate.sh widget`. Creates `:widget` at the root with a Glance-based receiver and an example widget Composable. Depends on `:core:data` + `:core:strings` + `:core:designsystem:common`.
 
 **"I need to add a Wear OS complication"**
 Run `scripts/generate.sh complications`. Creates `:complications` with a `SuspendingComplicationDataSourceService` skeleton. Depends only on `:core:domain`.
@@ -500,12 +349,24 @@ Add `implementation(libs.play.services.wearable)` to both `:app/build.gradle.kts
 Check the dependency flow:
 
 - A feature module trying to use Room/DataStore directly → wrong, those live in `:core:data` and only platform shells touch them
-- A feature module trying to use a type from another feature → wrong, move the type to `:core:domain`
-- A platform shell can't find a feature → check `settings.gradle.kts` auto-discovery and the shell's `build.gradle.kts` includes the right `:features:<name>:<platform>` dependency
+- A feature module trying to use a type from another feature → wrong, move the type to `:core:model`
+- An Android type (`Context`, `Uri`, etc.) referenced in `:core:model` or `:core:domain` → wrong, those modules are `kotlin("jvm")`. Move the code to `:core:data` or to a platform shell
+- A platform shell can't find a feature → check `settings.gradle.kts` includes the right `:features:<name>:<platform>` module
 
 **"I need a string used by a single feature"**
 Add it to `:core:strings/src/main/res/values/strings.xml`. The feature module already depends on `:core:strings` — reference it as `R.string.<name>` (where `R` is `<package>.strings.R`).
 
-## Reference
+**"Where should this drawable go?"**
+- A vector icon or illustration referenced from a Composable → `:core:designsystem:common/src/main/res/drawable/`. Every consumer (features, shells, widget) already depends on this module.
+- A launcher icon → platform shell (`:app/src/main/res/mipmap-*/`, etc.). Manifest reference, must live there.
+- A notification icon (referenced from code in `:core:data`) → `:core:data/src/main/res/drawable/`. Keeps the dependency direction clean.
+- Before adding a custom vector, check `androidx.compose.material.icons.Icons.Default.*` — hundreds of vectors come free.
 
-For the full module structure, dependency rules, and rationale, read `references/ARCHITECTURE.md`.
+## Reference Files
+
+Load on demand — these aren't pulled into context automatically:
+
+- `references/ARCHITECTURE.md` — full module structure, dependency rules, and rationale (including "Why split model from domain"). Read before architectural decisions.
+- `references/PATTERNS.md` — copy-paste templates for ViewModels, use cases, repositories, DAOs, and Koin wiring. Read before writing code in `:features:`, `:core:domain`, or `:core:data`.
+- `references/TESTING.md` — MockK + TDD templates for use case tests and ViewModel tests. Read before adding or modifying tests.
+- `references/TOOLING.md` — required `libs.versions.toml` plugin aliases, version keys, and per-module dependency lists. Read when troubleshooting Gradle sync or adjusting the catalog.

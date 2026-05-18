@@ -46,14 +46,14 @@ shift
 
 if [[ ! -f "gradle.properties" || ! -f "settings.gradle.kts" ]]; then
     echo "Error: not in an Android project root (missing gradle.properties or settings.gradle.kts)."
-    echo "Run scripts/init.sh first, or cd into an existing project."
+    echo "Run 'android create empty-activity --name=<Name> --output=./<dir>' then scripts/bootstrap.sh first."
     exit 1
 fi
 
 BASE_PACKAGE=$(grep '^android.basePackage=' gradle.properties | cut -d= -f2 || true)
 if [[ -z "${BASE_PACKAGE:-}" ]]; then
     echo "Error: android.basePackage not found in gradle.properties."
-    echo "This project may not have been initialized with scripts/init.sh."
+    echo "This project may not have been bootstrapped. Run scripts/bootstrap.sh first."
     exit 1
 fi
 
@@ -105,7 +105,6 @@ app)
     cat > app/build.gradle.kts <<EOF
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
 
@@ -129,6 +128,7 @@ android {
 dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:strings"))
+    implementation(project(":core:designsystem:common"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -246,7 +246,7 @@ EOF
     cat > "$APP_PKG_PATH/navigation/AppNavigation.kt" <<EOF
 package $BASE_PACKAGE.navigation
 
-// TODO: Wire Navigation 3 (androidx.navigation3) here.
+// AGENT: Wire Navigation 3 (androidx.navigation3) here.
 // Define NavKey objects for each screen and a NavDisplay that consumes them.
 EOF
 
@@ -295,7 +295,6 @@ wear)
     cat > wear/build.gradle.kts <<EOF
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
 
@@ -319,6 +318,7 @@ android {
 dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:strings"))
+    implementation(project(":core:designsystem:common"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -437,7 +437,7 @@ EOF
     cat > "$WEAR_PKG_PATH/navigation/WearNavigation.kt" <<EOF
 package $BASE_PACKAGE.wear.navigation
 
-// TODO: Wire Wear Compose Navigation here.
+// AGENT: Wire Wear Compose Navigation here.
 // Use SwipeDismissableNavHost with sealed-class routes for type safety.
 EOF
 
@@ -473,7 +473,6 @@ widget)
     cat > widget/build.gradle.kts <<EOF
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
 
@@ -493,6 +492,7 @@ android {
 dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:strings"))
+    implementation(project(":core:designsystem:common"))
     implementation(libs.androidx.glance.appwidget)
     implementation(libs.koin.android)
 }
@@ -588,7 +588,6 @@ complications)
     cat > complications/build.gradle.kts <<EOF
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
 }
 
 android {
@@ -649,7 +648,7 @@ class AppComplicationService : SuspendingComplicationDataSourceService() {
     }
 
     override suspend fun onComplicationRequest(request: ComplicationRequest): ComplicationData? {
-        // TODO: Read data via a use case from :core:domain.
+        // AGENT: Read data via a use case from :core:domain.
         return shortText("--")
     }
 
@@ -680,7 +679,6 @@ tiles)
     cat > tiles/build.gradle.kts <<EOF
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
 }
 
 android {
@@ -723,7 +721,7 @@ EOF
     cat > "$TILES_PKG_PATH/AppTileService.kt" <<EOF
 package $BASE_PACKAGE.tiles
 
-// TODO: Implement TileService following androidx.wear.tiles APIs.
+// AGENT: Implement TileService following androidx.wear.tiles APIs.
 // See https://developer.android.com/training/wearables/tiles
 EOF
 
@@ -774,7 +772,6 @@ feature)
     cat > "features/$FEATURE_SLUG/app/build.gradle.kts" <<EOF
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
 
@@ -794,6 +791,7 @@ android {
 dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:strings"))
+    implementation(project(":core:designsystem:common"))
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.koin.androidx.compose)
     implementation(platform(libs.compose.bom))
@@ -889,7 +887,6 @@ EOF
         cat > "features/$FEATURE_SLUG/wear/build.gradle.kts" <<EOF
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
 
@@ -909,6 +906,7 @@ android {
 dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:strings"))
+    implementation(project(":core:designsystem:common"))
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.koin.androidx.compose)
     implementation(libs.wear.compose.material3)
