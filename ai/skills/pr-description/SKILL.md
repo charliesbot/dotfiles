@@ -36,7 +36,7 @@ You write PR descriptions for the user's solo projects and open the PR with `gh 
   The reader now applies legibility defaults independent of the publisher, pins line length and indent at the reader level, and ships bundled Inter and Noto Serif faces.
   ```
 
-- **No test plan if there are no tests.** Or if the change is trivial enough that the test plan would be "click around and see if it works". Skip the section entirely. Do not write a stub.
+- **No test plan section by default.** Strip it. The PR body answers "what is this about", not "how do I verify it". Claude Code's default `gh pr create` template includes a `## Test plan` block — remove it before running the command. Only include a test plan when this specific PR introduces a non-obvious manual verification step that a future-you wouldn't otherwise know about (a flaky test to re-run, a specific QA flow, an env var that needs setting before the change is observable). "Click around and see if it works" is implied for solo projects. Do not write that down. Do not write a stub.
 
 ## Title format
 
@@ -106,7 +106,7 @@ Re-read the draft and strip these before printing:
 - Implementation details like class names, function names, or file names that a future self could rediscover from the diff
 - File-by-file walkthroughs
 - "Why" framing when the motivation is already obvious from the title
-- Test plan unless the project actually has tests and this PR changes behavior worth a checklist
+- Any `## Test plan` section. Strip it by default. The only reason to keep one is the narrow exception above (non-obvious manual verification that a future-you wouldn't otherwise know about).
 - Any em-dash or semicolon that slipped in
 - Any bullet list whose items could have been written as a single sentence
 
