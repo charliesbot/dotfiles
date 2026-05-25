@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 # Fedora-specific dotfiles installation script
 
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES_DIR="${DOTFILES_DIR:-$(cd "$SCRIPT_DIR/../.." && pwd)}"
 
 # Source the shared utilities
 source "$SCRIPT_DIR/../shared/install-utils.sh"
@@ -18,9 +21,7 @@ enable_third_party_repos() {
     # Enable Terra repository
     sudo dnf install -y --nogpgcheck --repofrompath 'terra,https://repos.fyralabs.com/terra$releasever' terra-release
 
-    # Install app-stream metadata
-    sudo dnf group upgrade -y core
-    sudo dnf4 group install -y core
+    sudo dnf makecache
 
     # Remove the limited Fedora repo
     flatpak remote-delete fedora --force 2>/dev/null || true
@@ -44,10 +45,9 @@ install_fedora_packages() {
     sudo dnf upgrade -y
 
     # Install basic development tools
-    sudo dnf install -y zsh curl wget git
-    sudo dnf group install -y development-tools
+    sudo dnf install -y zsh curl wget git jq
     sudo dnf install -y procps-ng curl file
-    sudo dnf5 install @development-tools -y
+    sudo dnf install -y @development-tools
 
     # Install archive tools
     sudo dnf install -y p7zip p7zip-plugins unrar
@@ -60,7 +60,7 @@ install_fedora_packages() {
     sudo dnf install -y vicinae
 
     # Enable KVM for Android Emulator
-    sudo dnf5 install @virtualization -y
+    sudo dnf install -y @virtualization
     sudo usermod -aG kvm $(whoami)
 }
 
@@ -78,12 +78,13 @@ install_chrome() {
 
     echo "Installing Google Chrome Beta..."
 
-    cd /tmp
-    wget https://dl.google.com/linux/direct/google-chrome-beta_current_x86_64.rpm
+    (
+        tmp_dir="$(mktemp -d)"
+        trap 'rm -rf "$tmp_dir"' EXIT
 
-    sudo dnf install -y google-chrome-beta_current_x86_64.rpm
-
-    rm google-chrome-beta_current_x86_64.rpm
+        wget -O "$tmp_dir/google-chrome-beta_current_x86_64.rpm" https://dl.google.com/linux/direct/google-chrome-beta_current_x86_64.rpm
+        sudo dnf install -y "$tmp_dir/google-chrome-beta_current_x86_64.rpm"
+    )
 
     echo "Google Chrome Beta installed."
 }
@@ -157,7 +158,7 @@ update_firmware() {
 install_multimedia() {
     echo "Installing multimedia codecs and packages..."
 
-    sudo dnf4 group install -y multimedia
+    sudo dnf group install -y multimedia
     sudo dnf swap -y 'ffmpeg-free' 'ffmpeg' --allowerasing
     sudo dnf upgrade -y @multimedia --setopt="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin
     sudo dnf group install -y sound-and-video

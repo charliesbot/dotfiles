@@ -1,21 +1,26 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 # Shared utility functions for dotfiles installation
+
+POLKIT_RULE_FILE="/etc/polkit-1/rules.d/99-temporary-dotfiles-install.rules"
 
 # Function to create temporary polkit rule to prevent graphical password dialogs
 setup_polkit_nopasswd() {
-    echo "Setting up polkit rule to prevent password dialogs..."
+    echo "Temporarily allowing passwordless polkit actions during setup..."
+    sudo rm -f "$POLKIT_RULE_FILE"
     echo 'polkit.addRule(function(action, subject) {
     if (subject.isInGroup("wheel")) {
         return polkit.Result.YES;
     }
-});' | sudo tee /etc/polkit-1/rules.d/99-temporary-install.rules >/dev/null
-    echo "Polkit rule created."
+});' | sudo tee "$POLKIT_RULE_FILE" >/dev/null
+    echo "Temporary polkit rule created."
 }
 
 # Function to clean up temporary polkit rule
 cleanup_polkit_rule() {
-    sudo rm -f /etc/polkit-1/rules.d/99-temporary-install.rules
+    sudo rm -f "$POLKIT_RULE_FILE"
 }
 
 # Function to setup authentication for unattended installation
@@ -24,16 +29,26 @@ setup_unattended_auth() {
 
     setup_polkit_nopasswd
 
-    while true; do
-        sudo -n true
-        sleep 30
-    done 2>/dev/null &
-    KEEPALIVE_PID=$!
+    start_sudo_keepalive
 
     trap "echo -e '\nCleaning up authentication helpers...'; kill $KEEPALIVE_PID &>/dev/null; cleanup_polkit_rule" EXIT INT TERM
 
     echo "Authentication configured. Sudo will stay active and no password dialogs will appear."
     echo
+}
+
+# Refresh sudo authentication
+refresh_sudo() {
+    sudo -v
+}
+
+# Keep sudo authentication active for long-running setup phases
+start_sudo_keepalive() {
+    while true; do
+        sudo -n true
+        sleep 30
+    done 2>/dev/null &
+    KEEPALIVE_PID=$!
 }
 
 # Function to check if a command exists
@@ -61,10 +76,10 @@ prompt_for_vcs_config() {
 
 # Apply stored VCS configuration
 apply_vcs_config() {
-    if [[ -n "$VCS_CONFIG_NAME" && -n "$VCS_CONFIG_EMAIL" ]]; then
+    if [[ -n "${VCS_CONFIG_NAME:-}" && -n "${VCS_CONFIG_EMAIL:-}" ]]; then
         echo "Applying VCS configuration..."
-        jj config set --user user.name "$VCS_CONFIG_NAME"
-        jj config set --user user.email "$VCS_CONFIG_EMAIL"
+        jj config set --user user.name "${VCS_CONFIG_NAME}"
+        jj config set --user user.email "${VCS_CONFIG_EMAIL}"
         echo "VCS user name and email have been set."
     else
         echo "VCS user details not provided, skipping VCS configuration."
@@ -98,60 +113,59 @@ install_brew() {
         eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     fi
 
-    # brew shellenv is already in config/zshrc — only append for non-zsh shells
-    if [[ "$SHELL" != *"zsh" ]]; then
-        grep -q "brew shellenv" ~/.bashrc 2>/dev/null || echo 'eval "$(brew shellenv)"' >>~/.bashrc
-    fi
 }
 
 # Create symlinks for dotfiles
 create_symlinks() {
-    echo "Removing existing dotfiles..."
+    local dotfiles_dir="${DOTFILES_DIR:-$HOME/dotfiles}"
+
+    echo "Replacing existing configs with dotfiles..."
     rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.config/nvim ~/.ideavimrc ~/.config/starship.toml ~/.config/ghostty ~/chai.toml 2>/dev/null
 
     echo "Creating symlinks..."
     mkdir -p ~/projects ~/.config ~/.config/tmux ~/.config/tmux/plugins
 
-    ln -s ~/dotfiles/config/zshrc ~/.zshrc
-    ln -s ~/dotfiles/config/nvim ~/.config/nvim
-    ln -s ~/dotfiles/config/tmux.conf ~/.tmux.conf
-    ln -s ~/dotfiles/config/ghostty ~/.config/ghostty
-    ln -s ~/dotfiles/config/starship.toml ~/.config/starship.toml
-    ln -s ~/dotfiles/config/ideavimrc ~/.ideavimrc
-    ln -s ~/dotfiles/config/chai.toml ~/chai.toml
+    ln -s "$dotfiles_dir/config/zshrc" ~/.zshrc
+    ln -s "$dotfiles_dir/config/nvim" ~/.config/nvim
+    ln -s "$dotfiles_dir/config/tmux.conf" ~/.tmux.conf
+    ln -s "$dotfiles_dir/config/ghostty" ~/.config/ghostty
+    ln -s "$dotfiles_dir/config/starship.toml" ~/.config/starship.toml
+    ln -s "$dotfiles_dir/config/ideavimrc" ~/.ideavimrc
+    ln -s "$dotfiles_dir/config/chai.toml" ~/chai.toml
 
     # Italics and true color profile for tmux
-    tic -x ~/dotfiles/config/tmux.terminfo
+    tic -x "$dotfiles_dir/config/tmux.terminfo"
 }
 
 # Install common brew packages
 install_brew_packages() {
+    refresh_sudo
     brew update
 
-    brew install jesseduffield/lazydocker/lazydocker
-    brew install neovim
-    brew install tree-sitter-cli
-    brew install zoxide
-    brew install zsh-autosuggestions
-    brew install zsh-syntax-highlighting
-    brew install starship
-    brew install devcontainer
-    brew install scrcpy
-    brew install tmux
-    brew install gh
-    brew install jj
-    brew install dmmulroy/tap/jj-starship
-    brew install zig
-    brew install go
-    brew install lazygit
+    brew install \
+        jesseduffield/lazydocker/lazydocker \
+        neovim \
+        tree-sitter-cli \
+        zoxide \
+        zsh-autosuggestions \
+        zsh-syntax-highlighting \
+        starship \
+        devcontainer \
+        scrcpy \
+        tmux \
+        gh \
+        jj \
+        dmmulroy/tap/jj-starship \
+        zig \
+        go \
+        lazygit
 
     # Install fonts
-    brew install --cask font-jetbrains-mono
-    brew install --cask font-cascadia-code
+    brew install --cask \
+        font-jetbrains-mono \
+        font-cascadia-code
 
-    if ! check_command fzf; then
-        brew install fzf
-    fi
+    brew install fzf
 }
 
 # Install Bun
@@ -219,7 +233,7 @@ install_android_cli() {
 
 # Setup ZSH as default shell
 setup_zsh_shell() {
-    if [[ "$SHELL" == *"zsh" ]]; then
+    if [[ "${SHELL:-}" == *"zsh" ]]; then
         echo "ZSH is the default shell."
     else
         zsh_path=$(which zsh)

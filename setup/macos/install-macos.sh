@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 # macOS-specific dotfiles installation script
 
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES_DIR="${DOTFILES_DIR:-$(cd "$SCRIPT_DIR/../.." && pwd)}"
 
 # Source the shared utilities
 source "$SCRIPT_DIR/../shared/install-utils.sh"
@@ -61,16 +64,19 @@ disable_dock_hot_corners() {
 
 # Install macOS-specific packages via Homebrew cask
 install_brew_cask_packages() {
+    refresh_sudo
+
     echo "Installing macOS applications via Homebrew Cask..."
 
-    brew install --cask 1password
-    brew install --cask docker
-    brew install --cask google-chrome
-    brew install --cask logi-options+
-    brew install --cask jetbrains-toolbox
-    brew install --cask raycast
-    brew install --cask whatsapp
-    brew install --cask ghostty
+    brew install --cask \
+        1password \
+        docker \
+        google-chrome \
+        logi-options+ \
+        jetbrains-toolbox \
+        raycast \
+        whatsapp \
+        ghostty
 
     echo "Homebrew Cask applications installed."
     echo "Use JetBrains Toolbox to install Android Studio and other JetBrains IDEs."
@@ -78,6 +84,8 @@ install_brew_cask_packages() {
 
 # Install macOS-specific packages
 install_macos_packages() {
+    refresh_sudo
+
     echo "Installing macOS-specific packages..."
 
     # Install reattach-to-user-namespace for tmux clipboard support on macOS
@@ -95,11 +103,20 @@ set_hostname() {
     read -p "Enter new computer name (or press Enter to keep current): " new_name
 
     if [[ -n "$new_name" ]]; then
+        local local_hostname
+        local_hostname="$(printf "%s" "$new_name" | tr -cd '[:alnum:] -' | tr ' ' '-' | tr -s '-' | sed 's/^-*//; s/-*$//')"
+
+        if [[ -z "$local_hostname" ]]; then
+            echo "Error: Local hostname would be empty after sanitizing '$new_name'."
+            return 1
+        fi
+
         sudo scutil --set ComputerName "$new_name"
         sudo scutil --set HostName "$new_name"
-        sudo scutil --set LocalHostName "$new_name"
+        sudo scutil --set LocalHostName "$local_hostname"
         sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "$new_name"
         echo "Computer name set to: $new_name"
+        echo "Local hostname set to: $local_hostname"
     else
         echo "Keeping current computer name."
     fi
@@ -178,10 +195,10 @@ setup_github_ssh() {
 
     # Switch dotfiles remote from HTTPS to SSH if needed
     local remote_url
-    remote_url=$(git -C ~/dotfiles remote get-url origin 2>/dev/null)
+    remote_url=$(jj -R "$DOTFILES_DIR" git remote list | awk '$1 == "origin" { print $2 }')
     if [[ "$remote_url" == https://* ]]; then
         echo "Switching dotfiles remote to SSH..."
-        git -C ~/dotfiles remote set-url origin git@github.com:charliesbot/dotfiles.git
+        jj -R "$DOTFILES_DIR" git remote set-url origin git@github.com:charliesbot/dotfiles.git
     fi
 }
 
@@ -196,14 +213,10 @@ fi
 echo "macOS detected. Starting installation..."
 
 # Ask for the administrator password upfront
-sudo -v
+refresh_sudo
 
 # Keep sudo alive for the duration of the script
-while true; do
-    sudo -n true
-    sleep 60
-done 2>/dev/null &
-KEEPALIVE_PID=$!
+start_sudo_keepalive
 
 trap "kill $KEEPALIVE_PID &>/dev/null" EXIT INT TERM
 
