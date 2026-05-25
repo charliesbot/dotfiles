@@ -139,6 +139,7 @@ install_brew_packages() {
     brew install scrcpy
     brew install tmux
     brew install gh
+    brew install jj
     brew install zig
     brew install go
     brew install lazygit
