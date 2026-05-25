@@ -1,4 +1,4 @@
-platforms = ["claude", "antigravity-cli", "antigravity", "opencode", "codex"]
+platforms = ["claude", "antigravity", "opencode", "codex"]
 
 instructions = "~/dotfiles/ai/instructions/AGENTS.md"
 
@@ -52,5 +52,5 @@ args = ["-y", "@google-cloud/cloud-run-mcp"]
 command = "npx"
 args = ["-y", "firebase-tools@latest", "mcp"]
 
-[antigravity-cli.plugins]
+[antigravity.plugins]
 workspace = "https://github.com/gemini-cli-extensions/workspace"
