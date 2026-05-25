@@ -18,7 +18,7 @@ paths = [
   "@android-skills/navigation/*",
   "@android-skills/performance/*",
   "@android-skills/xr/*",
-  "@android-skills/jetpack-compose/theming/*",
+  "@android-skills/jetpack-compose/*",
   "@android-skills/device-ai/*",
   "@android-skills/devtools/*",
   # Stitch Skills
