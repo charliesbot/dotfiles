@@ -23,6 +23,28 @@ alias jbc='jj bookmark create'
 alias jbm='jj bookmark move'
 alias jbd='jj bookmark delete'
 
+jpm() {
+  if [[ $# -ne 1 ]]; then
+    echo "Usage: jpm <pr-number-or-url>"
+    return 2
+  fi
+
+  local pr="$1"
+  local state
+
+  gh pr merge "$pr" --squash --delete-branch
+  state=$(gh pr view "$pr" --json state --jq .state 2>/dev/null || true)
+
+  if [[ "$state" != "MERGED" ]]; then
+    echo "PR $pr was not merged."
+    return 1
+  fi
+
+  jj git fetch
+  jj bookmark set main -r main@origin
+  jj new main
+}
+
 # History configuration
 HISTFILE=${HOME}/.zsh_history
 HISTSIZE=10000
