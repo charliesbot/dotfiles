@@ -7,6 +7,8 @@
 - Trivial fixes can commit directly to `main` only when explicitly asked.
 - Do not perform opportunistic refactors. If adjacent cleanup is useful but not required, log it as follow-up work or propose a separate cleanup PR.
 - Do not commit outside an approved non-trivial slice unless explicitly asked. Before any commit, verify no secrets are included.
+- For non-trivial changes, do not commit, push, or open a PR until a reviewer subagent reports PASS.
+- Treat `git commit`, `git push`, and `gh pr create` as unauthorized for non-trivial work unless reviewer status is PASS in the current session.
 - NEVER use hacks to bypass the type system or linters (e.g., `// @ts-ignore`, suppressing linter warnings) unless explicitly directed.
 - NEVER commit `.env` files or expose API keys, tokens, or secrets in any output.
 - Bug fixes follow TDD red-green: write a failing test first (red), then implement the fix (green).
@@ -54,7 +56,7 @@ When stuck, try 2–3 approaches before asking. If still blocked, ask with conte
 
 Main session handles implementation. Delegate only when a trigger below matches:
 
-- **reviewer** — MUST run a fresh-eyes pass (delegated to a read-only reviewer subagent or a separate review pass reading the modified files) after every non-trivial change, before commit or PR. Do not proceed until the review reports PASS or all issues are resolved.
+- **reviewer** — Use after every non-trivial change, before commit or PR. Resolve findings and rerun this subagent until PASS.
 
 ## Tooling
 
