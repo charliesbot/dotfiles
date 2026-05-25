@@ -57,6 +57,7 @@ When stuck, try 2–3 approaches before asking. If still blocked, ask with conte
 Main session handles implementation. Delegate only when a trigger below matches:
 
 - **reviewer** — Use after every non-trivial change, before commit or PR. Resolve findings and rerun this subagent until PASS.
+- Always start reviewer subagents in a fresh session. Never resume a prior reviewer task/session; stale reviewer context can cause hangs, empty results, or reviews of the wrong diff.
 
 ## Tooling
 
