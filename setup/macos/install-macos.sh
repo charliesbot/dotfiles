@@ -131,7 +131,7 @@ setup_macos() {
 
     set_hostname
 
-    prompt_for_git_config
+    prompt_for_vcs_config
 
     configure_macos_defaults
 
@@ -145,7 +145,7 @@ setup_macos() {
 
     install_android_cli
 
-    apply_git_config
+    apply_vcs_config
 
     install_bun
 

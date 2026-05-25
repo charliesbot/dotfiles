@@ -49,25 +49,25 @@ suppress_login_message() {
     echo "Login message suppressed."
 }
 
-# Prompt for Git user details to be applied later
-prompt_for_git_config() {
-    echo "Enter your details for Git configuration."
-    read -p "Enter your full name: " git_name
-    read -p "Enter your email: " git_email
+# Prompt for VCS user details to be applied later
+prompt_for_vcs_config() {
+    echo "Enter your details for VCS configuration."
+    read -p "Enter your full name: " vcs_name
+    read -p "Enter your email: " vcs_email
 
-    export GIT_CONFIG_NAME="$git_name"
-    export GIT_CONFIG_EMAIL="$git_email"
+    export VCS_CONFIG_NAME="$vcs_name"
+    export VCS_CONFIG_EMAIL="$vcs_email"
 }
 
-# Apply stored Git configuration
-apply_git_config() {
-    if [[ -n "$GIT_CONFIG_NAME" && -n "$GIT_CONFIG_EMAIL" ]]; then
-        echo "Applying Git configuration..."
-        git config --global user.name "$GIT_CONFIG_NAME"
-        git config --global user.email "$GIT_CONFIG_EMAIL"
-        echo "Git user name and email have been set."
+# Apply stored VCS configuration
+apply_vcs_config() {
+    if [[ -n "$VCS_CONFIG_NAME" && -n "$VCS_CONFIG_EMAIL" ]]; then
+        echo "Applying VCS configuration..."
+        jj config set --user user.name "$VCS_CONFIG_NAME"
+        jj config set --user user.email "$VCS_CONFIG_EMAIL"
+        echo "VCS user name and email have been set."
     else
-        echo "Git user details not provided, skipping Git configuration."
+        echo "VCS user details not provided, skipping VCS configuration."
     fi
 }
 

@@ -226,7 +226,7 @@ setup_fedora() {
 
     set_hostname
 
-    prompt_for_git_config
+    prompt_for_vcs_config
 
     configure_dns
 
@@ -235,8 +235,6 @@ setup_fedora() {
     enable_third_party_repos
 
     install_fedora_packages
-
-    apply_git_config
 
     install_multimedia
 
@@ -253,6 +251,8 @@ setup_fedora() {
     install_ai_tools
 
     install_brew_packages
+
+    apply_vcs_config
 
     install_jetbrains_toolbox
 
