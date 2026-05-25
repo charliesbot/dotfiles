@@ -140,6 +140,7 @@ install_brew_packages() {
     brew install tmux
     brew install gh
     brew install jj
+    brew install dmmulroy/tap/jj-starship
     brew install zig
     brew install go
     brew install lazygit
