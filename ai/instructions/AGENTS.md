@@ -3,7 +3,7 @@
 ## Hard Rules
 
 - For non-trivial changes, draft a plan first and wait for explicit approval before writing code. Trivial fixes (typos, one-line bug fixes, renames) can proceed directly.
-- For non-trivial changes, work on a new branch and open a PR for the approved slice once ready. Approval to implement a non-trivial slice includes approval to commit that slice and open its PR.
+- For non-trivial changes, work on a new branch and open a ready-for-review PR for the approved slice once ready. Approval to implement a non-trivial slice includes approval to commit that slice and open its PR. Open draft PRs only when explicitly asked.
 - Trivial fixes can commit directly to `main` only when explicitly asked.
 - Do not perform opportunistic refactors. If adjacent cleanup is useful but not required, log it as follow-up work or propose a separate cleanup PR.
 - Do not commit outside an approved non-trivial slice unless explicitly asked. Before any commit, verify no secrets are included.
