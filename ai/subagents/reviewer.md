@@ -48,10 +48,16 @@ Followed by: `PASS` or `NEEDS FIXES`.
    b. Does the code match the planned approach?
    c. Are tests present and testing the right behavior?
 4. Check code quality independent of the plan:
-   a. Error handling — are failures caught, not swallowed?
-   b. Type safety — no casts, no any, no suppressed warnings.
-   c. Security — no hardcoded secrets, no injection vectors, no auth gaps.
-   d. Test quality — do tests assert behavior, not implementation details?
+   a. Correctness — edge cases handled? Race conditions? Off-by-one errors?
+   b. Error handling — are failures caught, not swallowed?
+   c. Type safety — no casts, no any, no suppressed warnings.
+   d. Security — no hardcoded secrets, no injection vectors, no auth gaps.
+      Input validated at system boundaries? Queries parameterized?
+   e. Architecture — does it follow existing patterns or introduce a new one
+      without justification? Dependencies flowing the right direction?
+   f. Performance — N+1 queries? Unbounded loops? Missing pagination?
+      Synchronous operations that should be async?
+   g. Test quality — do tests assert behavior, not implementation details?
 5. Flag anything implemented that wasn't in the plan (scope creep).
 
 ## Constraints

@@ -95,3 +95,6 @@ export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
 # Rust
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
+
+# Added by Antigravity IDE
+export PATH="$HOME/.antigravity-ide/antigravity-ide/bin:$PATH"

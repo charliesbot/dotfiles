@@ -41,10 +41,9 @@ When stuck, try 2–3 approaches before asking. If still blocked, ask with conte
 
 ### Subagents
 
-Main session handles implementation. Delegate only when a trigger below matches.
+Main session handles implementation. Delegate only when a trigger below matches:
 
-- **architect** — Use when starting work in an unfamiliar codebase, or before any change that spans multiple modules. Returns a dependency map and risk read so you plan against real structure, not guesses. Runs `discover` on its own.
-- **reviewer** — MUST run after every non-trivial change, before commit or PR. Read-only fresh-eyes pass catches issues the implementer is blind to.
+- **reviewer** — MUST run a fresh-eyes pass (delegated to a read-only reviewer subagent or a separate review pass reading the modified files) after every non-trivial change, before commit or PR. Do not proceed until the review reports PASS or all issues are resolved.
 
 ## Tooling
 

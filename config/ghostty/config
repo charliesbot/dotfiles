@@ -12,5 +12,5 @@ window-padding-balance = true
 window-padding-y = 0
 window-padding-color = extend
 
-theme = catppuccin-mocha
+theme = Catppuccin Mocha
 keybind = shift+enter=text:\x1b\r

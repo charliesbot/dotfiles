@@ -120,10 +120,6 @@ create_symlinks() {
     ln -s ~/dotfiles/config/ideavimrc ~/.ideavimrc
     ln -s ~/dotfiles/config/chai.toml ~/chai.toml
 
-    # CLI tools
-    mkdir -p ~/.local/bin
-    ln -sf ~/dotfiles/config/scripts/discover.sh ~/.local/bin/discover
-
     # Italics and true color profile for tmux
     tic -x ~/dotfiles/config/tmux.terminfo
 }
@@ -191,11 +187,11 @@ install_ai_tools() {
         curl -fsSL https://ollama.com/install.sh | sh
     fi
 
-    # Gemini CLI (via Bun)
-    if check_command gemini; then
-        echo "Gemini CLI is already installed."
+    # Antigravity CLI
+    if check_command antigravity; then
+        echo "Antigravity CLI is already installed."
     else
-        bun install -g @google/gemini-cli
+        curl -fsSL https://antigravity.google/cli/install.sh | bash
     fi
 
     echo "AI CLI tools installed."

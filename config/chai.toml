@@ -1,4 +1,4 @@
-platforms = ["claude", "gemini", "antigravity", "opencode", "codex"]
+platforms = ["claude", "antigravity-cli", "antigravity", "opencode", "codex"]
 
 instructions = "~/dotfiles/ai/instructions/AGENTS.md"
 
@@ -6,12 +6,14 @@ instructions = "~/dotfiles/ai/instructions/AGENTS.md"
 material-3-skills = "https://github.com/hamen/material-3-skill"
 android-skills = "https://github.com/android/skills"
 stitch-skills = "https://github.com/google-labs-code/stitch-skills"
+agent-skills = "https://github.com/addyosmani/agent-skills"
 
 [skills]
 paths = [
   "~/dotfiles/ai/skills/*",
-  "~/.gemini/extensions/workspace/skills/*",
+  "~/.gemini/antigravity-cli/plugins/google-workspace/skills/*",
   "@material-3-skills",
+  # Android Skills
   "@android-skills/system/*",
   "@android-skills/navigation/*",
   "@android-skills/performance/*",
@@ -19,9 +21,16 @@ paths = [
   "@android-skills/jetpack-compose/theming/*",
   "@android-skills/device-ai/*",
   "@android-skills/devtools/*",
+  # Stitch Skills
   "@stitch-skills/skills/design-md",
   "@stitch-skills/skills/taste-design",
   "@stitch-skills/skills/enhance-prompt",
+  # Addy Osmani Agent Skills
+  "@agent-skills/skills/planning-and-task-breakdown",
+  "@agent-skills/skills/incremental-implementation",
+  "@agent-skills/skills/code-simplification",
+  "@agent-skills/skills/context-engineering",
+  "@agent-skills/skills/source-driven-development",
 ]
 
 [subagents]
@@ -43,5 +52,5 @@ args = ["-y", "@google-cloud/cloud-run-mcp"]
 command = "npx"
 args = ["-y", "firebase-tools@latest", "mcp"]
 
-[gemini.extensions]
+[antigravity-cli.plugins]
 workspace = "https://github.com/gemini-cli-extensions/workspace"
