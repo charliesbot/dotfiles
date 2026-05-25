@@ -12,25 +12,28 @@ agent-skills = "https://github.com/addyosmani/agent-skills"
 paths = [
   "~/dotfiles/ai/skills/*",
   "~/.gemini/antigravity-cli/plugins/google-workspace/skills/*",
-  "@material-3-skills",
-  # Android Skills
-  "@android-skills/system/*",
-  "@android-skills/navigation/*",
-  "@android-skills/performance/*",
-  "@android-skills/xr/*",
-  "@android-skills/jetpack-compose/*",
-  "@android-skills/device-ai/*",
-  "@android-skills/devtools/*",
-  # Stitch Skills
-  "@stitch-skills/skills/design-md",
-  "@stitch-skills/skills/taste-design",
-  "@stitch-skills/skills/enhance-prompt",
   # Addy Osmani Agent Skills
-  "@agent-skills/skills/planning-and-task-breakdown",
-  "@agent-skills/skills/incremental-implementation",
   "@agent-skills/skills/code-simplification",
   "@agent-skills/skills/context-engineering",
+  "@agent-skills/skills/incremental-implementation",
+  "@agent-skills/skills/planning-and-task-breakdown",
   "@agent-skills/skills/source-driven-development",
+  # Android Skills
+  "@android-skills/device-ai/*",
+  "@android-skills/devtools/*",
+  "@android-skills/jetpack-compose/*",
+  "@android-skills/navigation/*",
+  "@android-skills/performance/*",
+  "@android-skills/system/*",
+  "@android-skills/testing/*",
+  "@android-skills/wear/*",
+  "@android-skills/xr/*",
+  # Material 3 Skills
+  "@material-3-skills/skills/material-3",
+  # Stitch Skills
+  "@stitch-skills/skills/design-md",
+  "@stitch-skills/skills/enhance-prompt",
+  "@stitch-skills/skills/taste-design",
 ]
 
 [subagents]
