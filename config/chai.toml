@@ -1,4 +1,4 @@
-platforms = ["claude", "antigravity", "opencode", "codex"]
+platforms = ["claude", "antigravity", "opencode", "codex", "cursor"]
 
 instructions = "~/dotfiles/ai/instructions/AGENTS.md"
 
@@ -8,6 +8,7 @@ android-skills = "https://github.com/android/skills"
 stitch-skills = "https://github.com/google-labs-code/stitch-skills"
 agent-skills = "https://github.com/addyosmani/agent-skills"
 jj-skill = "https://github.com/megumish/jj-skill"
+modern-web-guidance = "https://github.com/GoogleChrome/modern-web-guidance"
 
 [skills]
 paths = [
@@ -33,6 +34,8 @@ paths = [
   "@jj-skill/skills/jj",
   # Material 3 Skills
   "@material-3-skills/skills/material-3",
+  # Modern Web Guidance
+  "@modern-web-guidance/skills/*",
   # Stitch Skills
   "@stitch-skills/skills/design-md",
   "@stitch-skills/skills/enhance-prompt",
