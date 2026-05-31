@@ -72,3 +72,4 @@ Main session handles implementation. Delegate only when a trigger below matches:
 
 - GitHub username: charliesbot
 - gh CLI is available globally
+- When running inside Herdr (`HERDR_ENV=1`), prefer `herdr` panes for long-running commands, logs, dev servers, watchers, and sibling agents so output stays visible and persistent. Use normal command execution for quick one-shot commands.

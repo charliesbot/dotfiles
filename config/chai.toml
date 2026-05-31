@@ -9,6 +9,7 @@ stitch-skills = "https://github.com/google-labs-code/stitch-skills"
 agent-skills = "https://github.com/addyosmani/agent-skills"
 jj-skill = "https://github.com/megumish/jj-skill"
 modern-web-guidance = "https://github.com/GoogleChrome/modern-web-guidance"
+herdr = "https://github.com/ogulcancelik/herdr"
 
 [skills]
 paths = [
@@ -30,6 +31,8 @@ paths = [
   "@android-skills/testing/*",
   "@android-skills/wear/*",
   "@android-skills/xr/*",
+  # Herdr Skills
+  "@herdr",
   # JJ Skill
   "@jj-skill/skills/jj",
   # Material 3 Skills

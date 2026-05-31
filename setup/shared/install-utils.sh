@@ -120,15 +120,16 @@ create_symlinks() {
     local dotfiles_dir="${DOTFILES_DIR:-$HOME/dotfiles}"
 
     echo "Replacing existing configs with dotfiles..."
-    rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.config/nvim ~/.ideavimrc ~/.config/starship.toml ~/.config/ghostty ~/chai.toml 2>/dev/null
+    rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.config/nvim ~/.ideavimrc ~/.config/starship.toml ~/.config/ghostty ~/.config/herdr/config.toml ~/chai.toml 2>/dev/null
 
     echo "Creating symlinks..."
-    mkdir -p ~/projects ~/.config ~/.config/tmux ~/.config/tmux/plugins
+    mkdir -p ~/projects ~/.config ~/.config/herdr ~/.config/tmux ~/.config/tmux/plugins
 
     ln -s "$dotfiles_dir/config/zshrc" ~/.zshrc
     ln -s "$dotfiles_dir/config/nvim" ~/.config/nvim
     ln -s "$dotfiles_dir/config/tmux.conf" ~/.tmux.conf
     ln -s "$dotfiles_dir/config/ghostty" ~/.config/ghostty
+    ln -s "$dotfiles_dir/config/herdr.toml" ~/.config/herdr/config.toml
     ln -s "$dotfiles_dir/config/starship.toml" ~/.config/starship.toml
     ln -s "$dotfiles_dir/config/ideavimrc" ~/.ideavimrc
     ln -s "$dotfiles_dir/config/chai.toml" ~/chai.toml
