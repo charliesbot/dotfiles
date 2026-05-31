@@ -47,11 +47,11 @@ reload_config = "prefix+shift+r"
 # open_notification_target = "prefix+o"
 # workspace_picker = "prefix+w"
 goto = "prefix+g"
-new_workspace = "prefix+n"
+new_workspace = "prefix+shift+n"
+# rename_workspace = "prefix+shift+w"
 # new_worktree = "prefix+shift+g"
 # open_worktree = ""    # optional, unset by default
 # remove_worktree = ""  # optional, unset by default; opens confirmation
-# rename_workspace = "prefix+shift+w"
 # close_workspace = "prefix+shift+d"
 previous_workspace = "prefix+p"
 next_workspace = "prefix+n"
@@ -163,7 +163,7 @@ delivery = "terminal"
 
 # Play sounds when agents change state in background workspaces
 [ui.sound]
-# enabled = true
+enabled = false
 # Optional custom mp3 sound files. Relative paths are resolved from this config file's directory.
 # path = "sounds/notification.mp3"   # one mp3 file for all sound notifications
 # done_path = "sounds/done.mp3"      # overrides only finished notifications

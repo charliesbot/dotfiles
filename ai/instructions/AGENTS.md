@@ -57,16 +57,23 @@ Prefer small vertical slices that produce working behavior. Use foundation-only 
 
 Implement only the approved slice. If scope grows beyond the approved file list, touches more than ~5 meaningful files, or approaches ~300 changed LOC excluding generated files, lockfiles, snapshots, and migrations, stop and propose a split.
 
-Use `planning-and-task-breakdown`, `incremental-implementation`, and reviewer checks as the default feature workflow. Use `code-simplification` only for separate cleanup PRs or reviewer-requested follow-up. Use `context-engineering` when entering an unfamiliar repo area or when conventions are unclear. Use `source-driven-development` for framework/library APIs, auth, routing, data fetching, forms, migrations, deployment, security-sensitive code, or dependency upgrades. Do not create a separate feature spec by default; the PR plan is the lightweight spec unless the feature is ambiguous, high-risk, product-defining, or likely to span multiple sessions.
+Default feature workflow:
+
+1. Plan the approved slice with `planning-and-task-breakdown`.
+2. Use `context-engineering` if entering an unfamiliar repo area or if conventions are unclear.
+3. Use `source-driven-development` if touching framework/library APIs, auth, routing, data fetching, forms, migrations, deployment, security-sensitive code, or dependency upgrades.
+4. Implement the approved slice incrementally with `incremental-implementation`.
+5. Run the relevant verification.
+6. Use `implementation-reviewer` before describing, pushing, or opening a PR.
+7. Resolve reviewer findings in the main session, then rerun `implementation-reviewer` until it reports PASS in the current session.
+
+Main session handles implementation by default; delegate only when a required skill explicitly asks for a subagent.
+
+Use `code-simplification` only for separate cleanup PRs or reviewer-requested follow-up.
+
+Do not create a separate feature spec by default; the PR plan is the lightweight spec unless the feature is ambiguous, high-risk, product-defining, or likely to span multiple sessions.
 
 When stuck, try 2–3 approaches before asking. If still blocked, ask with context on what you tried.
-
-### Subagents
-
-Main session handles implementation. Delegate only when a trigger below matches:
-
-- **reviewer** — Use after every non-trivial change, before describing, pushing, or opening a PR. Resolve findings and rerun this subagent until PASS.
-- Always start reviewer subagents in a fresh session. Never resume a prior reviewer task/session; stale reviewer context can cause hangs, empty results, or reviews of the wrong diff.
 
 ## Tooling
 
