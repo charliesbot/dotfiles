@@ -18,14 +18,46 @@ the work to a fresh reviewer context.
 Start a fresh reviewer subagent now.
 
 Use `references/reviewer-subagent-prompt.md` as the subagent's primary prompt.
-Do not summarize or reinterpret that prompt. Add task-specific context below it:
+Do not summarize or reinterpret that prompt. Add task-specific context below it
+using these headings when available:
 
-- User request and approved plan or implementation slice
-- Non-goals and expected file list, if known
-- Implementer report, if available
-- Current diff scope or changed files list
-- Verification commands run and results
-- Any repo-specific instructions the reviewer needs
+```xml
+<user_request>
+Original user request.
+</user_request>
+
+<approved_plan>
+Approved plan, implementation slice, non-goals, assumptions, and open questions.
+</approved_plan>
+
+<expected_files>
+Expected file list and why each file was expected to change.
+</expected_files>
+
+<changed_files>
+Changed files or current diff scope.
+</changed_files>
+
+<diff_stats>
+Diff stats, including changed file count and approximate changed LOC.
+</diff_stats>
+
+<verification>
+Commands run, pass/fail results, and concise command output summaries when available.
+</verification>
+
+<implementer_report>
+What the implementation session claims changed. Treat as unverified.
+</implementer_report>
+
+<repo_instructions>
+Repo-specific instructions the reviewer must apply.
+</repo_instructions>
+```
+
+Include actual command outputs or concise pass/fail summaries when available.
+Include diff stats and the changed file list so the reviewer can enforce scope
+without guessing.
 
 The reviewer subagent must not edit files. It must return exactly one terminal
 status: `PASS` or `NEEDS FIXES`.
