@@ -80,6 +80,8 @@ apply_vcs_config() {
         echo "Applying VCS configuration..."
         jj config set --user user.name "${VCS_CONFIG_NAME}"
         jj config set --user user.email "${VCS_CONFIG_EMAIL}"
+        jj config set --user ui.pager '["hunk", "pager"]'
+        jj config set --user ui.diff-formatter '":git"'
         echo "VCS user name and email have been set."
     else
         echo "VCS user details not provided, skipping VCS configuration."
@@ -146,7 +148,6 @@ install_brew_packages() {
     brew install \
         jesseduffield/lazydocker/lazydocker \
         neovim \
-        tree-sitter-cli \
         zoxide \
         zsh-autosuggestions \
         zsh-syntax-highlighting \
@@ -159,24 +160,15 @@ install_brew_packages() {
         dmmulroy/tap/jj-starship \
         zig \
         go \
-        lazygit
+        node \
+        pnpm \
+        modem-dev/tap/hunk \
+        fzf
 
     # Install fonts
     brew install --cask \
         font-jetbrains-mono \
         font-cascadia-code
-
-    brew install fzf
-}
-
-# Install Bun
-install_bun() {
-    if check_command bun; then
-        echo "Bun is already installed."
-    else
-        echo "Installing Bun..."
-        curl -fsSL https://bun.sh/install | bash
-    fi
 }
 
 # Install AI CLI tools

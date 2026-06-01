@@ -164,8 +164,6 @@ setup_macos() {
 
     apply_vcs_config
 
-    install_bun
-
     install_ai_tools
 
     create_symlinks

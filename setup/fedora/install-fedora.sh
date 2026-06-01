@@ -247,8 +247,6 @@ setup_fedora() {
 
     install_brew
 
-    install_bun
-
     install_ai_tools
 
     install_brew_packages
