@@ -289,6 +289,10 @@ wearMinSdk = "30"
 room = "2.8.2"
 koin = "4.1.0"
 datastore = "1.1.7"
+lifecycle = "<look-up-latest-lifecycle-version>"
+navigation3 = "<look-up-latest-navigation3-version>"
+wearCompose = "<look-up-latest-wear-compose-version>"
+kotlinxSerialization = "<look-up-latest-kotlinx-serialization-version>"
 ksp = "<look-up-latest-ksp-matching-your-kotlin-version>"  # e.g. "2.3.20-2.0.4" — verify on https://github.com/google/ksp/releases
 spotless = "7.2.1"
 
@@ -298,6 +302,11 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "navigation3" }
+androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "navigation3" }
+wear-compose-navigation3 = { module = "androidx.wear.compose:compose-navigation3", version.ref = "wearCompose" }
+androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycle" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
 
@@ -313,12 +322,14 @@ koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", versi
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 
 # --- Add to the root build.gradle.kts plugins block ---
 alias(libs.plugins.android.library) apply false
 alias(libs.plugins.kotlin.jvm) apply false
+alias(libs.plugins.kotlin.serialization) apply false
 alias(libs.plugins.ksp) apply false
 alias(libs.plugins.spotless)
 

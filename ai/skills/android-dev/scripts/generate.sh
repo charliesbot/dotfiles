@@ -106,6 +106,7 @@ app)
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -140,7 +141,9 @@ dependencies {
     implementation(libs.compose.foundation)
     implementation(libs.compose.material3)
     implementation(libs.compose.ui.tooling.preview)
-    implementation(libs.androidx.navigation3)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.kotlinx.serialization.json)
     debugImplementation(libs.compose.ui.tooling)
 }
 EOF
@@ -246,8 +249,8 @@ EOF
     cat > "$APP_PKG_PATH/navigation/AppNavigation.kt" <<EOF
 package $BASE_PACKAGE.navigation
 
-// AGENT: Wire Navigation 3 (androidx.navigation3) here.
-// Define NavKey objects for each screen and a NavDisplay that consumes them.
+// AGENT: Wire Navigation 3 here.
+// Define @Serializable NavKey objects for each screen and a NavDisplay that consumes them.
 EOF
 
     cat > "$APP_PKG_PATH/theme/AppTheme.kt" <<EOF
@@ -296,6 +299,7 @@ wear)
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -330,7 +334,10 @@ dependencies {
     implementation(libs.compose.foundation)
     implementation(libs.wear.compose.material3)
     implementation(libs.wear.compose.foundation)
-    implementation(libs.wear.compose.navigation)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.wear.compose.navigation3)
+    implementation(libs.kotlinx.serialization.json)
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.wear.tooling.preview)
 }
@@ -437,8 +444,9 @@ EOF
     cat > "$WEAR_PKG_PATH/navigation/WearNavigation.kt" <<EOF
 package $BASE_PACKAGE.wear.navigation
 
-// AGENT: Wire Wear Compose Navigation here.
-// Use SwipeDismissableNavHost with sealed-class routes for type safety.
+// AGENT: Wire Wear Navigation 3 here.
+// Define @Serializable NavKey objects, create a rememberNavBackStack(), and render a NavDisplay
+// with rememberSwipeDismissableSceneStrategy() for Wear swipe-to-dismiss behavior.
 EOF
 
     cat > "$WEAR_PKG_PATH/theme/WearAppTheme.kt" <<EOF
