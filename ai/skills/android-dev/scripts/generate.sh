@@ -10,9 +10,8 @@ set -o noclobber
 # Types:
 #   app             Add :app module (phone/tablet)
 #   wear            Add :wear module (Wear OS)
-#   widget          Add :widget module (home screen widget, Glance)
+#   widget          Add :widget module (responsive Glance widget surfaces)
 #   complications   Add :complications module (Wear OS data providers)
-#   tiles           Add :tiles module (Wear OS tile services)
 #   feature <name>  Add :features:<name>:app (and :wear with --wear)
 #
 # Examples:
@@ -31,9 +30,8 @@ Usage: $0 <type> [<name>] [--wear]
 Types:
   app              Add :app module (phone/tablet)
   wear             Add :wear module (Wear OS)
-  widget           Add :widget module (Glance home screen widget)
+  widget           Add :widget module (responsive Glance widget surfaces)
   complications    Add :complications module (Wear OS data providers)
-  tiles            Add :tiles module (Wear OS tile services)
   feature <name>   Add :features:<name>:app (and :wear with --wear)
 USAGE
     exit 1
@@ -467,7 +465,7 @@ EOF
     ;;
 
 # ============================================================
-# :widget — home screen widget (Glance)
+# :widget — responsive Glance widget surfaces
 # ============================================================
 widget)
     if [[ -e "widget" ]]; then
@@ -569,6 +567,8 @@ class AppWidget : GlanceAppWidget() {
     }
 }
 
+// Widget UI must stay responsive across home screen, Wear OS, Auto, and future surfaces.
+// Keep shared content size-aware and add surface-specific receivers or services in :widget.
 @Composable
 private fun WidgetContent() {
     Box(modifier = GlanceModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -670,71 +670,6 @@ EOF
 
     append_include 'include(":complications")'
     echo "Created: complications/"
-    ;;
-
-# ============================================================
-# :tiles — Wear OS tile services
-# ============================================================
-tiles)
-    if [[ -e "tiles" ]]; then
-        echo "Skipped: tiles/ already exists. To recreate, delete the directory first."
-        exit 0
-    fi
-
-    TILES_PKG_PATH="tiles/src/main/kotlin/$PACKAGE_PATH/tiles"
-    mkdir -p "$TILES_PKG_PATH"
-
-    cat > tiles/build.gradle.kts <<EOF
-plugins {
-    alias(libs.plugins.android.library)
-}
-
-android {
-    namespace = "$BASE_PACKAGE.tiles"
-    compileSdk = libs.versions.compileSdk.get().toInt()
-
-    defaultConfig {
-        minSdk = libs.versions.wearMinSdk.get().toInt()
-    }
-}
-
-dependencies {
-    implementation(project(":core:domain"))
-    implementation(libs.androidx.wear.tiles)
-    implementation(libs.androidx.wear.protolayout)
-    implementation(libs.androidx.wear.protolayout.material3)
-    implementation(libs.koin.android)
-}
-EOF
-
-    cat > tiles/src/main/AndroidManifest.xml <<EOF
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <application>
-        <service
-            android:name=".AppTileService"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:permission="com.google.android.wearable.permission.BIND_TILE_PROVIDER">
-            <intent-filter>
-                <action android:name="androidx.wear.tiles.action.BIND_TILE_PROVIDER" />
-            </intent-filter>
-        </service>
-    </application>
-
-</manifest>
-EOF
-
-    cat > "$TILES_PKG_PATH/AppTileService.kt" <<EOF
-package $BASE_PACKAGE.tiles
-
-// AGENT: Implement TileService following androidx.wear.tiles APIs.
-// See https://developer.android.com/training/wearables/tiles
-EOF
-
-    append_include 'include(":tiles")'
-    echo "Created: tiles/"
     ;;
 
 # ============================================================
@@ -1013,7 +948,7 @@ EOF
 # ============================================================
 *)
     echo "Error: unknown type '$TYPE'"
-    echo "Valid types: app, wear, widget, complications, tiles, feature"
+    echo "Valid types: app, wear, widget, complications, feature"
     exit 1
     ;;
 

@@ -4,7 +4,7 @@ description: >
   Architecture and conventions for multi-module Android projects with Jetpack Compose, Wear OS,
   Koin DI, and Gradle. Use when the user works on Android, Kotlin, Compose, or Gradle —
   including :features:, :core:model / :core:domain / :core:data / :core:strings / :core:designsystem,
-  :app / :wear / :widget / :complications / :tiles modules, Wear tiles/complications,
+  :app / :wear / :widget / :complications modules, Wear widgets/complications,
   StateFlow/MVVM, Navigation 3, or Spotless/ktfmt.
 ---
 
@@ -29,7 +29,7 @@ Before writing any feature code, run `./gradlew projects` and confirm these five
 This skill ships two scripts in its `scripts/` directory:
 
 - **Bootstrap a new project:** `scripts/bootstrap.sh` — run after `android create empty-activity ...` (see below). Adds the five `:core:*` modules.
-- **Add modules:** `scripts/generate.sh <type> [<name>] [--wear]` — platform shells (`app`, `wear`), OS surfaces (`widget`, `complications`, `tiles`), or feature modules (`feature <name>`). Idempotent for shells/surfaces, errors on feature name collisions.
+- **Add modules:** `scripts/generate.sh <type> [<name>] [--wear]` — platform shells (`app`, `wear`), OS surfaces (`widget`, `complications`), or feature modules (`feature <name>`). Idempotent for shells/surfaces, errors on feature name collisions.
 
 Run these from the project root. Do not copy them into the project — they live in the skill directory and the runtime resolves the path.
 
@@ -60,9 +60,8 @@ cd <project-root>
 
 scripts/generate.sh app                    # add :app module
 scripts/generate.sh wear                   # add :wear module
-scripts/generate.sh widget                 # add :widget (Glance home screen widget)
+scripts/generate.sh widget                 # add :widget (responsive Glance widget surfaces)
 scripts/generate.sh complications          # add :complications (Wear OS data providers)
-scripts/generate.sh tiles                  # add :tiles (Wear OS tile services)
 scripts/generate.sh feature dashboard          # add :features:dashboard:app
 scripts/generate.sh feature dashboard --wear   # add :features:dashboard:app + :wear
 ```
@@ -88,7 +87,6 @@ The architecture supports multiple Android platforms (`:app` for phone/tablet, `
 :app, :wear       → :core:data + :core:strings + :core:designsystem:common + :features:*:*
 :widget           → :core:data + :core:strings + :core:designsystem:common
 :complications    → :core:domain    (no Room/Ktor on classpath)
-:tiles            → :core:domain
 ```
 
 **Feature modules never depend on `:core:data`.** They only know `:core:domain` (and `:core:strings` for resources, plus `:core:model` transitively). Platform shells (`:app`, `:wear`) wire concrete data implementations into Koin and inject them into the use cases features depend on. This is dependency inversion at the module boundary — the feature compiles, tests, and reasons about behaviour without knowing which database, network library, or sync mechanism backs its use cases.
@@ -105,13 +103,14 @@ The architecture supports multiple Android platforms (`:app` for phone/tablet, `
 - **`:features:<name>:app`** — `:app` presentation: ViewModel, Composable screens (Material 3), feature-scoped DI module, optional `component/` package for feature-local widgets.
 - **`:features:<name>:wear`** — `:wear` presentation: ViewModel, Composable screens (Wear Material 3), feature-scoped DI module.
 - **`:app`**, **`:wear`** — platform shells that wire navigation, theming, and DI. Both use Navigation 3; `:wear` adds the Wear-specific `SwipeDismissableSceneStrategy` from `androidx.wear.compose:compose-navigation3`.
-- **`:widget`** — home screen widget (Glance). Standalone OS entry point at root level.
+- **`:widget`** — responsive Glance widget surfaces. Standalone OS entry point at root level.
 - **`:complications`** — Wear OS complication data providers. Standalone OS entry points the watch face calls directly.
-- **`:tiles`** — Wear OS tile services. Standalone OS entry points reachable via swipe.
 
 Every feature uses platform submodules (`app/`, `wear/`, etc.) — even when it only targets one platform today. This removes the "is this feature flat or nested?" guessing game and means adding a Wear or TV variant later is just adding a sibling submodule.
 
-Widgets, complications, and tiles are **not** features — they're standalone entry points the OS launches independently. They sit at the root level alongside platform shells.
+Widgets and complications are **not** features — they're standalone entry points the OS launches independently. They sit at the root level alongside platform shells.
+
+Widgets are the preferred glanceable surface for Wear OS, Auto, home screen, and future surfaces. Widget UI **must be responsive**: never assume a fixed watch, phone launcher, or car display size. Use size-aware Glance/Remote Compose layouts, concise content, and surface-specific receivers or services inside `:widget` while keeping the shared presentation adaptable.
 
 **What `core/` is not:**
 
@@ -126,12 +125,12 @@ Widgets, complications, and tiles are **not** features — they're standalone en
 - **Make feature modules depend on `:core:data`** — features only know `:core:domain` and `:core:strings` (and `:core:model` transitively). Data implementations are wired by platform shells via DI.
 - **Put strings outside `:core:strings`** — every user-facing string lives there. The only exception is `app_name` in each platform shell's `res/values/titles.xml` when the launcher label needs to differ per surface.
 - **Add Android types to `:core:model` or `:core:domain`** — the `kotlin("jvm")` plugin will reject `Context`, `Uri`, etc. at compile time. If you need them, the logic belongs in `:core:data`.
-- **Put models inside `:core:domain`** — models live in `:core:model`. Domain holds repository interfaces and use cases that depend on those models. Keeping them split means a `:complications` or `:tiles` module that just reads pre-computed state can depend on `:core:model` alone.
+- **Put models inside `:core:domain`** — models live in `:core:model`. Domain holds repository interfaces and use cases that depend on those models. Keeping them split means a `:complications` module or a widget surface that just reads pre-computed state can depend on `:core:model` alone.
 - **Add dependencies between feature modules** — features depend only on `:core:domain` and `:core:strings`. If two features need the same type, move it to `:core:model`.
 - **Add third-party libraries without asking** — the current stack covers most needs. Explain what's missing before adding anything.
 - **Create feature modules for single screens** — a feature is a complete user journey (e.g., `:features:auth` covers login, register, and forgot password).
 - **Create flat feature modules** — always use platform submodules (`app/`, `wear/`), even for `:app`-only features.
-- **Put widget, complication, or tile code inside `:app` or `:wear`** — they're standalone entry points and get their own root-level modules.
+- **Put widget or complication code inside `:app` or `:wear`** — they're standalone entry points and get their own root-level modules.
 - **Use LiveData** — the entire codebase uses StateFlow + coroutines.
 - **Skip writing tests** — follow red-green TDD. Write the failing test first.
 - **Skip `@Preview`** — every `@Composable` needs one.
@@ -334,13 +333,10 @@ StateFlow. The entire codebase uses StateFlow + coroutines for reactive state. L
 Ask first. The current stack covers most needs. If you think something is missing, explain what problem it solves and why the existing stack can't handle it.
 
 **"I need to add a home screen widget"**
-Run `scripts/generate.sh widget`. Creates `:widget` at the root with a Glance-based receiver and an example widget Composable. Depends on `:core:data` + `:core:strings` + `:core:designsystem:common`.
+Run `scripts/generate.sh widget`. Creates `:widget` at the root with a Glance-based receiver and an example widget Composable. Depends on `:core:data` + `:core:strings` + `:core:designsystem:common`. Widget UI must be responsive because the same module owns glanceable surfaces for home screen, Wear OS, Auto, and future surfaces.
 
 **"I need to add a Wear OS complication"**
 Run `scripts/generate.sh complications`. Creates `:complications` with a `SuspendingComplicationDataSourceService` skeleton. Depends only on `:core:domain`.
-
-**"I need to add a Wear OS tile"**
-Run `scripts/generate.sh tiles`. Creates `:tiles` with a `TileService` skeleton. Depends only on `:core:domain`.
 
 **"I need Wearable Data Layer sync between :app and :wear"**
 Add `implementation(libs.play.services.wearable)` to both `:app/build.gradle.kts` and `:wear/build.gradle.kts`. The Data Layer client (`Wearable.getDataClient(context)`) and listener services live in `:core:data` so both platforms share the sync logic.
