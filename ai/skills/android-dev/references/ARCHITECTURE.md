@@ -2,7 +2,7 @@
 
 ## Overview
 
-Multi-module Android architecture targeting `:app` (phone/tablet), Wear OS, and optionally TV/Auto from a single codebase. The core layer is split into five sub-modules so feature modules don't pull in the full data layer, business logic can be tested as pure Kotlin, shared models can be consumed from anywhere (including standalone OS surfaces like `:complications` and `:tiles`) without dragging Android types onto their classpath, and resources have explicit homes.
+Multi-module Android architecture targeting `:app` (phone/tablet), Wear OS, and optionally TV/Auto from a single codebase. The core layer is split into five sub-modules so feature modules don't pull in the full data layer, business logic can be tested as pure Kotlin, shared models can be consumed from anywhere (including standalone OS surfaces like widgets and `:complications`) without dragging Android types onto their classpath, and resources have explicit homes.
 
 **Core sub-modules:**
 
@@ -21,9 +21,8 @@ Multi-module Android architecture targeting `:app` (phone/tablet), Wear OS, and 
 
 **Standalone OS entry points:**
 
-- `:widget` — home screen widget (Glance)
+- `:widget` — responsive Glance widget surfaces
 - `:complications` — Wear OS data providers
-- `:tiles` — Wear OS tile services
 
 **Feature modules:**
 
@@ -132,18 +131,14 @@ my-app/
 │               └── di/
 │                   └── WearDashboardModule.kt
 │
-├── widget/                      # :widget (optional) — Glance home screen widget
+├── widget/                      # :widget (optional) — responsive Glance widget surfaces
 │   └── src/main/kotlin/com/myapp/widget/
 │       ├── AppWidgetReceiver.kt
 │       └── AppWidget.kt
 │
-├── complications/               # :complications (optional) — Wear OS data providers
-│   └── src/main/kotlin/com/myapp/complications/
-│       └── AppComplicationService.kt
-│
-└── tiles/                       # :tiles (optional) — Wear OS tile services
-    └── src/main/kotlin/com/myapp/tiles/
-        └── AppTileService.kt
+└── complications/               # :complications (optional) — Wear OS data providers
+    └── src/main/kotlin/com/myapp/complications/
+        └── AppComplicationService.kt
 ```
 
 ## Dependency Flow
@@ -166,20 +161,21 @@ The dependency direction is strictly enforced:
 :widget          ──→ :core:data + :core:strings + :core:designsystem:common
 
 :complications   ──→ :core:domain      (no Room/Ktor on classpath)
-:tiles           ──→ :core:domain
 ```
 
 **Key rules:**
 
 1. **Feature modules never depend on `:core:data`.** They depend only on `:core:domain` (for use cases and interfaces) and `:core:strings` (for resources). Models come in transitively via `:core:domain → :core:model`. Concrete data implementations are wired by platform shells via Koin.
 
-2. **`:core:model` and `:core:domain` are pure Kotlin.** Use `kotlin("jvm")` plugin, not `android.library`. Cannot import Android types — enforced at compile time. Splitting model from domain means a `:complications` or `:tiles` module that only reads pre-computed state can depend on `:core:model` (or `:core:domain` for use cases) without ever pulling in Room/Ktor.
+2. **`:core:model` and `:core:domain` are pure Kotlin.** Use `kotlin("jvm")` plugin, not `android.library`. Cannot import Android types — enforced at compile time. Splitting model from domain means a `:complications` module or a simple widget surface that only reads pre-computed state can depend on `:core:model` (or `:core:domain` for use cases) without ever pulling in Room/Ktor.
 
 3. **`:core:data`, `:core:strings`, and `:core:designsystem:common` are Android libraries** with no dependencies on each other. `:core:data` depends on `:core:domain` (and transitively `:core:model`). `:core:strings` is a leaf module containing only `res/values/strings.xml` with per-locale folders. `:core:designsystem:common` is a leaf module holding everything resource-y that isn't a string — drawables, color values, typography, shapes.
 
 4. **Platform shells (`:app`, `:wear`) own DI wiring.** They load `coreDataModule` (from `:core:data`) plus their feature modules' Koin modules to provide concrete implementations to the use cases features depend on. This is dependency inversion at the module boundary.
 
-5. **Widgets, complications, and tiles are sibling root modules**, not features. The OS launches them independently of the main app. They depend only on the core layer they need.
+5. **Widgets and complications are sibling root modules**, not features. The OS launches them independently of the main app. They depend only on the core layer they need.
+
+6. **Widgets must be responsive.** Treat `:widget` as the home for glanceable surfaces across phone launchers, Wear OS, Auto, and future surfaces. Do not design widget UI around a single fixed surface size. Use size-aware Glance/Remote Compose layouts and keep surface-specific receivers or services inside `:widget`.
 
 ## Why kotlin("jvm") for :core:model and :core:domain
 
@@ -188,7 +184,7 @@ The single most important compile-time barrier in this architecture is making bo
 - **No `Context`, no `Uri`, no `R` class.** If you need them, the logic doesn't belong in model or domain.
 - **Tests run as plain JVM tests.** No Robolectric, no instrumentation, no emulator. Milliseconds per test.
 - **Multi-platform reuse.** A pure Kotlin model + domain layer can later move to a `commonMain` source set if you ever go Compose Multiplatform.
-- **Lean watch-side surfaces.** `:tiles` and `:complications` reading pre-computed state can depend on `:core:model` (or `:core:domain` for use cases) and skip Room/Ktor entirely.
+- **Lean watch-side surfaces.** `:complications` and simple widget surfaces reading pre-computed state can depend on `:core:model` (or `:core:domain` for use cases) and skip Room/Ktor entirely.
 
 If these were `android.library`, an agent (or a careless dev) could `import android.content.Context` and the architecture would silently leak Android into the supposed-pure layer. With `kotlin("jvm")` the build fails immediately.
 
@@ -197,7 +193,7 @@ If these were `android.library`, an agent (or a careless dev) could `import andr
 The split mirrors what reference Android projects do (NowInAndroid, Tivi, DroidKaigi conference app all separate `model` from `domain`). Concrete benefits:
 
 - **Stable consumability.** Models (data classes, enums) change less often than use cases and interfaces. Putting them in their own module means a use-case change doesn't invalidate every consumer's compilation.
-- **Capabilities without business logic.** A standalone surface (`:tiles`, `:complications`, a widget showing a static value) might only need types like `Book` or `DownloadState` — not the use cases that produce them. `:core:model` is what they actually need.
+- **Capabilities without business logic.** A standalone surface (`:complications`, a widget showing a static value) might only need types like `Book` or `DownloadState` — not the use cases that produce them. `:core:model` is what they actually need.
 - **Domain stays focused.** When `:core:domain` only holds interfaces + use cases (not models), its role is unambiguous: it's the contract layer. Models support the contract but live separately.
 
 ## Why Centralized Strings (Pocket Casts Pattern)
@@ -352,7 +348,7 @@ dependencies {
 
 - **Compile-time architecture enforcement.** Pure-Kotlin model and domain layers can't accidentally import Android. Feature modules can't accidentally depend on the data layer.
 - **Watch APK isn't bloated.** Wear pulls in `:core:data` (Room, etc.) but not the feature modules' Material 3 phone widgets, and not `:app` shell code.
-- **Tile and complication classpaths stay lean.** `:tiles` and `:complications` depend on `:core:domain` (or `:core:model` for the simplest cases) and never load Room or Ktor.
+- **Widget and complication classpaths stay intentional.** Simple widget surfaces and `:complications` can depend on `:core:domain` (or `:core:model` for the simplest cases) without loading more of the stack than they need.
 - **Tests run instantly.** Model and domain layers are JVM-only — no Robolectric, no instrumentation.
 - **Single source of truth for strings.** Pocket Casts pattern. One file to localize.
 - **Multi-platform from day one.** Adding `:wear` after building `:app`-only is one `generate.sh wear` call.
@@ -365,5 +361,5 @@ dependencies {
 3. **Replace bare `:app`:** delete `app/` and run `scripts/generate.sh app` to get the skill's wired-up shell (or manually add `:core:data` + `:core:strings` deps + Koin setup to the bare `:app`).
 4. **Add Wear shell if needed:** `scripts/generate.sh wear`.
 5. **Add features:** `scripts/generate.sh feature dashboard --wear`.
-6. **Add OS surfaces as needed:** `scripts/generate.sh widget` / `complications` / `tiles`.
+6. **Add OS surfaces as needed:** `scripts/generate.sh widget` / `complications`.
 7. **Iterate:** generate more features and modules as needed.
