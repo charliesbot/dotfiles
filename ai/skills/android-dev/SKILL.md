@@ -104,7 +104,7 @@ The architecture supports multiple Android platforms (`:app` for phone/tablet, `
 - **`:core:designsystem:common`** — Android library, non-string resources: drawables (vector icons, illustrations, app logo), color values (XML-referenced from manifest theme, splash screen), typography and shape values. Platform shells, feature modules, and `:widget` all depend on this. Two carve-outs: launcher icons (`mipmap/`) live in platform shells (manifest requirement), notification icons live in `:core:data` (the data layer code references them and shouldn't depend on `:core:designsystem:common`).
 - **`:features:<name>:app`** — `:app` presentation: ViewModel, Composable screens (Material 3), feature-scoped DI module, optional `component/` package for feature-local widgets.
 - **`:features:<name>:wear`** — `:wear` presentation: ViewModel, Composable screens (Wear Material 3), feature-scoped DI module.
-- **`:app`**, **`:wear`** — platform shells that wire navigation, theming, and DI. Each platform uses its own navigation library (Navigation 3 for `:app`, Wear Compose Navigation for `:wear`).
+- **`:app`**, **`:wear`** — platform shells that wire navigation, theming, and DI. Both use Navigation 3; `:wear` adds the Wear-specific `SwipeDismissableSceneStrategy` from `androidx.wear.compose:compose-navigation3`.
 - **`:widget`** — home screen widget (Glance). Standalone OS entry point at root level.
 - **`:complications`** — Wear OS complication data providers. Standalone OS entry points the watch face calls directly.
 - **`:tiles`** — Wear OS tile services. Standalone OS entry points reachable via swipe.
@@ -148,7 +148,7 @@ Widgets, complications, and tiles are **not** features — they're standalone en
 | Serialization        | Kotlinx Serialization                                |
 | Image loading        | Coil                                                 |
 | Navigation (`:app`)  | Navigation 3 (`androidx.navigation3`)                |
-| Navigation (`:wear`) | Wear Compose Navigation                              |
+| Navigation (`:wear`) | Navigation 3 + Wear `SwipeDismissableSceneStrategy`  |
 | State management     | StateFlow + MVVM                                     |
 | Formatting           | Spotless + ktfmt (Google style)                      |
 | Testing              | MockK                                                |

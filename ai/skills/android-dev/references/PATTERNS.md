@@ -29,7 +29,7 @@ class DashboardViewModel(
 
 A common confusion: in Compose, **always use `koinViewModel()` for ViewModels** — not `get()`. The two functions look interchangeable but have different lifecycle semantics:
 
-- `koinViewModel<T>()` — Compose-aware, scopes the instance to the nearest `ViewModelStoreOwner` (the NavDisplay backstack entry, or the host Activity). Survives configuration changes. Use this in every `@Composable` screen.
+- `koinViewModel<T>()` — Compose-aware, scopes the instance to the nearest `ViewModelStoreOwner`. Without Navigation 3's ViewModel decorators, that owner is usually the host Activity. Survives configuration changes. Use this in every `@Composable` screen.
 - `get<T>()` — gives you a new instance each call (for `factory`) or the singleton (for `single`). Does **not** participate in the ViewModel lifecycle. Using `get()` for a ViewModel re-creates it on every recomposition and loses state on rotation.
 
 Register the ViewModel in the feature's Koin module with `viewModel { ... }` (not `factory` or `single`):
@@ -67,7 +67,51 @@ class AppApplication : Application() {
 }
 ```
 
-The same pattern works in Navigation 3: each route's `NavEntry` content block calls `koinViewModel()`, and Koin's Compose integration scopes the instance to that entry's backstack lifetime — pop the entry, the ViewModel is cleared. Use `get()` only for non-ViewModel injections (e.g., a logger or repository inside a `LaunchedEffect`).
+The same pattern works in Navigation 3, but destination scoping is not automatic. If a route needs a ViewModel cleared when its `NavEntry` is popped, add `androidx.lifecycle:lifecycle-viewmodel-navigation3` and provide Navigation 3 entry decorators such as `rememberSaveableStateHolderNavEntryDecorator()` and `rememberViewModelStoreNavEntryDecorator()` to `NavDisplay`. Then each route's `NavEntry` content block can call `koinViewModel()` against that entry's `ViewModelStoreOwner`. Use `get()` only for non-ViewModel injections (e.g., a logger or repository inside a `LaunchedEffect`).
+
+## Navigation Delegation Pattern
+
+Platform shells own Navigation 3 keys, the back stack, `NavDisplay`, and every `backStack` mutation. Keep `@Serializable NavKey` types inside `:app` or `:wear`, not inside feature modules. Navigation keys describe platform composition, and `:app` and `:wear` often need different route shapes for the same domain journey.
+
+Feature screens expose navigation intent through callback lambdas. They never import another feature's route type, mutate a platform back stack, or expose their own `NavKey` classes as a public feature API.
+
+```kotlin
+@Composable
+fun ArticleListScreen(
+    onArticleClick: (articleId: String) -> Unit,
+) {
+    // ...
+}
+```
+
+The platform shell maps those callbacks to its own `NavKey` and back-stack operations:
+
+```kotlin
+@Serializable
+sealed interface AppScreen : NavKey {
+    @Serializable
+    data object ArticleList : AppScreen
+
+    @Serializable
+    data class ArticleDetail(val articleId: String) : AppScreen
+}
+
+NavDisplay(
+    backStack = backStack,
+    entryProvider = entryProvider {
+        entry<AppScreen.ArticleList> {
+            ArticleListScreen(
+                onArticleClick = { articleId -> backStack.add(AppScreen.ArticleDetail(articleId)) },
+            )
+        }
+        entry<AppScreen.ArticleDetail> { screen ->
+            ArticleDetailScreen(articleId = screen.articleId)
+        }
+    },
+)
+```
+
+This keeps feature modules independent, prevents circular feature dependencies, and lets each platform shell choose its own navigation graph without changing feature UI APIs.
 
 ## Use Case Pattern
 

@@ -8,6 +8,7 @@ The `bootstrap.sh` and `generate.sh` scripts generate `build.gradle.kts` files t
 - `libs.plugins.android.library`
 - `libs.plugins.kotlin.jvm` (for `:core:model` and `:core:domain`)
 - `libs.plugins.kotlin.compose`
+- `libs.plugins.kotlin.serialization` (for Navigation 3 `@Serializable` keys in platform shells)
 - `libs.plugins.ksp` (for `:core:data` Room)
 - `libs.plugins.spotless`
 
@@ -18,6 +19,10 @@ AGP 9.0+ bundles Kotlin support, so `libs.plugins.kotlin.android` is **not** app
 - `libs.versions.compileSdk`
 - `libs.versions.minSdk`
 - `libs.versions.wearMinSdk`
+- `libs.versions.navigation3`
+- `libs.versions.wearCompose`
+- `libs.versions.kotlinxSerialization`
+- `libs.versions.lifecycle`
 
 ## Module-by-module dependency requirements
 
@@ -42,8 +47,10 @@ AGP 9.0+ bundles Kotlin support, so `libs.plugins.kotlin.android` is **not** app
 - `libs.androidx.core.ktx`, `libs.androidx.activity.compose`, `libs.androidx.lifecycle.viewmodel.compose`
 - `libs.koin.android`, `libs.koin.androidx.compose`
 - `libs.compose.bom`, `libs.compose.runtime`, `libs.compose.ui`, `libs.compose.foundation`, `libs.compose.ui.tooling.preview`, `libs.compose.ui.tooling`
-- `:app`: `libs.compose.material3`, `libs.androidx.navigation3`
-- `:wear`: `libs.wear.compose.material3`, `libs.wear.compose.foundation`, `libs.wear.compose.navigation`, `libs.wear.tooling.preview`
+- Navigation 3: `libs.androidx.navigation3.runtime`, `libs.androidx.navigation3.ui`, `libs.kotlinx.serialization.json`
+- Optional destination-scoped ViewModels: `libs.androidx.lifecycle.viewmodel.navigation3`
+- `:app`: `libs.compose.material3`
+- `:wear`: `libs.wear.compose.material3`, `libs.wear.compose.foundation`, `libs.wear.compose.navigation3`, `libs.wear.tooling.preview`
 
 **Feature module deps** (same for `app/` and `wear/` submodules):
 

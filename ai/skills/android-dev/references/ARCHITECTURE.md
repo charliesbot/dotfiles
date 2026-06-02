@@ -74,7 +74,7 @@ my-app/
 │       ├── MainActivity.kt          # uses WearAppTheme
 │       ├── di/
 │       │   └── WearAppModule.kt
-│       ├── navigation/              # Wear Compose Navigation (SwipeDismissableNavHost)
+│       ├── navigation/              # Navigation 3 + SwipeDismissableSceneStrategy
 │       │   └── WearNavigation.kt
 │       └── theme/
 │           └── WearAppTheme.kt      # Wear MaterialTheme
@@ -240,7 +240,7 @@ Pre-promotion: themes live inline in platform shells (`:app/theme/AppTheme.kt`),
 A key strength of this architecture is how it isolates platform-specific implementations. Navigation is a perfect example.
 
 - **`:app`** uses Navigation 3 (`androidx.navigation3`) — adaptive layouts with scenes, savable back stack with keys, central `NavDisplay`.
-- **`:wear`** uses Wear Compose Navigation (`androidx.wear.compose:compose-navigation`) — `SwipeDismissableNavHost` and watch-tailored components.
+- **`:wear`** uses Navigation 3 plus `androidx.wear.compose:compose-navigation3` — `NavKey`, `rememberNavBackStack`, `NavDisplay`, and the Wear-specific `SwipeDismissableSceneStrategy`.
 
 Feature modules just provide `@Composable` screens. Platform shells call those screens using their own navigation library. Features don't know which platform they're on.
 
@@ -269,7 +269,7 @@ dependencies {
     implementation(project(":core:strings"))
     implementation(project(":core:designsystem:common"))
     implementation(project(":features:dashboard:wear"))
-    // Wear Compose, Koin, Wear Compose Navigation, etc.
+    // Wear Compose, Koin, Navigation 3, Wear swipe-dismiss scene strategy, etc.
 }
 
 // features/dashboard/app/build.gradle.kts
@@ -342,7 +342,7 @@ dependencies {
 - **Networking:** Retrofit (add to `:core:data` when needed)
 - **Serialization:** Kotlinx Serialization
 - **Image Loading:** Coil
-- **Navigation:** Navigation 3 (`:app`), Wear Compose Navigation (`:wear`)
+- **Navigation:** Navigation 3 for both `:app` and `:wear`; Wear adds `SwipeDismissableSceneStrategy`.
 - **State Management:** StateFlow + MVVM
 - **Formatting:** Spotless + ktfmt (Google style)
 - **Testing:** MockK
