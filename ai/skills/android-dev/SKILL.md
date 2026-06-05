@@ -172,7 +172,7 @@ For full templates and copy-paste examples (ViewModel, Use Case, Data Layer, Koi
 - Every `@Composable` function needs a `@Preview`. Catches layout issues without launching the app.
 - Use Material 3 components in `:app` features; Wear Material 3 in `:wear` features.
 - Platform shells call feature screens — features don't know which platform they're on.
-- **Feature-scoped components live in a `component/` package inside the platform submodule** (e.g., `features/dashboard/app/component/StatCard.kt`). Promote to a shared `:core:ui:app` module only when a _second_ feature needs the same component (lazy promotion, see below).
+- **Feature-scoped components live in a `component/` package inside the platform submodule** (e.g., `features/dashboard/app/component/StatCard.kt`). Promote to `:core:designsystem:app` only when a concrete lazy-promotion trigger fires (e.g., a second app feature needs the same component, you build brand-flavored Material primitives worth sharing, or the app theme should move out of the `:app` shell).
 - The `app/` and `wear/` submodules within a feature do not share UI or ViewModels. Different Compose toolkits, different UI shape, different state. The shared code is in `:core:domain` (use cases, repositories, models).
 
 ## Resources

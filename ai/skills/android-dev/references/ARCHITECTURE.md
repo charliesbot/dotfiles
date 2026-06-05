@@ -352,7 +352,7 @@ dependencies {
 - **Tests run instantly.** Model and domain layers are JVM-only — no Robolectric, no instrumentation.
 - **Single source of truth for strings.** Pocket Casts pattern. One file to localize.
 - **Multi-platform from day one.** Adding `:wear` after building `:app`-only is one `generate.sh wear` call.
-- **No premature abstraction.** No `:core:ui:*`, no `:core:designsystem` until real reuse demands them.
+- **No premature abstraction.** Add platform Compose design-system modules (`:core:designsystem:app` / `:core:designsystem:wear`) only when real reuse demands them.
 
 ## Getting Started
 

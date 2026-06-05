@@ -32,7 +32,12 @@ jpm() {
   local pr="$1"
   local state
 
-  gh pr merge "$pr" --squash --delete-branch
+  # 1. Get the current active bookmark name before merging
+  local current_bookmark
+  current_bookmark=$(jj bookmark list --all | grep -E '\*' | awk '{print $1}')
+
+  # 2. Merge the PR on GitHub
+  gh pr merge "$pr" --squash --delete-branch --admin
   state=$(gh pr view "$pr" --json state --jq .state 2>/dev/null || true)
 
   if [[ "$state" != "MERGED" ]]; then
@@ -40,8 +45,20 @@ jpm() {
     return 1
   fi
 
+  # 3. Fetch remote changes and update main
   jj git fetch
   jj bookmark set main -r main@origin
+
+  # 4. Rebase stacked children and push updates to GitHub
+  if [[ -n "$current_bookmark" ]]; then
+    echo "Rebasing children of $current_bookmark onto main..."
+    jj rebase -s "children($current_bookmark)" -d main
+    
+    echo "Pushing updates to remaining stacked PRs..."
+    jj git push
+  fi
+
+  # 5. Move to a clean change on top of the updated main
   jj new main
 }
 

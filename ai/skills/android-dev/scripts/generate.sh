@@ -711,6 +711,7 @@ feature)
     # --- Feature :app submodule ---
     APP_SRC="features/$FEATURE_SLUG/app/src/main/kotlin/$PACKAGE_PATH/features/$FEATURE_PKG"
     mkdir -p "$APP_SRC/component" "$APP_SRC/di"
+    touch "$APP_SRC/component/.gitkeep"
 
     cat > "features/$FEATURE_SLUG/app/build.gradle.kts" <<EOF
 plugins {
@@ -826,6 +827,7 @@ EOF
     if [[ "$WITH_WEAR" == true ]]; then
         WEAR_SRC="features/$FEATURE_SLUG/wear/src/main/kotlin/$PACKAGE_PATH/features/$FEATURE_PKG/wear"
         mkdir -p "$WEAR_SRC/component" "$WEAR_SRC/di"
+        touch "$WEAR_SRC/component/.gitkeep"
 
         cat > "features/$FEATURE_SLUG/wear/build.gradle.kts" <<EOF
 plugins {
