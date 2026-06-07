@@ -250,6 +250,33 @@ Feature modules just provide `@Composable` screens. Platform shells call those s
 
 By default each platform shell defines its own theme that wraps `MaterialTheme` with dynamic colors. `:core:designsystem:common` is resources only (drawables + value resources), not Compose code — so themes don't live there.
 
+`:app` theme uses Material 3 + `dynamicLightColorScheme()` / `dynamicDarkColorScheme()`:
+
+```kotlin
+@Composable
+fun AppTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit,
+) {
+    val context = LocalContext.current
+    val colorScheme = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+    } else {
+        if (darkTheme) darkColorScheme() else lightColorScheme()
+    }
+    MaterialTheme(colorScheme = colorScheme, content = content)
+}
+```
+
+`:wear` theme uses Wear Material 3 (Wear OS 6+ supports dynamic color via the system theme):
+
+```kotlin
+@Composable
+fun WearAppTheme(content: @Composable () -> Unit) {
+    androidx.wear.compose.material3.MaterialTheme(content = content)
+}
+```
+
 Move themes into shared code only through the Lazy Design-System Promotions rules above.
 
 ## Example Module Dependencies
