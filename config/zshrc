@@ -30,13 +30,16 @@ alias jbd='jj bookmark delete'
     fi
 
     local pr="$1"
-    local info number base head state next_prs
+    local info number base head state head_owner repo_owner repo next_prs
 
-    info=$(gh pr view "$pr" --json number,baseRefName,headRefName,state)
+    info=$(gh pr view "$pr" --json number,baseRefName,headRefName,headRepositoryOwner,state)
     number=$(echo "$info" | jq -r .number)
     base=$(echo "$info" | jq -r .baseRefName)
     head=$(echo "$info" | jq -r .headRefName)
+    head_owner=$(echo "$info" | jq -r .headRepositoryOwner.login)
     state=$(echo "$info" | jq -r .state)
+    repo=$(gh repo view --json nameWithOwner --jq .nameWithOwner)
+    repo_owner=${repo%%/*}
 
     if [[ "$state" != "OPEN" ]]; then
       echo "PR #$number is not open; state=$state"
@@ -53,7 +56,13 @@ alias jbd='jj bookmark delete'
     next_prs=$(gh pr list --state open --json number,baseRefName \
       --jq ".[] | select(.baseRefName == \"$head\") | .number")
 
-    gh pr merge "$number" --squash --delete-branch --admin || return 1
+    gh pr merge "$number" --squash --admin || return 1
+
+    if [[ "$head_owner" == "$repo_owner" ]]; then
+      gh api -X DELETE "repos/$repo/git/refs/heads/$head" --silent
+    else
+      echo "Leaving fork branch '$head_owner:$head' alone."
+    fi
 
     jj git fetch
     jj bookmark set main -r main@origin
