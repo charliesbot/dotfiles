@@ -23,44 +23,54 @@ alias jbc='jj bookmark create'
 alias jbm='jj bookmark move'
 alias jbd='jj bookmark delete'
 
-jpm() {
-  if [[ $# -ne 1 ]]; then
-    echo "Usage: jpm <pr-number-or-url>"
-    return 2
-  fi
+ jpm() {
+    if [[ $# -ne 1 ]]; then
+      echo "Usage: jpm <pr-number-or-url>"
+      return 2
+    fi
 
-  local pr="$1"
-  local state
+    local pr="$1"
+    local info number base head state next_prs
 
-  # 1. Get the current active bookmark name before merging
-  local current_bookmark
-  current_bookmark=$(jj bookmark list --all | grep -E '\*' | awk '{print $1}')
+    info=$(gh pr view "$pr" --json number,baseRefName,headRefName,state)
+    number=$(echo "$info" | jq -r .number)
+    base=$(echo "$info" | jq -r .baseRefName)
+    head=$(echo "$info" | jq -r .headRefName)
+    state=$(echo "$info" | jq -r .state)
 
-  # 2. Merge the PR on GitHub
-  gh pr merge "$pr" --squash --delete-branch --admin
-  state=$(gh pr view "$pr" --json state --jq .state 2>/dev/null || true)
+    if [[ "$state" != "OPEN" ]]; then
+      echo "PR #$number is not open; state=$state"
+      return 1
+    fi
 
-  if [[ "$state" != "MERGED" ]]; then
-    echo "PR $pr was not merged."
-    return 1
-  fi
+    if [[ "$base" != "main" ]]; then
+      echo "Refusing to merge PR #$number because base is '$base', not 'main'."
+      echo "Retarget/rebase the stack first, or merge the bottom PR first."
+      return 1
+    fi
 
-  # 3. Fetch remote changes and update main
-  jj git fetch
-  jj bookmark set main -r main@origin
+    # PRs stacked directly on this PR's head bookmark.
+    next_prs=$(gh pr list --state open --json number,baseRefName \
+      --jq ".[] | select(.baseRefName == \"$head\") | .number")
 
-  # 4. Rebase stacked children and push updates to GitHub
-  if [[ -n "$current_bookmark" ]]; then
-    echo "Rebasing children of $current_bookmark onto main..."
-    jj rebase -s "children($current_bookmark)" -d main
-    
-    echo "Pushing updates to remaining stacked PRs..."
-    jj git push
-  fi
+    gh pr merge "$number" --squash --delete-branch --admin || return 1
 
-  # 5. Move to a clean change on top of the updated main
-  jj new main
-}
+    jj git fetch
+    jj bookmark set main -r main@origin
+    jj new main
+
+    for next in $next_prs; do
+      local next_head
+      next_head=$(gh pr view "$next" --json headRefName --jq .headRefName)
+
+      echo "Rebasing PR #$next ($next_head) onto main..."
+      jj rebase -b "$next_head" -d main
+      jj git push -b "$next_head"
+
+      echo "Retargeting PR #$next to main..."
+      gh pr edit "$next" --base main
+    done
+  }
 
 # History configuration
 HISTFILE=${HOME}/.zsh_history
