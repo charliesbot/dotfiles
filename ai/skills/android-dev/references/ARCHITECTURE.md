@@ -10,7 +10,7 @@ Multi-module Android architecture targeting `:app` (phone/tablet), Wear OS, and 
 - `:core:domain` — pure Kotlin (`kotlin("jvm")`): repository interfaces and use cases. Depends on `:core:model`. No Android dependencies.
 - `:core:data` — Android library: Room, DataStore, network, security, repository implementations, DI wiring.
 - `:core:strings` — Android library, strings only: every user-facing string with per-locale translations.
-- `:core:designsystem:common` — Android library, non-string resources: drawables, color values, typography, shape values. Two siblings (`:app` and `:wear`) are lazy promotions for platform-specific Compose primitives and themes.
+- `:core:designsystem:common` — Android library, non-string resources: drawables, color values, typography, shape values. Platform-specific Compose design-system siblings are lazy promotions.
 
 **Platform shells:**
 
@@ -222,9 +222,9 @@ The `app/` and `wear/` submodules within a feature are intentionally isolated fr
 - **No shared UI** — `:app` uses `androidx.compose.material3`, `:wear` uses `androidx.wear.compose.material3`. Different libraries with different components (a `Button` on phone is a `Chip` on Wear). Sharing composables would mean pulling in both toolkits.
 - **No shared ViewModels** — even when two ViewModels call the same use case, the UI state they manage is typically different. A phone dashboard might show charts in a grid; a Wear dashboard shows three items in a `ScalingLazyColumn`. Different shape = different state = different ViewModel. The duplication is minimal (a thin class with a StateFlow) and not worth a shared module.
 
-## Lazy Module Promotions
+## Lazy Design-System Promotions
 
-Two platform-specific siblings of `:core:designsystem:common` can be added when a concrete trigger fires:
+Platform-specific siblings of `:core:designsystem:common` can be added when a concrete trigger fires:
 
 - **`:core:designsystem:app`** — Material 3 layer for phone/tablet. Holds `AppTheme.kt`, brand-flavored Material primitives (e.g., `KanshuButton`, `KanshuTopBar`), and shared Composables that take domain types (e.g., `BookCard(book: Book)`). Depends on `:core:designsystem:common` + `:core:model`.
 - **`:core:designsystem:wear`** — Wear Material 3 layer for watch. Same scope but with the Wear Compose toolkit. Can't share Composable code with `:designsystem:app` — the two libraries have incompatible APIs.
@@ -250,7 +250,7 @@ Feature modules just provide `@Composable` screens. Platform shells call those s
 
 By default each platform shell defines its own theme that wraps `MaterialTheme` with dynamic colors. `:core:designsystem:common` is resources only (drawables + value resources), not Compose code — so themes don't live there.
 
-If you want the theme to live in shared code instead of duplicated inline in each shell, that's one of the triggers for promoting `:core:designsystem:app` (and `:core:designsystem:wear`). Those modules hold the Compose Material primitives and `AppTheme.kt` / `WearAppTheme.kt`. See the Lazy Module Promotions section above.
+Move themes into shared code only through the Lazy Design-System Promotions rules above.
 
 ## Example Module Dependencies
 

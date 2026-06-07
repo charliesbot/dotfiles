@@ -180,7 +180,7 @@ For full templates and copy-paste examples (ViewModel, Use Case, Data Layer, Koi
 - Every `@Composable` function needs a `@Preview`. Catches layout issues without launching the app.
 - Use Material 3 components in `:app` features; Wear Material 3 in `:wear` features.
 - Platform shells call feature screens — features don't know which platform they're on.
-- **Feature-scoped components live in a `component/` package inside the platform submodule** (e.g., `features/dashboard/app/component/StatCard.kt`). Promote to `:core:designsystem:app` only when a concrete lazy-promotion trigger fires (e.g., a second app feature needs the same component, you build brand-flavored Material primitives worth sharing, or the app theme should move out of the `:app` shell).
+- **Feature-scoped components live in a `component/` package inside the platform submodule** (e.g., `features/dashboard/app/component/StatCard.kt`). Promote shared platform UI only through the Lazy Design-System Promotions rules below.
 - The `app/` and `wear/` submodules within a feature do not share UI or ViewModels. Different Compose toolkits, different UI shape, different state. The shared code is in `:core:domain` (use cases, repositories, models).
 
 ## Resources
@@ -267,11 +267,11 @@ fun WearAppTheme(content: @Composable () -> Unit) {
 }
 ```
 
-By default each platform shell defines its own theme — `:core:designsystem:common` is resources only and doesn't ship Compose components. When you want themes to live in shared code instead of duplicated in shells, promote (see below).
+By default each platform shell defines its own theme — `:core:designsystem:common` is resources only and doesn't ship Compose components. When you want themes to live in shared code instead of duplicated in shells, follow the Lazy Design-System Promotions rules below.
 
-## Lazy Module Promotions
+## Lazy Design-System Promotions
 
-`bootstrap.sh` creates five core modules. Two more can be added later when a concrete trigger fires — never on speculation.
+`bootstrap.sh` creates the five starter core modules. Platform-specific design-system modules can be added later when a concrete trigger fires — never on speculation.
 
 **`:core:designsystem:app`** — sibling of `:core:designsystem:common`. Holds the phone-side Material 3 layer: `AppTheme.kt`, brand-flavored Material primitives (`KanshuButton`, `KanshuTopBar`), and shared composables that know domain types (e.g., `BookCard(book: Book)`, `ChapterListItem(chapter: Chapter)`). Depends on `:core:designsystem:common` + `:core:model`. **Trigger:** any one of — you build a brand-flavored Material primitive worth sharing, OR a second feature needs the same domain-aware composable, OR you want the theme out of `:app/`'s code. Until then, theme lives inline in `:app/`, and feature-local composables live in `features/<name>/app/component/`.
 

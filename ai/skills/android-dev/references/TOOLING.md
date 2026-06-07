@@ -61,3 +61,5 @@ AGP 9.0+ bundles Kotlin support, so `libs.plugins.kotlin.android` is **not** app
 - `wear/` adds `libs.wear.compose.material3`, `libs.wear.compose.foundation`, `libs.wear.tooling.preview`
 
 Feature modules and platform shells (and `:widget`) also depend on `project(":core:designsystem:common")` for shared drawables and resource values. The script-generated `build.gradle.kts` files already include this; only adjust if you delete or rename the module.
+
+When a lazy-promoted `:core:designsystem:<platform>` module exists, matching feature modules may add `project(":core:designsystem:<platform>")`; see `ARCHITECTURE.md` for promotion triggers.
