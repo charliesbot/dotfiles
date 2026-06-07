@@ -143,7 +143,7 @@ my-app/
 
 ## Dependency Flow
 
-The dependency direction is strictly enforced. Do not infer target platforms: if the user asks for a feature, screen, shell, or UI work without naming the target surface, ask before generating modules or writing platform UI.
+The dependency direction is strictly enforced. This diagram describes allowed dependency flow when modules exist; bootstrap creates only the five starter core modules. Do not infer target platforms: if the user asks for a feature, screen, shell, or UI work without naming the target surface, ask before generating modules or writing platform UI.
 
 ```
 :core:model              (no deps — pure Kotlin)

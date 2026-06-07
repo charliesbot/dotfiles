@@ -76,7 +76,7 @@ The script reads `android.basePackage` from `gradle.properties` so you never re-
 
 ## Core Principles
 
-The architecture supports multiple Android platforms (`:app` for phone/tablet, `:wear`, optionally `:tv`, `:auto`) from a single codebase. Dependencies flow in one direction:
+The architecture supports multiple Android platforms (`:app` for phone/tablet, `:wear`, optionally `:tv`, `:auto`) from a single codebase. Dependencies flow in one direction. This diagram describes allowed dependency flow when modules exist; bootstrap creates only the five starter core modules.
 
 ```
 :core:model              (no deps — pure Kotlin)
