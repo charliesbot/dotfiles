@@ -187,6 +187,10 @@ ViewModels live in their platform submodule and use StateFlow. Use cases live in
 
 For full templates and copy-paste examples (ViewModel, Use Case, Data Layer, Koin wiring), read `references/PATTERNS.md` before writing code in any of these layers.
 
+## Kotlin Code Quality
+
+Prefer the smallest idiomatic Kotlin solution that satisfies the requirement. Optimize first for correctness, maintainability, and simplicity. Do not add abstraction, indirection, inheritance, generics, sealed hierarchies, helper layers, or framework-like patterns unless they remove real duplication, enforce an important module/API boundary, or make a known upcoming change materially easier.
+
 ## Composable Conventions
 
 - Every `@Composable` function needs a `@Preview`. Catches layout issues without launching the app.
