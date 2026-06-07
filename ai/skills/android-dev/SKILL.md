@@ -68,6 +68,8 @@ scripts/generate.sh feature dashboard --wear   # add :features:dashboard:app + :
 
 Each invocation does one thing. Re-running with the same type for an existing platform shell or OS surface skips with a notice (idempotent). Re-running with the same feature name errors hard — features are user-named so a collision is almost always a typo.
 
+**Do not infer target platforms.** If the user asks for a feature, screen, shell, or UI work without naming the target surface, ask whether it should target `:app`, `:wear`, both, `:widget`, `:complications`, or another surface before generating modules or writing platform UI.
+
 The script reads `android.basePackage` from `gradle.properties` so you never re-type the package after bootstrap.
 
 **About the bare `:app` from `android create`:** the `app/` module produced by `android create empty-activity` is a standalone Compose app — it doesn't depend on `:core:data` or feature modules and has no Koin setup. To get the skill's wired-up shell, delete the `app/` directory and run `scripts/generate.sh app`. That regenerates `:app` with `AppApplication` (Koin), `AppTheme`, navigation wiring, and dependencies on `:core:data`, `:core:strings`, and `:features:*:app`.

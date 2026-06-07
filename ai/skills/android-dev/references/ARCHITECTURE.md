@@ -143,7 +143,7 @@ my-app/
 
 ## Dependency Flow
 
-The dependency direction is strictly enforced:
+The dependency direction is strictly enforced. Do not infer target platforms: if the user asks for a feature, screen, shell, or UI work without naming the target surface, ask before generating modules or writing platform UI.
 
 ```
 :core:model              (no deps — pure Kotlin)
@@ -357,7 +357,7 @@ dependencies {
 - **Widget and complication classpaths stay intentional.** Simple widget surfaces and `:complications` can depend on `:core:domain` (or `:core:model` for the simplest cases) without loading more of the stack than they need.
 - **Tests run instantly.** Model and domain layers are JVM-only — no Robolectric, no instrumentation.
 - **Single source of truth for strings.** Pocket Casts pattern. One file to localize.
-- **Multi-platform from day one.** Adding `:wear` after building `:app`-only is one `generate.sh wear` call.
+- **Multi-platform ready.** Adding `:wear` after building `:app`-only is one `generate.sh wear` call, but only do it when the target platform is clear.
 - **No premature abstraction.** Add platform Compose design-system modules (`:core:designsystem:app` / `:core:designsystem:wear`) only when real reuse demands them.
 
 ## Getting Started
