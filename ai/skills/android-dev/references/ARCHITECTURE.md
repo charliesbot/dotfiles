@@ -163,6 +163,12 @@ The dependency direction is strictly enforced:
 :complications   ──→ :core:domain      (no Room/Ktor on classpath)
 ```
 
+After a lazy-promotion trigger, a platform feature may also depend on its matching promoted design-system module:
+
+```
+:features:*:<platform> ──→ optionally :core:designsystem:<platform>
+```
+
 **Key rules:**
 
 1. **Feature modules never depend on `:core:data`.** They depend only on `:core:domain` (for use cases and interfaces) and `:core:strings` (for resources). Models come in transitively via `:core:domain → :core:model`. Concrete data implementations are wired by platform shells via Koin.

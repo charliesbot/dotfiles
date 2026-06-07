@@ -89,6 +89,12 @@ The architecture supports multiple Android platforms (`:app` for phone/tablet, `
 :complications    → :core:domain    (no Room/Ktor on classpath)
 ```
 
+After a lazy-promotion trigger, a platform feature may also depend on its matching promoted design-system module:
+
+```
+:features:*:<platform> → optionally :core:designsystem:<platform>
+```
+
 **Feature modules never depend on `:core:data`.** They only know `:core:domain` (and `:core:strings` for resources, plus `:core:model` transitively). Platform shells (`:app`, `:wear`) wire concrete data implementations into Koin and inject them into the use cases features depend on. This is dependency inversion at the module boundary — the feature compiles, tests, and reasons about behaviour without knowing which database, network library, or sync mechanism backs its use cases.
 
 `:core:model` and `:core:domain` use the `kotlin("jvm")` plugin, not `android.library`. They're pure Kotlin modules — Android types (`Context`, `Uri`, anything from `android.*`) won't compile there. The boundary is enforced at build time, not by convention. Models live in `:core:model` (consumable from everywhere); repository interfaces and use cases live in `:core:domain`.
@@ -116,11 +122,11 @@ Widgets are the preferred glanceable surface for Wear OS, Auto, home screen, and
 
 - Not a home for capability slices. `library`, `reader`, `auth`, `cart` are features (`:features:<name>:<platform>`), not core. If a directory name reads like a user-facing thing, it's a feature.
 - Not a place for concern-named sibling packages. No top-level `core/network/`, `core/security/`, `core/connection/` as siblings of `model/`/`domain/`/`data/`. Network plumbing lives inside `:core:data`. Credential storage lives inside `:core:data`. Pure policy/rules can live in `:core:domain`.
-- Not a substitute for module boundaries. If you find yourself making `core/<x>/` folders to "organize" code, ask whether `<x>` is really a feature, or whether the code belongs _inside_ one of the four core modules.
+- Not a substitute for module boundaries. If you find yourself making `core/<x>/` folders to "organize" code, ask whether `<x>` is really a feature, or whether the code belongs _inside_ one of the five starter core modules.
 
 ## Do Not
 
-- **Fence by package inside one `:core` module instead of using the four modules** — `:core:model` / `:core:domain` / `:core:data` / `:core:strings` are the enforcement. A single `:core` with `model/`, `domain/`, `data/`, `strings/` subpackages looks similar but has no compile-time wall and lets Android types leak into domain code.
+- **Fence by package inside one `:core` module instead of using the five starter core modules** — `:core:model` / `:core:domain` / `:core:data` / `:core:strings` / `:core:designsystem:common` are the enforcement. A single `:core` with `model/`, `domain/`, `data/`, `strings/`, `designsystem/` subpackages looks similar but has no compile-time wall and lets Android types leak into domain code.
 - **Put capability-named directories under `core/`** (`core/library/`, `core/reader/`, `core/auth/`) — capabilities are sliced via `:features:<name>:<platform>`. If a name reads like a user-facing thing, it's a feature, not core.
 - **Make feature modules depend on `:core:data`** — features only know `:core:domain` and `:core:strings` (and `:core:model` transitively). Data implementations are wired by platform shells via DI.
 - **Put strings outside `:core:strings`** — every user-facing string lives there. The only exception is `app_name` in each platform shell's `res/values/titles.xml` when the launcher label needs to differ per surface.
@@ -353,6 +359,7 @@ Check the dependency flow:
 Add it to `:core:strings/src/main/res/values/strings.xml`. The feature module already depends on `:core:strings` — reference it as `R.string.<name>` (where `R` is `<package>.strings.R`).
 
 **"Where should this drawable go?"**
+
 - A vector icon or illustration referenced from a Composable → `:core:designsystem:common/src/main/res/drawable/`. Every consumer (features, shells, widget) already depends on this module.
 - A launcher icon → platform shell (`:app/src/main/res/mipmap-*/`, etc.). Manifest reference, must live there.
 - A notification icon (referenced from code in `:core:data`) → `:core:data/src/main/res/drawable/`. Keeps the dependency direction clean.
