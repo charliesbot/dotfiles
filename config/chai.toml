@@ -3,13 +3,14 @@ platforms = ["claude", "antigravity", "opencode", "codex", "cursor"]
 instructions = "~/dotfiles/ai/instructions/AGENTS.md"
 
 [deps]
-material-3-skills = "https://github.com/hamen/material-3-skill"
-android-skills = "https://github.com/android/skills"
-stitch-skills = "https://github.com/google-labs-code/stitch-skills"
 agent-skills = "https://github.com/addyosmani/agent-skills"
-jj-skill = "https://github.com/megumish/jj-skill"
-modern-web-guidance = "https://github.com/GoogleChrome/modern-web-guidance"
+android-skills = "https://github.com/android/skills"
 herdr = "https://github.com/ogulcancelik/herdr"
+jj-skill = "https://github.com/megumish/jj-skill"
+kotlin-compose-android-skills = "https://github.com/chrisbanes/skills"
+material-3-skills = "https://github.com/hamen/material-3-skill"
+modern-web-guidance = "https://github.com/GoogleChrome/modern-web-guidance"
+stitch-skills = "https://github.com/google-labs-code/stitch-skills"
 
 [skills]
 paths = [
@@ -32,9 +33,11 @@ paths = [
   "@android-skills/wear/*",
   "@android-skills/xr/*",
   # Herdr Skills
-  "@herdr",
+  "@herdr/SKILL.md",
   # JJ Skill
   "@jj-skill/skills/jj",
+  # Kotlin Compose Android Skills
+  "@kotlin-compose-android-skills/skills/*",
   # Material 3 Skills
   "@material-3-skills/skills/material-3",
   # Modern Web Guidance
