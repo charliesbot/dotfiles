@@ -21,8 +21,8 @@ Multi-module Android architecture targeting `:app` (phone/tablet), Wear OS, and 
 
 **Standalone OS entry points:**
 
-- `:widget` — responsive Glance widget surfaces
-- `:complications` — Wear OS data providers
+- `:widget:common`, `:widget:app`, `:widget:wear` — Glance widgets (phone + Wear)
+- `:complications` — Wear OS complication data providers
 
 **Feature modules:**
 
@@ -131,10 +131,18 @@ my-app/
 │               └── di/
 │                   └── WearDashboardModule.kt
 │
-├── widget/                      # :widget (optional) — responsive Glance widget surfaces
-│   └── src/main/kotlin/com/myapp/widget/
-│       ├── AppWidgetReceiver.kt
-│       └── AppWidget.kt
+├── widget/                      # widget modules (optional) — OS glanceable surfaces
+│   ├── common/                  # :widget:common — pure Kotlin shared widget state
+│   │   └── src/main/kotlin/com/myapp/widget/common/
+│   │       └── WidgetDisplayState.kt
+│   ├── app/                     # :widget:app — phone home-screen Glance widget
+│   │   └── src/main/kotlin/com/myapp/widget/
+│   │       ├── AppWidgetReceiver.kt
+│   │       └── AppWidget.kt
+│   └── wear/                    # :widget:wear — Glance Wear Widget (Remote Compose)
+│       └── src/main/kotlin/com/myapp/widget/wear/
+│           ├── WearAppWidgetService.kt
+│           └── WearAppWidget.kt
 │
 └── complications/               # :complications (optional) — Wear OS data providers
     └── src/main/kotlin/com/myapp/complications/
@@ -154,11 +162,15 @@ The dependency direction is strictly enforced. This diagram describes allowed de
 
 :app             ──→ :core:data + :core:strings + :core:designsystem:common
                  ──→ :features:*:app   ──→ :core:domain + :core:strings + :core:designsystem:common
+                 ──→ :widget:app (optional)
 
 :wear            ──→ :core:data + :core:strings + :core:designsystem:common
                  ──→ :features:*:wear  ──→ :core:domain + :core:strings + :core:designsystem:common
+                 ──→ :widget:wear (optional)
 
-:widget          ──→ :core:data + :core:strings + :core:designsystem:common
+:widget:common   ──→ :core:model + :core:domain
+:widget:app      ──→ :widget:common + :core:domain + :core:strings + :core:designsystem:common
+:widget:wear     ──→ :widget:common + :core:domain + :core:strings + :core:designsystem:common
 
 :complications   ──→ :core:domain      (no Room/Ktor on classpath)
 ```
@@ -179,9 +191,11 @@ After a lazy-promotion trigger, a platform feature may also depend on its matchi
 
 4. **Platform shells (`:app`, `:wear`) own DI wiring.** They load `coreDataModule` (from `:core:data`) plus their feature modules' Koin modules to provide concrete implementations to the use cases features depend on. This is dependency inversion at the module boundary.
 
-5. **Widgets and complications are sibling root modules**, not features. The OS launches them independently of the main app. They depend only on the core layer they need.
+5. **Widgets and complications are OS entry points, not features.** Widget code uses platform submodules under `widget/` (`common/`, `app/`, `wear/`) — the same pattern as features. Widget library modules merge into `:app` and `:wear` APKs; platform shells own Koin wiring so widgets can inject repositories from `:core:data` without depending on it at compile time.
 
-6. **Widgets must be responsive.** Treat `:widget` as the home for glanceable surfaces across phone launchers, Wear OS, Auto, and future surfaces. Do not design widget UI around a single fixed surface size. Use size-aware Glance/Remote Compose layouts and keep surface-specific receivers or services inside `:widget`.
+6. **Wear glanceable surfaces use Glance Wear Widgets, not Tiles.** `:widget:wear` uses `GlanceWearWidget` + Remote Compose. Do not add `androidx.wear.tiles` or `BIND_TILE_PROVIDER` — the Tiles API is legacy.
+
+7. **Widgets must be responsive.** Phone widgets use size-aware Glance App Widget layouts (`:widget:app`). Wear widgets use Remote Compose with container-size params (`:widget:wear`). Shared presentation state lives in `:widget:common`; platform UI stays in each submodule.
 
 ## Why kotlin("jvm") for :core:model and :core:domain
 
@@ -289,6 +303,7 @@ dependencies {
     implementation(project(":core:designsystem:common"))
     implementation(project(":features:dashboard:app"))
     implementation(project(":features:profile:app"))
+    implementation(project(":widget:app"))
     // Compose, Koin, Navigation 3, etc.
 }
 
@@ -298,6 +313,7 @@ dependencies {
     implementation(project(":core:strings"))
     implementation(project(":core:designsystem:common"))
     implementation(project(":features:dashboard:wear"))
+    implementation(project(":widget:wear"))
     // Wear Compose, Koin, Navigation 3, Wear swipe-dismiss scene strategy, etc.
 }
 
@@ -319,12 +335,31 @@ dependencies {
     // Wear Compose, Koin Compose, ViewModel
 }
 
-// widget/build.gradle.kts
+// widget/common/build.gradle.kts
 dependencies {
-    implementation(project(":core:data"))
+    api(project(":core:model"))
+    implementation(project(":core:domain"))
+    // Pure Kotlin — shared widget presentation state and mappers
+}
+
+// widget/app/build.gradle.kts
+dependencies {
+    implementation(project(":core:domain"))
     implementation(project(":core:strings"))
     implementation(project(":core:designsystem:common"))
-    // Glance
+    implementation(project(":widget:common"))
+    // Glance App Widget, Koin
+    // NO :core:data
+}
+
+// widget/wear/build.gradle.kts
+dependencies {
+    implementation(project(":core:domain"))
+    implementation(project(":core:strings"))
+    implementation(project(":core:designsystem:common"))
+    implementation(project(":widget:common"))
+    // Glance Wear Widget, Remote Compose, Koin
+    // NO :core:data, NO androidx.wear.tiles
 }
 
 // complications/build.gradle.kts
@@ -394,5 +429,5 @@ dependencies {
 3. **Replace bare `:app`:** delete `app/` and run `scripts/generate.sh app` to get the skill's wired-up shell (or manually add `:core:data` + `:core:strings` deps + Koin setup to the bare `:app`).
 4. **Add Wear shell if needed:** `scripts/generate.sh wear`.
 5. **Add features:** `scripts/generate.sh feature dashboard --wear`.
-6. **Add OS surfaces as needed:** `scripts/generate.sh widget` / `complications`.
+6. **Add OS surfaces as needed:** `scripts/generate.sh widget` / `scripts/generate.sh widget --wear` / `complications`.
 7. **Iterate:** generate more features and modules as needed.

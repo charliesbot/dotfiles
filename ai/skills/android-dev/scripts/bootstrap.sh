@@ -295,6 +295,11 @@ wearCompose = "<look-up-latest-wear-compose-version>"
 kotlinxSerialization = "<look-up-latest-kotlinx-serialization-version>"
 ksp = "<look-up-latest-ksp-matching-your-kotlin-version>"  # e.g. "2.3.20-2.0.4" — verify on https://github.com/google/ksp/releases
 spotless = "7.2.1"
+# Add when generating widgets (see references/TOOLING.md):
+# glanceAppwidget = "<latest>"
+# glanceWear = "<latest>"
+# remoteCompose = "<latest>"
+# wearRemoteMaterial3 = "<latest>"
 
 # --- Add to gradle/libs.versions.toml under [libraries] ---
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
@@ -309,6 +314,13 @@ androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecy
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
+# Widget libraries (add when running generate.sh widget — see references/TOOLING.md):
+# androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "glanceAppwidget" }
+# androidx-glance-wear = { module = "androidx.glance.wear:wear", version.ref = "glanceWear" }
+# androidx-glance-wear-core = { module = "androidx.glance.wear:wear-core", version.ref = "glanceWear" }
+# androidx-remote-core = { module = "androidx.compose.remote:remote-core", version.ref = "remoteCompose" }
+# androidx-remote-creation-compose = { module = "androidx.compose.remote:remote-creation-compose", version.ref = "remoteCompose" }
+# wear-remote-material3 = { module = "androidx.wear.compose:compose-remote-material3", version.ref = "wearRemoteMaterial3" }
 
 # --- Add to gradle/libs.versions.toml under [plugins] ---
 # Note: AGP 9.0+ bundles Kotlin support, so we don't add `kotlin-android` — it would

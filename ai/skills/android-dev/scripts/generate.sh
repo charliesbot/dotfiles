@@ -10,7 +10,7 @@ set -o noclobber
 # Types:
 #   app             Add :app module (phone/tablet)
 #   wear            Add :wear module (Wear OS)
-#   widget          Add :widget module (responsive Glance widget surfaces)
+#   widget [--wear] Add :widget:common + :widget:app (and :widget:wear with --wear)
 #   complications   Add :complications module (Wear OS data providers)
 #   feature <name>  Add :features:<name>:app (and :wear with --wear)
 #
@@ -19,7 +19,7 @@ set -o noclobber
 #   ./generate.sh wear
 #   ./generate.sh feature dashboard
 #   ./generate.sh feature dashboard --wear
-#   ./generate.sh widget
+#   ./generate.sh widget [--wear]
 
 # --- Help / arg parsing ---
 
@@ -30,7 +30,7 @@ Usage: $0 <type> [<name>] [--wear]
 Types:
   app              Add :app module (phone/tablet)
   wear             Add :wear module (Wear OS)
-  widget           Add :widget module (responsive Glance widget surfaces)
+  widget [--wear]  Add :widget:common + :widget:app (and :widget:wear with --wear)
   complications    Add :complications module (Wear OS data providers)
   feature <name>   Add :features:<name>:app (and :wear with --wear)
 USAGE
@@ -67,6 +67,22 @@ append_include() {
         echo "$include_line" >> settings.gradle.kts
         echo "Updated: settings.gradle.kts (added $include_line)"
     fi
+}
+
+# Append `implementation(project(...))` inside an existing dependencies block.
+add_impl_dependency() {
+    local gradle_file="$1"
+    local project_path="$2"
+    if [[ ! -f "$gradle_file" ]] || grep -qF "$project_path" "$gradle_file"; then
+        return
+    fi
+    local dep_line="    implementation(project(\"$project_path\"))"
+    awk -v dep="$dep_line" '
+        /^dependencies \{/ { in_deps=1 }
+        in_deps && /^\}/ { print dep; in_deps=0 }
+        { print }
+    ' "$gradle_file" > "${gradle_file}.tmp" && mv "${gradle_file}.tmp" "$gradle_file"
+    echo "Updated: $gradle_file (added $project_path)"
 }
 
 # kebab-or-snake case → PascalCase
@@ -278,6 +294,9 @@ fun AppTheme(
 EOF
 
     append_include 'include(":app")'
+    if [[ -f "widget/app/build.gradle.kts" ]]; then
+        add_impl_dependency "app/build.gradle.kts" ":widget:app"
+    fi
     echo "Created: app/"
     ;;
 
@@ -461,22 +480,64 @@ fun WearAppTheme(content: @Composable () -> Unit) {
 EOF
 
     append_include 'include(":wear")'
+    if [[ -f "widget/wear/build.gradle.kts" ]]; then
+        add_impl_dependency "wear/build.gradle.kts" ":widget:wear"
+    fi
     echo "Created: wear/"
     ;;
 
 # ============================================================
-# :widget — responsive Glance widget surfaces
+# widget [--wear] — :widget:common + :widget:app (+ :widget:wear)
 # ============================================================
 widget)
+    WITH_WEAR=false
+    if [[ "${1:-}" == "--wear" ]]; then
+        WITH_WEAR=true
+        shift
+    fi
+
     if [[ -e "widget" ]]; then
         echo "Skipped: widget/ already exists. To recreate, delete the directory first."
         exit 0
     fi
 
-    WIDGET_PKG_PATH="widget/src/main/kotlin/$PACKAGE_PATH/widget"
-    mkdir -p "$WIDGET_PKG_PATH" "widget/src/main/res/xml"
+    WIDGET_COMMON_PKG="widget/common/src/main/kotlin/$PACKAGE_PATH/widget/common"
+    WIDGET_APP_PKG="widget/app/src/main/kotlin/$PACKAGE_PATH/widget"
+    mkdir -p "$WIDGET_COMMON_PKG" "$WIDGET_APP_PKG" "widget/app/src/main/res/xml"
 
-    cat > widget/build.gradle.kts <<EOF
+    # --- :widget:common — pure Kotlin shared widget state ---
+    cat > widget/common/build.gradle.kts <<EOF
+plugins {
+    alias(libs.plugins.kotlin.jvm)
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+dependencies {
+    api(project(":core:model"))
+    implementation(project(":core:domain"))
+    implementation(libs.kotlinx.coroutines.core)
+}
+EOF
+
+    cat > "$WIDGET_COMMON_PKG/WidgetDisplayState.kt" <<EOF
+package $BASE_PACKAGE.widget.common
+
+/** Platform-agnostic presentation state shared by :widget:app and :widget:wear. */
+data class WidgetDisplayState(
+    val primaryText: String,
+    val secondaryText: String = "",
+)
+EOF
+
+    append_include 'include(":widget:common")'
+    echo "Created: widget/common/"
+
+    # --- :widget:app — phone home-screen Glance widget ---
+    cat > widget/app/build.gradle.kts <<EOF
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
@@ -496,15 +557,16 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:data"))
+    implementation(project(":core:domain"))
     implementation(project(":core:strings"))
     implementation(project(":core:designsystem:common"))
+    implementation(project(":widget:common"))
     implementation(libs.androidx.glance.appwidget)
     implementation(libs.koin.android)
 }
 EOF
 
-    cat > widget/src/main/AndroidManifest.xml <<EOF
+    cat > widget/app/src/main/AndroidManifest.xml <<EOF
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -524,7 +586,7 @@ EOF
 </manifest>
 EOF
 
-    cat > widget/src/main/res/xml/app_widget_info.xml <<EOF
+    cat > widget/app/src/main/res/xml/app_widget_info.xml <<EOF
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:initialLayout="@layout/glance_default_loading_layout"
@@ -535,7 +597,7 @@ EOF
     android:widgetCategory="home_screen" />
 EOF
 
-    cat > "$WIDGET_PKG_PATH/AppWidgetReceiver.kt" <<EOF
+    cat > "$WIDGET_APP_PKG/AppWidgetReceiver.kt" <<EOF
 package $BASE_PACKAGE.widget
 
 import androidx.glance.appwidget.GlanceAppWidget
@@ -546,7 +608,7 @@ class AppWidgetReceiver : GlanceAppWidgetReceiver() {
 }
 EOF
 
-    cat > "$WIDGET_PKG_PATH/AppWidget.kt" <<EOF
+    cat > "$WIDGET_APP_PKG/AppWidget.kt" <<EOF
 package $BASE_PACKAGE.widget
 
 import android.content.Context
@@ -560,25 +622,184 @@ import androidx.glance.layout.Box
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.text.Text
 import $BASE_PACKAGE.strings.R
+import $BASE_PACKAGE.widget.common.WidgetDisplayState
 
 class AppWidget : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        provideContent { WidgetContent() }
+        provideContent {
+            // AGENT: Map domain data to WidgetDisplayState in :widget:common, then render.
+            WidgetContent(
+                state = WidgetDisplayState(primaryText = context.getString(R.string.app_name)),
+            )
+        }
     }
 }
 
-// Widget UI must stay responsive across home screen, Wear OS, Auto, and future surfaces.
-// Keep shared content size-aware and add surface-specific receivers or services in :widget.
 @Composable
-private fun WidgetContent() {
+private fun WidgetContent(state: WidgetDisplayState) {
     Box(modifier = GlanceModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = androidx.glance.LocalContext.current.getString(R.string.app_name))
+        Text(text = state.primaryText)
     }
 }
 EOF
 
-    append_include 'include(":widget")'
-    echo "Created: widget/"
+    append_include 'include(":widget:app")'
+    echo "Created: widget/app/"
+    add_impl_dependency "app/build.gradle.kts" ":widget:app"
+
+    # --- :widget:wear — Glance Wear Widget (not Tiles API) ---
+    if [[ "$WITH_WEAR" == true ]]; then
+        WIDGET_WEAR_PKG="widget/wear/src/main/kotlin/$PACKAGE_PATH/widget/wear"
+        mkdir -p "$WIDGET_WEAR_PKG" "widget/wear/src/main/res/xml"
+
+        cat > widget/wear/build.gradle.kts <<EOF
+plugins {
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.compose)
+}
+
+android {
+    namespace = "$BASE_PACKAGE.widget.wear"
+    compileSdk = libs.versions.compileSdk.get().toInt()
+
+    defaultConfig {
+        minSdk = libs.versions.wearMinSdk.get().toInt()
+    }
+
+    buildFeatures {
+        compose = true
+    }
+}
+
+dependencies {
+    implementation(project(":core:domain"))
+    implementation(project(":core:strings"))
+    implementation(project(":core:designsystem:common"))
+    implementation(project(":widget:common"))
+    implementation(libs.androidx.glance.wear)
+    implementation(libs.androidx.glance.wear.core)
+    implementation(libs.androidx.remote.core)
+    implementation(libs.androidx.remote.creation.compose)
+    implementation(libs.wear.remote.material3)
+    implementation(libs.koin.android)
+}
+EOF
+
+        cat > widget/wear/src/main/AndroidManifest.xml <<EOF
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <service
+            android:name=".WearAppWidgetService"
+            android:exported="true"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="androidx.glance.wear.action.BIND_WIDGET_PROVIDER" />
+            </intent-filter>
+            <meta-data
+                android:name="androidx.glance.wear.widget.provider"
+                android:resource="@xml/wear_app_widget_info" />
+        </service>
+    </application>
+
+</manifest>
+EOF
+
+        cat > widget/wear/src/main/res/xml/wear_app_widget_info.xml <<EOF
+<?xml version="1.0" encoding="utf-8"?>
+<wearwidget-provider
+    description="@string/app_name"
+    label="@string/app_name"
+    preferredType="SMALL">
+    <container
+        type="SMALL"
+        previewImage="@android:drawable/sym_def_app_icon" />
+</wearwidget-provider>
+EOF
+
+        cat > "$WIDGET_WEAR_PKG/WearAppWidgetService.kt" <<EOF
+package $BASE_PACKAGE.widget.wear
+
+import androidx.glance.wear.GlanceWearWidget
+import androidx.glance.wear.GlanceWearWidgetService
+
+class WearAppWidgetService : GlanceWearWidgetService() {
+    override val widget: GlanceWearWidget = WearAppWidget()
+}
+EOF
+
+        cat > "$WIDGET_WEAR_PKG/WearAppWidget.kt" <<EOF
+package $BASE_PACKAGE.widget.wear
+
+import android.content.Context
+import androidx.compose.remote.creation.compose.layout.RemoteAlignment
+import androidx.compose.remote.creation.compose.layout.RemoteBox
+import androidx.compose.remote.creation.compose.layout.RemoteComposable
+import androidx.compose.remote.creation.compose.modifier.RemoteModifier
+import androidx.compose.remote.creation.compose.modifier.fillMaxSize
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.glance.wear.GlanceWearWidget
+import androidx.glance.wear.WearWidgetBrush
+import androidx.glance.wear.WearWidgetData
+import androidx.glance.wear.WearWidgetDocument
+import androidx.glance.wear.core.WearWidgetParams
+import androidx.wear.compose.remote.material3.RemoteMaterialTheme
+import androidx.wear.compose.remote.material3.RemoteText
+import $BASE_PACKAGE.widget.common.WidgetDisplayState
+
+class WearAppWidget : GlanceWearWidget() {
+    override suspend fun provideWidgetData(
+        context: Context,
+        params: WearWidgetParams,
+    ): WearWidgetData {
+        // AGENT: Read domain data via Koin-injected repository or use case.
+        val state = WidgetDisplayState(primaryText = context.getString($BASE_PACKAGE.strings.R.string.app_name))
+        return WearWidgetDocument(background = WearWidgetBrush) {
+            WearWidgetContent(state = state)
+        }
+    }
+}
+
+@RemoteComposable
+@Composable
+private fun WearWidgetContent(state: WidgetDisplayState) {
+    RemoteMaterialTheme {
+        RemoteBox(
+            modifier = RemoteModifier.fillMaxSize(),
+            contentAlignment = RemoteAlignment.Center,
+        ) {
+            RemoteText(
+                text = androidx.compose.remote.creation.compose.state.RemoteString(state.primaryText),
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun WearAppWidgetPreview() {
+    WearWidgetContent(state = WidgetDisplayState(primaryText = "Preview"))
+}
+EOF
+
+        append_include 'include(":widget:wear")'
+        echo "Created: widget/wear/"
+        add_impl_dependency "wear/build.gradle.kts" ":widget:wear"
+    fi
+
+    echo ""
+    echo "Next steps:"
+    echo "  1. Add Glance / Glance Wear library aliases to gradle/libs.versions.toml (see references/TOOLING.md)"
+    echo "  2. Platform shells (:app, :wear) start Koin with coreDataModule so widgets can inject repositories"
+    if [[ "$WITH_WEAR" == false ]]; then
+        echo "  3. For Wear widgets, re-run: scripts/generate.sh widget --wear (after deleting widget/ if needed)"
+    fi
+    echo "  4. Do not use the legacy Wear Tiles API (androidx.wear.tiles) — use Glance Wear Widgets instead"
     ;;
 
 # ============================================================
