@@ -4,8 +4,9 @@ description: >
   Architecture and conventions for multi-module Android projects with Jetpack Compose, Wear OS,
   Koin DI, Gradle, StateFlow/MVVM, Navigation 3, widgets, and complications. Use when the user asks
   to "bootstrap Android project", "generate feature module", "add Wear support", "add widget",
-  "add complication", decide where Android/Kotlin/Compose code belongs, or work with :features:,
-  :core:model, :core:domain, :core:data, :core:strings, :core:designsystem, :app, :wear, or Gradle.
+  "add wear widget", "add complication", decide where Android/Kotlin/Compose code belongs, or work with :features:,
+  :core:model, :core:domain, :core:data, :core:strings, :core:designsystem, :app, :wear, :widget:common,
+  :widget:app, :widget:wear, or Gradle.
 ---
 
 You are working on a multi-platform Android project following this architecture and conventions. Read `references/ARCHITECTURE.md` for the full module structure and dependency rules before making architectural decisions.
@@ -72,7 +73,8 @@ cd <project-root>
 
 scripts/generate.sh app                    # add :app module
 scripts/generate.sh wear                   # add :wear module
-scripts/generate.sh widget                 # add :widget (responsive Glance widget surfaces)
+scripts/generate.sh widget                 # add :widget:common + :widget:app
+scripts/generate.sh widget --wear          # also add :widget:wear (Glance Wear Widget)
 scripts/generate.sh complications          # add :complications (Wear OS data providers)
 scripts/generate.sh feature dashboard          # add :features:dashboard:app
 scripts/generate.sh feature dashboard --wear   # add :features:dashboard:app + :wear
@@ -80,7 +82,7 @@ scripts/generate.sh feature dashboard --wear   # add :features:dashboard:app + :
 
 Each invocation does one thing. Re-running with the same type for an existing platform shell or OS surface skips with a notice (idempotent). Re-running with the same feature name errors hard — features are user-named so a collision is almost always a typo.
 
-**Do not infer target platforms.** If the user asks for a feature, screen, shell, or UI work without naming the target surface, ask whether it should target `:app`, `:wear`, both, `:widget`, `:complications`, or another surface before generating modules or writing platform UI.
+**Do not infer target platforms.** If the user asks for a feature, screen, shell, or UI work without naming the target surface, ask whether it should target `:app`, `:wear`, both, `:widget:app`, `:widget:wear`, `:complications`, or another surface before generating modules or writing platform UI.
 
 The script reads `android.basePackage` from `gradle.properties` so you never re-type the package after bootstrap.
 
@@ -99,7 +101,10 @@ The architecture supports multiple Android platforms (`:app` for phone/tablet, `
 
 :features:*:*     → :core:domain + :core:strings + :core:designsystem:common
 :app, :wear       → :core:data + :core:strings + :core:designsystem:common + :features:*:*
-:widget           → :core:data + :core:strings + :core:designsystem:common
+                 → optionally :widget:app (:app) or :widget:wear (:wear)
+:widget:common    → :core:model + :core:domain
+:widget:app       → :widget:common + :core:domain + :core:strings + :core:designsystem:common
+:widget:wear      → :widget:common + :core:domain + :core:strings + :core:designsystem:common
 :complications    → :core:domain    (no Room/Ktor on classpath)
 ```
 
@@ -117,20 +122,22 @@ After a lazy-promotion trigger, a platform feature may also depend on its matchi
 
 - **`:core:model`** — pure Kotlin (`kotlin("jvm")`): domain models and value types (data classes, enums, sealed hierarchies). No logic, no dependencies. Consumable from everywhere — domain, data, features, and platform shells all transitively pick it up.
 - **`:core:domain`** — pure Kotlin (`kotlin("jvm")`): repository interfaces and use cases. Depends on `:core:model`. No Android dependencies. Both `:features:*:app` and `:features:*:wear` depend on this.
-- **`:core:data`** — Android library: Room database, Retrofit/Ktor, DataStore, repository implementations, network/connectivity, credential storage, DI wiring (`CoreDataModule`). Platform shells (`:app`, `:wear`, `:widget`) depend on this to wire implementations.
+- **`:core:data`** — Android library: Room database, Retrofit/Ktor, DataStore, repository implementations, network/connectivity, credential storage, DI wiring (`CoreDataModule`). Platform shells (`:app`, `:wear`) depend on this to wire implementations into Koin for features and widgets.
 - **`:core:strings`** — Android library, resources only: every user-facing string in the app, with translations per locale (`values/`, `values-es/`, etc.). Both platform shells and feature modules depend on this.
-- **`:core:designsystem:common`** — Android library, non-string resources: drawables (vector icons, illustrations, app logo), color values (XML-referenced from manifest theme, splash screen), typography and shape values. Platform shells, feature modules, and `:widget` all depend on this. Two carve-outs: launcher icons (`mipmap/`) live in platform shells (manifest requirement), notification icons live in `:core:data` (the data layer code references them and shouldn't depend on `:core:designsystem:common`).
+- **`:core:designsystem:common`** — Android library, non-string resources: drawables (vector icons, illustrations, app logo), color values (XML-referenced from manifest theme, splash screen), typography and shape values. Platform shells, feature modules, and `:widget:app` / `:widget:wear` all depend on this. Two carve-outs: launcher icons (`mipmap/`) live in platform shells (manifest requirement), notification icons live in `:core:data` (the data layer code references them and shouldn't depend on `:core:designsystem:common`).
 - **`:features:<name>:app`** — `:app` presentation: ViewModel, Composable screens (Material 3), feature-scoped DI module, optional `component/` package for feature-local widgets.
 - **`:features:<name>:wear`** — `:wear` presentation: ViewModel, Composable screens (Wear Material 3), feature-scoped DI module.
 - **`:app`**, **`:wear`** — platform shells that wire navigation, theming, and DI. Both use Navigation 3; `:wear` adds the Wear-specific `SwipeDismissableSceneStrategy` from `androidx.wear.compose:compose-navigation3`.
-- **`:widget`** — responsive Glance widget surfaces. Standalone OS entry point at root level.
+- **`:widget:common`** — pure Kotlin (`kotlin("jvm")`): platform-agnostic widget presentation state and mappers from domain models. Depends on `:core:model` + `:core:domain`.
+- **`:widget:app`** — phone home-screen Glance widget (`GlanceAppWidget` + receiver). Android library merged into the `:app` APK.
+- **`:widget:wear`** — Wear Glance widget (`GlanceWearWidget` + service, Remote Compose UI). Android library merged into the `:wear` APK. **Do not use the legacy Wear Tiles API** (`androidx.wear.tiles`).
 - **`:complications`** — Wear OS complication data providers. Standalone OS entry points the watch face calls directly.
 
 Every feature uses platform submodules (`app/`, `wear/`, etc.) — even when it only targets one platform today. This removes the "is this feature flat or nested?" guessing game and means adding a Wear or TV variant later is just adding a sibling submodule.
 
-Widgets and complications are **not** features — they're standalone entry points the OS launches independently. They sit at the root level alongside platform shells.
+Widgets and complications are **not** features — they're OS entry points the system launches independently. Widget code lives under `widget/` with platform submodules (`common/`, `app/`, `wear/`) mirroring the feature-module pattern. Widget library modules ship inside `:app` and `:wear` APKs; platform shells wire Koin so widgets can inject repositories.
 
-Widgets are the preferred glanceable surface for Wear OS, Auto, home screen, and future surfaces. Widget UI **must be responsive**: never assume a fixed watch, phone launcher, or car display size. Use size-aware Glance/Remote Compose layouts, concise content, and surface-specific receivers or services inside `:widget` while keeping the shared presentation adaptable.
+**Phone widgets** use Glance App Widget (`:widget:app`). **Wear widgets** use Glance Wear Widgets with Remote Compose (`:widget:wear`) — not the deprecated Tiles API. Widget UI **must be responsive**: never assume a fixed launcher or watch size. Keep shared state in `:widget:common`, platform-specific receivers/services in `:widget:app` / `:widget:wear`, and size-aware layouts in each platform module.
 
 **What `core/` is not:**
 
@@ -150,7 +157,8 @@ Widgets are the preferred glanceable surface for Wear OS, Auto, home screen, and
 - **Add third-party libraries without asking** — the current stack covers most needs. Explain what's missing before adding anything.
 - **Create feature modules for single screens** — a feature is a complete user journey (e.g., `:features:auth` covers login, register, and forgot password).
 - **Create flat feature modules** — always use platform submodules (`app/`, `wear/`), even for `:app`-only features.
-- **Put widget or complication code inside `:app` or `:wear`** — they're standalone entry points and get their own root-level modules.
+- **Put widget or complication UI inside `:app` or `:wear` packages** — widgets get their own `widget/` modules (`:widget:app`, `:widget:wear`). Shells only add a Gradle dependency to merge manifests.
+- **Use the legacy Wear Tiles API** (`androidx.wear.tiles`, `BIND_TILE_PROVIDER`) — use Glance Wear Widgets in `:widget:wear` instead.
 - **Use LiveData** — the entire codebase uses StateFlow + coroutines.
 - **Skip writing tests** — follow red-green TDD. Write the failing test first.
 - **Skip `@Preview`** — every `@Composable` needs one.
@@ -328,7 +336,10 @@ StateFlow. The entire codebase uses StateFlow + coroutines for reactive state. L
 Ask first. The current stack covers most needs. If you think something is missing, explain what problem it solves and why the existing stack can't handle it.
 
 **"I need to add a home screen widget"**
-Run `scripts/generate.sh widget`. Creates `:widget` at the root with a Glance-based receiver and an example widget Composable. Depends on `:core:data` + `:core:strings` + `:core:designsystem:common`. Widget UI must be responsive because the same module owns glanceable surfaces for home screen, Wear OS, Auto, and future surfaces.
+Run `scripts/generate.sh widget`. Creates `:widget:common` (shared state) and `:widget:app` (Glance receiver). Wires `:app` → `:widget:app` when the shell exists. Widget modules depend on `:core:domain`, not `:core:data` — repositories are injected via Koin started in `:app`.
+
+**"I need to add a Wear widget"**
+Run `scripts/generate.sh widget --wear`. Also creates `:widget:wear` with `GlanceWearWidgetService` and Remote Compose UI. Wires `:wear` → `:widget:wear`. Do not use the legacy Tiles API.
 
 **"I need to add a Wear OS complication"**
 Run `scripts/generate.sh complications`. Creates `:complications` with a `SuspendingComplicationDataSourceService` skeleton. Depends only on `:core:domain`.
