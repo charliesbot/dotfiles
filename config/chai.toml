@@ -70,9 +70,6 @@ args = ["-y", "@google-cloud/cloud-run-mcp"]
 command = "npx"
 args = ["-y", "firebase-tools@latest", "mcp"]
 
-[antigravity.plugins]
-workspace = "https://github.com/gemini-cli-extensions/workspace"
-
 [mcp.tolaria]
 command = "/opt/homebrew/bin/node"
 args = ["/Applications/Tolaria.app/Contents/Resources/mcp-server/index.js"]
