@@ -1,17 +1,14 @@
--- Colorscheme. Loaded early (high priority) so treesitter highlights have real
--- colors. Integrations are enabled as their plugins arrive in later steps.
+-- Catppuccin theme. Installs and configures it only; activation lives in
+-- lua/config/theme.lua. Integrations are enabled as their plugins arrive.
 
 return {
   'catppuccin/nvim',
   name = 'catppuccin',
   priority = 1000,
-  config = function()
-    require('catppuccin').setup {
-      integrations = {
-        treesitter = true,
-        native_lsp = { enabled = true },
-      },
-    }
-    vim.cmd.colorscheme 'catppuccin-mocha'
-  end,
+  opts = {
+    integrations = {
+      treesitter = true,
+      native_lsp = { enabled = true },
+    },
+  },
 }

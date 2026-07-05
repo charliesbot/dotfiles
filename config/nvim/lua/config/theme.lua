@@ -1,0 +1,11 @@
+-- The single place to choose the active colorscheme.
+-- Theme plugins in lua/plugins/*.lua only install and set up their theme; this
+-- file decides which one is active. Runs after config.lazy, so all theme
+-- plugins are already loaded.
+--
+-- vim.cmd.colorscheme 'catppuccin-mocha'
+vim.cmd.colorscheme 'tokyonight'
+-- vim.cmd.colorscheme 'tokyonight-moon'
+-- vim.cmd.colorscheme 'tokyonight-night'
+-- vim.cmd.colorscheme 'rose-pine'
+-- vim.cmd.colorscheme 'rose-pine-moon'
