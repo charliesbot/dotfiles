@@ -163,6 +163,8 @@ install_brew_packages() {
         node \
         pnpm \
         modem-dev/tap/hunk \
+        fd \
+        ripgrep \
         fzf
 
     # Install fonts
