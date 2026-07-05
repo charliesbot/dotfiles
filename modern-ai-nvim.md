@@ -126,11 +126,12 @@ minuet) the key stays, only the implementation moves.
 `<leader>1` to `<leader>5` jump to pinned files. `<leader>e` is normal-mode and
 does not conflict with blink's insert-mode `<C-e>`.
 
-### Search family (`<leader>s*`, was Telescope, now snacks picker)
+### Navigation (snacks)
 
-`sh` help, `sk` keymaps, `sf` files, `ss` pickers list, `sw` current word,
-`sg` grep, `sd` diagnostics, `sr` resume, `s.` recent files, `sn` search config,
-`<leader><leader>` buffers, `<leader>/` fuzzy in buffer, `<leader>s/` grep open buffers.
+`<C-p>` workspace file finder (frecency), `<C-f>` project grep, `<C-b>` explorer
+sidebar toggle (`i` focuses its search bar). No `<leader>s*` family: the old
+Telescope search bindings were never internalized and are dropped. Discovery is
+`<C-p>`/`<C-f>`/explorer plus harpoon for the working set.
 
 ### LSP (buffer-local)
 
