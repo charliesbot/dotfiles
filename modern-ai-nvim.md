@@ -133,12 +133,12 @@ sidebar toggle (`i` focuses its search bar). No `<leader>s*` family: the old
 Telescope search bindings were never internalized and are dropped. Discovery is
 `<C-p>`/`<C-f>`/explorer plus harpoon for the working set.
 
-### LSP (buffer-local)
+### LSP (buffer-local, minimal set)
 
-`grn` rename, `gra` code action, `grr` references, `gri` implementation,
-`gd` definition, `gD` declaration, `gO` document symbols, `gW` workspace symbols,
-`grt` type definition, `gh` hover, `<leader>th` toggle inlay hints. References,
-implementation, definition, symbols route through the snacks picker.
+Only the keys actually used: `gd` definition, `gD` declaration, `gh` hover.
+Diagnostics navigation is the global `<leader>n` / `<leader>m` (already set).
+The rest of kickstart's LSP keys (rename, code action, references, implementation,
+symbols) are intentionally dropped and can be added back one line at a time.
 
 ### Completion and AI (insert)
 
