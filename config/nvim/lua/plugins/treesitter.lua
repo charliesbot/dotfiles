@@ -11,29 +11,21 @@ return {
   'romus204/tree-sitter-manager.nvim',
   lazy = false,
   config = function()
+    -- Parsers for coding languages come from the language loader; add a base set
+    -- for docs/editor filetypes that have no language file of their own.
+    local parsers = { 'vim', 'vimdoc', 'query', 'diff', 'html' }
+    vim.list_extend(parsers, require('config.languages').load().parsers)
+
+    local seen, ensure_installed = {}, {}
+    for _, p in ipairs(parsers) do
+      if not seen[p] then
+        seen[p] = true
+        ensure_installed[#ensure_installed + 1] = p
+      end
+    end
+
     require('tree-sitter-manager').setup {
-      ensure_installed = {
-        'bash',
-        'c',
-        'cpp',
-        'diff',
-        'go',
-        'gomod',
-        'html',
-        'javascript',
-        'kotlin',
-        'lua',
-        'luadoc',
-        'markdown',
-        'markdown_inline',
-        'python',
-        'query',
-        'rust',
-        'tsx',
-        'typescript',
-        'vim',
-        'vimdoc',
-      },
+      ensure_installed = ensure_installed,
       -- Install a parser automatically the first time a new filetype is opened.
       auto_install = true,
       highlight = true,

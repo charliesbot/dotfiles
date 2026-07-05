@@ -13,9 +13,67 @@ return {
     'mason-org/mason-lspconfig.nvim',
     'WhoIsSethDaniel/mason-tool-installer.nvim',
     { 'j-hui/fidget.nvim', opts = {} },
+    -- Provides the completion capabilities we broadcast to servers below.
+    'saghen/blink.cmp',
   },
   config = function()
     local langs = require('config.languages').load()
+
+    -- Unified hover (VSCode-style): show the diagnostics at the cursor AND the
+    -- LSP hover (type / docs) together in a single floating popup, so you never
+    -- have to choose which to look at.
+    local function unified_hover()
+      local bufnr = vim.api.nvim_get_current_buf()
+      local lnum = vim.api.nvim_win_get_cursor(0)[1] - 1
+      local diagnostics = vim.diagnostic.get(bufnr, { lnum = lnum })
+      local clients = vim.lsp.get_clients { bufnr = bufnr }
+      local enc = clients[1] and clients[1].offset_encoding or 'utf-16'
+      local params = vim.lsp.util.make_position_params(0, enc)
+      local severity = { 'Error', 'Warn', 'Info', 'Hint' }
+
+      vim.lsp.buf_request_all(bufnr, 'textDocument/hover', params, function(results)
+        local lines = {}
+
+        -- Diagnostics first.
+        for _, d in ipairs(diagnostics) do
+          local tag = severity[d.severity] or 'Diagnostic'
+          if d.source then
+            tag = tag .. ' (' .. d.source .. (d.code and (': ' .. tostring(d.code)) or '') .. ')'
+          end
+          table.insert(lines, '**' .. tag .. '**')
+          vim.list_extend(lines, vim.split(d.message, '\n', { trimempty = false }))
+          table.insert(lines, '')
+        end
+
+        -- Then the LSP hover contents.
+        local hover_lines = {}
+        for _, res in pairs(results or {}) do
+          if res.result and res.result.contents then
+            vim.list_extend(hover_lines, vim.lsp.util.convert_input_to_markdown_lines(res.result.contents))
+          end
+        end
+        if #hover_lines > 0 then
+          if #lines > 0 then
+            table.insert(lines, '---')
+          end
+          vim.list_extend(lines, hover_lines)
+        end
+
+        while #lines > 0 and lines[#lines] == '' do
+          table.remove(lines)
+        end
+        if #lines == 0 then
+          return
+        end
+
+        vim.lsp.util.open_floating_preview(lines, 'markdown', {
+          border = 'rounded',
+          focusable = true,
+          focus_id = 'unified-hover',
+          max_width = 90,
+        })
+      end)
+    end
 
     -- Buffer-local keymaps when a server attaches. Minimal set on purpose.
     vim.api.nvim_create_autocmd('LspAttach', {
@@ -26,7 +84,7 @@ return {
         end
         map('gd', vim.lsp.buf.definition, 'Goto definition')
         map('gD', vim.lsp.buf.declaration, 'Goto declaration')
-        map('gh', vim.lsp.buf.hover, 'Hover documentation')
+        map('gh', unified_hover, 'Hover (type + diagnostics)')
       end,
     })
 
@@ -43,12 +101,14 @@ return {
           [vim.diagnostic.severity.HINT] = '󰌶 ',
         },
       } or {},
-      virtual_text = { source = 'if_many', spacing = 2 },
+      -- No inline text (overflows) and no virtual lines (shifts the code). The
+      -- message shows in the unified `gh` popup and in the jump float.
+      virtual_text = false,
     }
 
-    -- Per-server config (settings, cmd overrides). Capabilities become blink.cmp's
-    -- in step 4b; for now the native defaults. Set before enabling below.
-    local capabilities = vim.lsp.protocol.make_client_capabilities()
+    -- Per-server config (settings, cmd overrides). Broadcast blink.cmp's
+    -- completion capabilities to every server. Set before enabling below.
+    local capabilities = require('blink.cmp').get_lsp_capabilities()
     vim.lsp.config('*', { capabilities = capabilities })
     for name, cfg in pairs(langs.servers) do
       vim.lsp.config(name, cfg)

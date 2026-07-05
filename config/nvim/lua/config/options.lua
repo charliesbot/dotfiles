@@ -21,6 +21,9 @@ vim.o.confirm = true
 -- Preview substitutions live as you type.
 vim.o.inccommand = 'split'
 
+-- Rounded borders on all floating windows (hover, diagnostics, signature, etc.).
+vim.o.winborder = 'rounded'
+
 -- Sync clipboard with the OS after UI starts, to keep startup fast.
 vim.schedule(function()
   vim.o.clipboard = 'unnamedplus'
