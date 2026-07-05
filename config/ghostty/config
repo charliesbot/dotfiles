@@ -1,8 +1,8 @@
 font-size = 14
-font-family                    = JetBrains Mono
-font-family-bold               = JetBrains Mono
-font-family-italic             = JetBrains Mono
-font-family-bold-italic        = JetBrains Mono
+font-family                    = MonoLisaCode
+font-family-bold               = MonoLisaCode
+font-family-italic             = MonoLisaCode
+font-family-bold-italic        = MonoLisaCode
 
 copy-on-select                 = true
 shell-integration              = zsh
