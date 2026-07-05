@@ -9,7 +9,9 @@ vim.o.ignorecase = true
 vim.o.smartcase = true
 vim.o.signcolumn = 'yes'
 vim.o.updatetime = 250
-vim.o.timeoutlen = 300
+-- Wait time for a mapped sequence to complete. Widened from 300 so the
+-- mini.surround s-prefix (sa/sd/sr) does not need to be typed in a rush.
+vim.o.timeoutlen = 500
 vim.o.splitright = true
 vim.o.splitbelow = true
 vim.o.cursorline = true
