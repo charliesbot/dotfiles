@@ -165,6 +165,7 @@ install_brew_packages() {
         modem-dev/tap/hunk \
         fd \
         ripgrep \
+        tree-sitter \
         fzf
 
     # Install fonts

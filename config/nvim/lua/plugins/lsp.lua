@@ -1,9 +1,13 @@
 -- Native LSP (Neovim 0.11+ vim.lsp.config / vim.lsp.enable), fed by the language
--- loader. Mason installs servers and tools. Keymaps are minimal and buffer-local.
+-- loader. Loaded eagerly (no lazy event) so server registration happens before
+-- the first file opens; the servers themselves only start when a matching file
+-- is opened, so this is cheap.
+--
+-- mason installs binaries; mason-lspconfig maps names + auto-enables installed
+-- servers; mason-tool-installer installs the non-server tools (formatters/linters).
 
 return {
   'neovim/nvim-lspconfig',
-  event = { 'BufReadPre', 'BufNewFile' },
   dependencies = {
     { 'mason-org/mason.nvim', opts = {} },
     'mason-org/mason-lspconfig.nvim',
@@ -42,19 +46,25 @@ return {
       virtual_text = { source = 'if_many', spacing = 2 },
     }
 
-    -- Capabilities. Swapped to blink.cmp capabilities in step 4b.
+    -- Per-server config (settings, cmd overrides). Capabilities become blink.cmp's
+    -- in step 4b; for now the native defaults. Set before enabling below.
     local capabilities = vim.lsp.protocol.make_client_capabilities()
     vim.lsp.config('*', { capabilities = capabilities })
     for name, cfg in pairs(langs.servers) do
       vim.lsp.config(name, cfg)
     end
 
-    -- Install servers + tools. We lazy-load on BufReadPre, after VimEnter, so
-    -- mason-tool-installer's run_on_start hook is missed; trigger it explicitly.
-    require('mason-tool-installer').setup { ensure_installed = langs.mason, run_on_start = false }
-    require('mason-lspconfig').setup { ensure_installed = {}, automatic_enable = false }
-    pcall(vim.cmd, 'MasonToolsInstall')
+    -- Install + enable servers. `automatic_enable` as a list is an allowlist:
+    -- mason-lspconfig enables exactly these (and handles first-run install->enable
+    -- timing), instead of `true` which would also start any installed tool that
+    -- ships an LSP mode, e.g. `stylua --lsp`.
+    local server_names = vim.tbl_keys(langs.servers)
+    require('mason-lspconfig').setup {
+      ensure_installed = server_names,
+      automatic_enable = server_names,
+    }
 
-    vim.lsp.enable(vim.tbl_keys(langs.servers))
+    -- Install the non-server tools (formatters/linters).
+    require('mason-tool-installer').setup { ensure_installed = langs.mason }
   end,
 }

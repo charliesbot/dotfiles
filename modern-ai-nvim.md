@@ -249,23 +249,25 @@ small set of bundled parsers only (`c`, `lua`, `markdown`, `markdown_inline`,
 languages. Crucially, nvim-treesitter also shipped the curated highlight, indent,
 and fold queries that make highlighting good, and core does not replace those.
 
-Two real paths, verified:
+Two paths were considered, then decided empirically with a bake-off.
 
-**Path A (chosen): keep the archived `nvim-treesitter` `main`, pinned.** It still
-installs and runs fine at a locked commit and keeps shipping the curated queries.
-Downside is it is frozen, no future updates. This is the lower-maintenance,
-higher-quality choice today, which is why it wins.
+**Path A (initially planned): keep the archived `nvim-treesitter` `main`, pinned.**
+Battle-tested, curated queries, but frozen and depends on archived code.
 
-**Path B (not now): native core plus `tree-sitter-manager.nvim`.** Verified that
-it installs both parsers and queries and is actively maintained, but it builds
-parsers from source so it needs the tree-sitter CLI and a C compiler on every
-machine, and for non-core languages it uses grammar-repo queries, which are
-generally lower quality than nvim-treesitter's and can carry Neovim-predicate
-quirks. So highlighting works but looks poorer for TypeScript, Go, Kotlin, and Bash.
+**Path B (CHOSEN): `tree-sitter-manager.nvim` on core.** Actively maintained,
+minimal, config-owned, with a `:TSManager` TUI. Installs parsers + queries and
+auto-registers highlighting (`highlight = true`), plus `auto_install = true` so a
+new language's parser installs on first open. System deps (tree-sitter CLI + C
+compiler) are the same as nvim-treesitter needed anyway, and are declared in the
+brew setup.
 
-**Decision:** Path A, pinned and frozen. **Migration trigger to Path B:** when
-Neovim core ships native parser management (an `nvim-lspconfig`-style solution is
-under discussion) or when a language I use lacks good queries under Path A.
+**Decision: Path B.** The worry with Path B was grammar-repo query quality, so we
+tested it on the real languages (TypeScript, Python, Go, Rust, Kotlin, Bash, Lua):
+highlighting attaches for all, and visually it looked as good or better than
+nvim-treesitter. Getting off the archived dependency plus equal-or-better colors
+settled it. One accepted tradeoff: tree-sitter-manager does highlighting and parser
+management but not treesitter-based indentation, so indent falls back to Neovim's
+built-in indent files (fine for these languages).
 
 ## jj workflow
 
@@ -306,7 +308,7 @@ low-friction startup means getting into a fresh, ready project fast:
 
 ## Plugin set (target)
 
-Kept: lazy.nvim, nvim-treesitter (archived `main`, pinned and frozen, see above),
+Kept: lazy.nvim, tree-sitter-manager (parsers + highlighting, see above),
 nvim-lspconfig, mason stack, fidget, blink.cmp,
 LuaSnip, conform.nvim, lazydev, catppuccin, lualine, gitsigns, guess-indent,
 todo-comments, mini.ai, mini.surround, dropbar.

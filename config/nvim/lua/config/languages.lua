@@ -26,7 +26,8 @@ function M.load()
         local cfg = type(spec.server) == 'table' and vim.deepcopy(spec.server) or {}
         cfg.name = nil
         servers[name] = cfg
-        table.insert(mason, name) -- install the server too
+        -- The server itself is installed via mason-lspconfig (which maps the
+        -- lspconfig name to the mason package). `mason` here is only extra tools.
       end
       for _, tool in ipairs(spec.mason or {}) do
         table.insert(mason, tool)
