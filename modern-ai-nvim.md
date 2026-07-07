@@ -26,7 +26,7 @@ for an ADHD brain to focus.
 | --------------- | ----------------------------------------------------------------------------------------- |
 | Migration style | Clean modular rebuild, bindings ported verbatim                                           |
 | UI core         | `folke/snacks.nvim` (picker, explorer, dashboard, zen, dim, notifier, sessions, terminal) |
-| AI autocomplete | `minuet-ai.nvim` with two backends: local Qwen via Ollama, remote via OpenRouter          |
+| AI autocomplete | `copilot.lua` inline ghost text (Tab to accept), on the existing Copilot subscription       |
 | File navigation | `oil.nvim` for editing paths, snacks explorer as the toggleable sidebar                   |
 | Working set     | `harpoon` for the per-project curated file list                                           |
 | Sessions        | None. Always start fresh, never save or restore buffers or layout                         |
@@ -151,27 +151,40 @@ so the accept muscle memory is unchanged.
 
 `<leader>;` pick, `[;` context start, `];` next context.
 
-## AI autocomplete design (minuet-ai)
+## AI autocomplete design (Copilot via blink.cmp)
 
-`minuet-ai.nvim` is the one AI plugin. It talks to both backends through a single
-interface, so switching is a config edit, never a new plugin. minuet authenticates
-with API keys and OpenAI-compatible endpoints, so both backends fit it directly:
+**Decision: `copilot.lua` as inline ghost text (VSCode feel), `<Tab>` to accept.** It
+uses the Copilot subscription already paid for, needs almost no config, and gives
+top-quality, low-latency completion. The blink-source approach was tried first but
+the ghost text is the wanted UX. The classic "Copilot shows nothing" bug (ghost
+text hiding behind the completion menu) is fixed with `hide_during_completion =
+false`, so suggestions stay visible even while the blink menu is open. Copilot is
+already authed on this machine.
 
-- **Local Qwen** via Ollama serving `qwen2.5-coder` on the OpenAI-compatible FIM
-  endpoint (`openai_fim_compatible` provider). Default for offline, zero-cost work.
-- **OpenRouter** via one API key (`openai_compatible` provider). OpenRouter
-  aggregates DeepSeek, Claude, GPT, cloud Qwen and more behind a single key, so
-  "any remote model" is a model-name change, not a new provider setup. Pay per use.
+### Why not minuet
 
-### On subscription-based auth
+`minuet-ai.nvim` is excellent and provider-agnostic (OpenAI, Claude, Gemini,
+Codestral, Ollama, OpenAI-compatible like OpenRouter/DeepSeek), but it **cannot use
+a Copilot subscription** and cannot reuse credentials from other tools: every
+provider needs its own API key or a local model. Excluding local Ollama, there was
+nothing already-owned to plug into it, and its reliability and quality are not
+inherently better than Copilot for inline completion. So minuet loses here purely
+on fit.
 
-minuet cannot consume a ChatGPT or Codex OAuth subscription. That subscription
-authorizes the ChatGPT app and Codex CLI, not autocomplete API calls, and the
-OpenAI API bills separately on credits. The only inline autocomplete engine that
-runs on an OAuth subscription is Copilot itself. Since the goal is to move past
-Copilot and Ollama plus OpenRouter covers local and remote, subscription-OAuth is
-out of scope for autocomplete. If it is ever wanted, it returns as a small
-optional Copilot add-back, kept separate from minuet.
+### Fallback if Copilot disappoints
+
+`minuet-ai.nvim` + **local Qwen** (Ollama serving `qwen2.5-coder`, the
+`openai_fim_compatible` provider). This is the one minuet path that uses something
+already owned (Ollama/LM Studio are installed), giving offline, private, zero-cost
+completion, at lower quality than Copilot. Remote via OpenRouter would need a new
+paid API key and is not planned.
+
+## Still to build (todo)
+
+- **Statusline** (`lualine`, already in the plugin set) is not wired yet.
+- AI autocomplete (Copilot via blink) is in place; the rest of the polish tier
+  (harpoon, which-key, snacks dashboard/zen/dim, gitsigns + jj terminal) and the
+  kickstart-cruft cleanup remain.
 
 Two integration modes, pick one:
 
