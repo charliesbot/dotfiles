@@ -1,14 +1,14 @@
 -- Native statusline. No plugin. Adapts to any colorscheme: the mode block colors
--- are derived from the theme's own highlight groups on every ColorScheme, and the
--- rest uses existing groups (Diagnostic*, Comment). Global (laststatus = 3).
+-- are derived from the theme's highlight groups on every ColorScheme, and the rest
+-- uses existing groups (Diagnostic*, Added/Changed/Removed, Comment). Global.
 --
 -- Layout:
---   MODE  branch  file.ts [+]           8   3   1   filetype  12:34  45%
+--   MODE  file.ts (typescript, +0~1-0)      lua_ls      8  3   Ln 12, Col 34
+--   └mode └file    └(filetype, diff from vcsigns)  └lsp  └diagnostics  └position
 
 local M = {}
 
--- Nerd Font glyphs as byte escapes so they survive editing (\xNN, not literals).
-local BRANCH = '\xee\x82\xa0' --
+-- Nerd Font glyph as a byte escape so it survives editing (\xNN, not a literal).
 local LSP = '\xf3\xb0\x9a\xa9' -- U+F06A9
 
 local diag = {
@@ -89,14 +89,9 @@ local function setup_hl()
     local color = src.fg or normal.fg or 0xcccccc
     vim.api.nvim_set_hl(0, group, { fg = text, bg = color, bold = true })
   end
-end
-
-local function git()
-  local head = vim.b.gitsigns_head
-  if head and head ~= '' then
-    return '%#Constant# ' .. BRANCH .. ' ' .. head .. ' %*'
-  end
-  return ''
+  -- Subdued meta text: Comment's color, but never italic.
+  local comment = vim.api.nvim_get_hl(0, { name = 'Comment', link = false })
+  vim.api.nvim_set_hl(0, 'StlMeta', { fg = comment.fg, italic = false })
 end
 
 -- Clients that use LSP as transport but are not language servers.
@@ -112,7 +107,30 @@ local function lsp()
   if #names == 0 then
     return ''
   end
-  return '%#Comment#' .. LSP .. ' ' .. table.concat(names, ', ') .. '%*'
+  return '%#StlMeta#' .. LSP .. ' ' .. table.concat(names, ', ') .. '%*'
+end
+
+-- filetype + VCS diff counts, folded into one (typescript, +0~1-0) cluster.
+-- Diff counts come from vcsigns (vim.b.vcsigns_stats), so they are jj-aware.
+local function meta()
+  local ft = vim.bo.filetype
+  if ft == '' then
+    return ''
+  end
+  local out = '%#StlMeta# (' .. ft
+  local bm = vim.b.jj_bookmark
+  if bm and bm ~= '' then
+    out = out .. ', #' .. bm
+  end
+  local s = vim.b.vcsigns_stats
+  if s and (s.added + s.modified + s.removed) > 0 then
+    out = out
+      .. '%#StlMeta#, '
+      .. '%#Added#+' .. s.added
+      .. '%#Changed#~' .. s.modified
+      .. '%#Removed#-' .. s.removed
+  end
+  return out .. '%#StlMeta#)%*'
 end
 
 local function diagnostics()
@@ -133,13 +151,12 @@ function M.render()
   local hl = mode_hl[m] or 'StlModeNormal'
   return table.concat {
     '%#' .. hl .. '# ' .. label .. ' %*', -- colored mode block
-    git(), -- git branch (empty until gitsigns)
     ' %<%t%m%r', -- filename only, modified, readonly
+    meta(), -- (filetype, +added~changed-removed)
     '%=', -- ---- center ----
-    lsp(), -- attached LSP server(s), centered
+    lsp(), -- attached LSP server(s)
     '%=', -- ---- right ----
     diagnostics(),
-    '%#Comment# %{&filetype} %*', -- filetype, subdued
     ' Ln %l, Col %c ', -- position, VSCode-style
   }
 end
