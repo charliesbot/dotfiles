@@ -122,10 +122,8 @@ minuet) the key stays, only the implementation moves.
 
 ### Working set (harpoon, new)
 
-`<leader>a` add current file to the list, `<C-e>` toggle the harpoon menu,
-`<leader>1` to `<leader>5` jump to pinned files (the author defaults; the README's
-`<C-h>`-style selects are dropped since they clash with window nav). `<C-e>` is
-normal-mode and does not conflict with blink's insert-mode `<C-e>`.
+`<leader>H` add current file to the list, `<leader>h` toggle the harpoon menu,
+`<leader>1` to `<leader>5` jump to pinned files (LazyVim-style, all under leader).
 
 ### Navigation (snacks)
 
