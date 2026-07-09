@@ -92,6 +92,13 @@ local function setup_hl()
   -- Subdued meta text: Comment's color, but never italic.
   local comment = vim.api.nvim_get_hl(0, { name = 'Comment', link = false })
   vim.api.nvim_set_hl(0, 'StlMeta', { fg = comment.fg, italic = false })
+  -- Filename block: a subtle background from the theme's CursorLine group.
+  local cursorline = vim.api.nvim_get_hl(0, { name = 'CursorLine', link = false })
+  local visual = vim.api.nvim_get_hl(0, { name = 'Visual', link = false })
+  vim.api.nvim_set_hl(0, 'StlFile', { fg = normal.fg, bg = cursorline.bg or visual.bg })
+  -- Unify the statusline background with the editor so the bar looks seamless;
+  -- only the mode and filename blocks keep their own background.
+  vim.api.nvim_set_hl(0, 'StatusLine', { fg = normal.fg, bg = normal.bg })
 end
 
 -- Clients that use LSP as transport but are not language servers.
@@ -110,27 +117,26 @@ local function lsp()
   return '%#StlMeta#' .. LSP .. ' ' .. table.concat(names, ', ') .. '%*'
 end
 
--- filetype + VCS diff counts, folded into one (typescript, +0~1-0) cluster.
--- Diff counts come from vcsigns (vim.b.vcsigns_stats), so they are jj-aware.
-local function meta()
-  local ft = vim.bo.filetype
-  if ft == '' then
-    return ''
-  end
-  local out = '%#StlMeta# (' .. ft
+-- VCS cluster: jj bookmark + diff counts. Diff counts come from vcsigns
+-- (vim.b.vcsigns_stats), so they are jj-aware. No filetype, no parens.
+local function vcs()
+  local out = ''
   local bm = vim.b.jj_bookmark
   if bm and bm ~= '' then
-    out = out .. ', #' .. bm
+    out = out .. '%#StlMeta# #' .. bm
   end
   local s = vim.b.vcsigns_stats
   if s and (s.added + s.modified + s.removed) > 0 then
     out = out
-      .. '%#StlMeta#, '
+      .. '%#StlMeta# '
       .. '%#Added#+' .. s.added
       .. '%#Changed#~' .. s.modified
       .. '%#Removed#-' .. s.removed
   end
-  return out .. '%#StlMeta#)%*'
+  if out ~= '' then
+    out = out .. '%*'
+  end
+  return out
 end
 
 local function diagnostics()
@@ -151,12 +157,13 @@ function M.render()
   local hl = mode_hl[m] or 'StlModeNormal'
   return table.concat {
     '%#' .. hl .. '# ' .. label .. ' %*', -- colored mode block
-    ' %<%t%m%r', -- filename only, modified, readonly
-    meta(), -- (filetype, +added~changed-removed)
+    '%#StlFile# %<%t%m%r %*', -- filename block (with background)
+    vcs(), -- #bookmark +added~changed-removed
     '%=', -- ---- center ----
     lsp(), -- attached LSP server(s)
     '%=', -- ---- right ----
     diagnostics(),
+    '%#StlMeta# %{&filetype} %*', -- filetype, right side
     ' Ln %l, Col %c ', -- position, VSCode-style
   }
 end
