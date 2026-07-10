@@ -8,7 +8,6 @@ android-skills = "https://github.com/android/skills"
 herdr = "https://github.com/ogulcancelik/herdr"
 jj-skill = "https://github.com/megumish/jj-skill"
 kotlin-compose-android-skills = "https://github.com/chrisbanes/skills"
-material-3-skills = "https://github.com/hamen/material-3-skill"
 mattpocock-skills = "https://github.com/mattpocock/skills"
 modern-web-guidance = "https://github.com/GoogleChrome/modern-web-guidance"
 stitch-skills = "https://github.com/google-labs-code/stitch-skills"
@@ -38,8 +37,6 @@ paths = [
   "@jj-skill/skills/jj",
   # Kotlin Compose Android Skills
   "@kotlin-compose-android-skills/skills/*",
-  # Material 3 Skills
-  "@material-3-skills/skills/material-3",
   # Matt Pocock Skills
   "@mattpocock-skills/skills/productivity/*",
   # Modern Web Guidance
