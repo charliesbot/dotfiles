@@ -15,8 +15,7 @@ stitch-skills = "https://github.com/google-labs-code/stitch-skills"
 
 [skills]
 paths = [
-  "~/dotfiles/ai/skills/*",
-  "~/.gemini/antigravity-cli/plugins/google-workspace/skills/*",
+  "~/projects/skills/skills/*",
   # Addy Osmani Agent Skills
   "@agent-skills/skills/code-simplification",
   "@agent-skills/skills/context-engineering",
