@@ -265,8 +265,6 @@ setup_fedora() {
 
     create_symlinks
 
-    install_catpuccin_themes
-
     setup_zsh_shell
 
     print_completion
