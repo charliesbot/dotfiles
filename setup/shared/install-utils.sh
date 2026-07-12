@@ -88,16 +88,6 @@ apply_vcs_config() {
     fi
 }
 
-install_catpuccin_themes() {
-    if [[ -d ~/.config/tmux/plugins/catppuccin/tmux ]]; then
-        echo "Catppuccin tmux theme is already installed."
-        return
-    fi
-
-    mkdir -p ~/.config/tmux/plugins/catppuccin
-    git clone -b v2.1.3 https://github.com/catppuccin/tmux.git ~/.config/tmux/plugins/catppuccin/tmux
-}
-
 # Install Homebrew
 install_brew() {
     if check_command brew; then
@@ -125,19 +115,15 @@ create_symlinks() {
     rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.config/nvim ~/.ideavimrc ~/.config/starship.toml ~/.config/ghostty ~/.config/herdr/config.toml ~/chai.toml 2>/dev/null
 
     echo "Creating symlinks..."
-    mkdir -p ~/projects ~/.config ~/.config/herdr ~/.config/tmux ~/.config/tmux/plugins
+    mkdir -p ~/projects ~/.config ~/.config/herdr
 
     ln -s "$dotfiles_dir/config/zshrc" ~/.zshrc
     ln -s "$dotfiles_dir/config/nvim" ~/.config/nvim
-    ln -s "$dotfiles_dir/config/tmux.conf" ~/.tmux.conf
     ln -s "$dotfiles_dir/config/ghostty" ~/.config/ghostty
     ln -s "$dotfiles_dir/config/herdr.toml" ~/.config/herdr/config.toml
     ln -s "$dotfiles_dir/config/starship.toml" ~/.config/starship.toml
     ln -s "$dotfiles_dir/config/ideavimrc" ~/.ideavimrc
     ln -s "$dotfiles_dir/config/chai.toml" ~/chai.toml
-
-    # Italics and true color profile for tmux
-    tic -x "$dotfiles_dir/config/tmux.terminfo"
 }
 
 # Install common brew packages
@@ -154,7 +140,6 @@ install_brew_packages() {
         starship \
         devcontainer \
         scrcpy \
-        tmux \
         gh \
         jj \
         dmmulroy/tap/jj-starship \

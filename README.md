@@ -1,7 +1,7 @@
 # charliesbot's Dotfiles
 
 ```
-config/    — dotfiles that get symlinked (zshrc, nvim, ghostty, tmux, etc.)
+config/    — dotfiles that get symlinked (zshrc, nvim, ghostty, herdr, etc.)
 setup/     — machine provisioning scripts (macos, fedora)
 setup.sh   — entrypoint (detects OS, runs the right installer)
 ```

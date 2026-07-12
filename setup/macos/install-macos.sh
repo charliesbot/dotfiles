@@ -82,18 +82,6 @@ install_brew_cask_packages() {
     echo "Use JetBrains Toolbox to install Android Studio and other JetBrains IDEs."
 }
 
-# Install macOS-specific packages
-install_macos_packages() {
-    refresh_sudo
-
-    echo "Installing macOS-specific packages..."
-
-    # Install reattach-to-user-namespace for tmux clipboard support on macOS
-    brew install reattach-to-user-namespace
-
-    echo "macOS-specific packages installed."
-}
-
 # Set computer name/hostname
 set_hostname() {
     echo "Current computer name: $(scutil --get ComputerName 2>/dev/null || echo 'Not set')"
@@ -156,8 +144,6 @@ setup_macos() {
 
     install_brew_packages
 
-    install_macos_packages
-
     install_brew_cask_packages
 
     install_android_cli
@@ -167,8 +153,6 @@ setup_macos() {
     install_ai_tools
 
     create_symlinks
-
-    install_catpuccin_themes
 
     setup_zsh_shell
 
