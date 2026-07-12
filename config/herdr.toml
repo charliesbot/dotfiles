@@ -9,7 +9,7 @@ onboarding = false
 # Built-in themes: catppuccin, terminal, tokyo-night, dracula, nord,
 #                  gruvbox, one-dark, solarized, kanagawa, rose-pine,
 #                  vesper
-name = "catppuccin"
+name = "tokyo-night"
 
 # Accepts: hex (#rrggbb), named colors, rgb(r,g,b), or panel_bg = "reset"
 # [theme.custom]
@@ -128,6 +128,8 @@ zoom = "prefix+z"                 # legacy alias: fullscreen
 # Pane apps like lazygit and btop can still receive mouse when they request it.
 mouse_capture = true
 
+hide_tab_bar_when_single_tab = true
+
 # Force a full redraw when the outer terminal regains focus.
 # Set false to reduce visible flashing when switching back to Herdr.
 # Trade-off: rare host terminal surface corruption may persist until the next full redraw.
@@ -154,6 +156,7 @@ show_agent_labels_on_pane_borders = true
 # accent = "cyan"
 
 # Background notification popup delivery
+agent_panel_sort = "spaces"
 [ui.toast]
 # off = disable pop-up notifications
 # herdr = show top-right in-app toasts
