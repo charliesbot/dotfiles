@@ -11,10 +11,11 @@ kotlin-compose-android-skills = "https://github.com/chrisbanes/skills"
 mattpocock-skills = "https://github.com/mattpocock/skills"
 modern-web-guidance = "https://github.com/GoogleChrome/modern-web-guidance"
 stitch-skills = "https://github.com/google-labs-code/stitch-skills"
+emil-kowalski-skills = "https://github.com/emilkowalski/skills"
 
 [skills]
 paths = [
-  "~/projects/skills/skills/*",
+  "~/dotfiles/ai/skills/*",
   # Addy Osmani Agent Skills
   "@agent-skills/skills/code-simplification",
   "@agent-skills/skills/context-engineering",
@@ -31,6 +32,8 @@ paths = [
   "@android-skills/testing/*",
   "@android-skills/wear/*",
   "@android-skills/xr/*",
+  # Emil Kowalski Skills
+  "@emil-kowalski-skills/skills/*",
   # Herdr Skills
   "@herdr/SKILL.md",
   # JJ Skill
