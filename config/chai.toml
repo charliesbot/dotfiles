@@ -1,6 +1,6 @@
-platforms = ["claude", "antigravity", "opencode", "codex", "cursor"]
+platforms = ["claude", "antigravity", "opencode", "codex", "cursor", "pi"]
 
-instructions = "~/dotfiles/ai/instructions/AGENTS.md"
+instructions = ["~/dotfiles/ai/instructions/AGENTS.md"]
 
 [deps]
 agent-skills = "https://github.com/addyosmani/agent-skills"
@@ -11,6 +11,7 @@ mattpocock-skills = "https://github.com/mattpocock/skills"
 modern-web-guidance = "https://github.com/GoogleChrome/modern-web-guidance"
 stitch-skills = "https://github.com/google-labs-code/stitch-skills"
 emil-kowalski-skills = "https://github.com/emilkowalski/skills"
+i-have-adhd = "https://github.com/ayghri/i-have-adhd"
 
 [skills]
 paths = [
@@ -35,6 +36,8 @@ paths = [
   "@emil-kowalski-skills/skills/*",
   # Herdr Skills
   "@herdr/SKILL.md",
+  # I Have ADHD Skills
+  "@i-have-adhd/skills/*",
   # Kotlin Compose Android Skills
   "@kotlin-compose-android-skills/skills/*",
   # Matt Pocock Skills
@@ -71,3 +74,7 @@ command = "/opt/homebrew/bin/node"
 args = ["/Applications/Tolaria.app/Contents/Resources/mcp-server/index.js"]
 env = { WS_UI_PORT = "9711" }
 type = "stdio"
+
+[mcp.engram]
+command = "/opt/homebrew/bin/engram"
+args = ["mcp", "--tools=agent"]

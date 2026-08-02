@@ -2,6 +2,8 @@
 
 export EDITOR='nvim'
 
+alias glg='git log --graph --decorate --oneline -20'
+
 # History configuration
 HISTFILE=${HOME}/.zsh_history
 HISTSIZE=10000
