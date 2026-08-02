@@ -3,7 +3,9 @@
 ## Hard Rules
 
 - For non-trivial changes, draft a plan first and wait for explicit approval before writing code. Trivial fixes (typos, one-line bug fixes, renames) can proceed directly.
-- For non-trivial changes, work in a dedicated Git worktree and open a ready-for-review PR for the approved slice once ready. Approval to implement a non-trivial slice includes approval to commit the change, push its branch, and open its PR. Open draft PRs only when explicitly asked.
+- For non-trivial changes, create and enter a dedicated worktree with `wt switch --create <branch>` and open a ready-for-review PR for the approved slice once ready. Approval to implement a non-trivial slice includes approval to commit the change, push its branch, and open its PR. Open draft PRs only when explicitly asked.
+- Use Worktrunk exclusively to create, switch, list, and remove worktrees. Never use native `git worktree` commands or manually delete worktree directories.
+- If Worktrunk is unavailable or fails, stop and notify the user instead of falling back.
 - Trivial fixes can be committed and pushed to `main` only when explicitly asked.
 - Do not perform opportunistic refactors. If adjacent cleanup is useful but not required, log it as follow-up work or propose a separate cleanup PR.
 - Do not commit, push, or open a PR outside an approved non-trivial slice unless explicitly asked. Before committing or pushing any change, verify no secrets are included.
@@ -15,11 +17,15 @@
 
 ## Version Control
 
-Use Git for local version control and `gh` for GitHub operations.
+Use Git for local version control, Worktrunk for worktree management, and `gh` for GitHub operations.
 
 - Use `git status`, `git diff`, `git log`, and `git show` for inspection.
-- Use dedicated worktrees for non-trivial work and keep commits scoped to the approved slice.
-- Push the feature branch before creating or updating its pull request with `gh`.
+- After approval of a non-trivial slice, create and enter its worktree with `wt switch --create <branch>`.
+- Use `wt list` to inspect managed worktrees and `wt switch <branch>` to enter one.
+- Keep commits scoped to the approved slice.
+- Push the feature branch and manage its pull request with `gh`.
+- Continue merging PRs through GitHub; do not use `wt merge`.
+- After a PR is merged, remove its managed worktree with `wt remove`.
 
 ## Priorities
 
@@ -54,6 +60,8 @@ Before implementation, produce a lightweight PR plan and wait for approval. Incl
 
 Prefer small vertical slices that produce working behavior. Use foundation-only slices only when they reduce risk or unblock later work.
 
+Before implementation, create and enter the approved slice's worktree with `wt switch --create <branch>`.
+
 Implement only the approved slice. If scope grows beyond the approved file list, touches more than ~5 meaningful files, or approaches ~300 changed LOC excluding generated files, lockfiles, snapshots, and migrations, stop and propose a split.
 
 Default feature workflow:
@@ -78,6 +86,7 @@ When stuck, try 2–3 approaches before asking. If still blocked, ask with conte
 
 - GitHub username: charliesbot
 - gh CLI is available globally
+- Worktrunk (`wt`) is available globally and exclusively manages worktree lifecycle.
 - When running inside Herdr (`HERDR_ENV=1`), prefer `herdr` panes for long-running commands, logs, dev servers, watchers, and sibling agents so output stays visible and persistent. Use normal command execution for quick one-shot commands.
 
 <!-- BEGIN ENGRAM MEMORY PROTOCOL — managed by engram setup -->
