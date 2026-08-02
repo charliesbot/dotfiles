@@ -13,4 +13,3 @@ require 'config.lazy'
 -- Choose the active colorscheme after plugins (themes) have loaded.
 require 'config.theme'
 require 'config.statusline'
-require 'config.jj'

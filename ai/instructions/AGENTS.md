@@ -3,24 +3,23 @@
 ## Hard Rules
 
 - For non-trivial changes, draft a plan first and wait for explicit approval before writing code. Trivial fixes (typos, one-line bug fixes, renames) can proceed directly.
-- For non-trivial changes, work on a new jj change with a bookmark and open a ready-for-review PR for the approved slice once ready. Approval to implement a non-trivial slice includes approval to describe the change, push its bookmark, and open its PR. Open draft PRs only when explicitly asked.
-- Trivial fixes can be described and pushed to `main` only when explicitly asked.
+- For non-trivial changes, work in a dedicated Git worktree and open a ready-for-review PR for the approved slice once ready. Approval to implement a non-trivial slice includes approval to commit the change, push its branch, and open its PR. Open draft PRs only when explicitly asked.
+- Trivial fixes can be committed and pushed to `main` only when explicitly asked.
 - Do not perform opportunistic refactors. If adjacent cleanup is useful but not required, log it as follow-up work or propose a separate cleanup PR.
-- Do not describe, push, or open a PR outside an approved non-trivial slice unless explicitly asked. Before describing or pushing any change, verify no secrets are included.
-- For non-trivial changes, do not describe, push, or open a PR until a reviewer subagent reports PASS.
-- Treat `jj describe`, `jj git push`, and `gh pr create` as unauthorized for non-trivial work unless reviewer status is PASS in the current session.
+- Do not commit, push, or open a PR outside an approved non-trivial slice unless explicitly asked. Before committing or pushing any change, verify no secrets are included.
+- For non-trivial changes, do not commit, push, or open a PR until a reviewer subagent reports PASS.
+- Treat `git commit`, `git push`, and `gh pr create` as unauthorized for non-trivial work unless reviewer status is PASS in the current session.
 - NEVER use hacks to bypass the type system or linters (e.g., `// @ts-ignore`, suppressing linter warnings) unless explicitly directed.
 - NEVER commit `.env` files or expose API keys, tokens, or secrets in any output.
 - Bug fixes follow TDD red-green: write a failing test first (red), then implement the fix (green).
 
 ## Version Control
 
-Use `jj` for version control. If any skill or generic workflow says to use Git, translate it to jj.
+Use Git for local version control and `gh` for GitHub operations.
 
-- Do not run raw `git` commands for local VCS operations unless `jj` cannot operate in the workspace.
-- Use `jj status`, `jj diff`, `jj log`, and `jj show` for inspection.
-- Use `jj describe` instead of committing, bookmarks instead of branches, and `jj git push -b <bookmark>` instead of `git push`.
-- Use `gh` only for GitHub operations after pushing the jj bookmark.
+- Use `git status`, `git diff`, `git log`, and `git show` for inspection.
+- Use dedicated worktrees for non-trivial work and keep commits scoped to the approved slice.
+- Push the feature branch before creating or updating its pull request with `gh`.
 
 ## Priorities
 

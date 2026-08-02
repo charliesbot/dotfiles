@@ -2,85 +2,6 @@
 
 export EDITOR='nvim'
 
-# Jujutsu aliases
-alias jst='jj status'
-alias jin='jj git init --colocate'
-alias jdf='jj diff'
-alias jft='jj git fetch'
-alias jlg='jj log'
-alias jps='jj git push'
-alias jds='jj describe'
-alias jnw='jj new'
-alias jsq='jj squash'
-alias jsp='jj split'
-alias jrb='jj rebase'
-alias jrs='jj restore'
-alias jab='jj abandon'
-
-# Bookmark management
-alias jbl='jj bookmark list'
-alias jbc='jj bookmark create'
-alias jbm='jj bookmark move'
-alias jbd='jj bookmark delete'
-
- jpm() {
-    if [[ $# -ne 1 ]]; then
-      echo "Usage: jpm <pr-number-or-url>"
-      return 2
-    fi
-
-    local pr="$1"
-    local info number base head state head_owner repo_owner repo next_prs
-
-    info=$(gh pr view "$pr" --json number,baseRefName,headRefName,headRepositoryOwner,state)
-    number=$(echo "$info" | jq -r .number)
-    base=$(echo "$info" | jq -r .baseRefName)
-    head=$(echo "$info" | jq -r .headRefName)
-    head_owner=$(echo "$info" | jq -r .headRepositoryOwner.login)
-    state=$(echo "$info" | jq -r .state)
-    repo=$(gh repo view --json nameWithOwner --jq .nameWithOwner)
-    repo_owner=${repo%%/*}
-
-    if [[ "$state" != "OPEN" ]]; then
-      echo "PR #$number is not open; state=$state"
-      return 1
-    fi
-
-    if [[ "$base" != "main" ]]; then
-      echo "Refusing to merge PR #$number because base is '$base', not 'main'."
-      echo "Retarget/rebase the stack first, or merge the bottom PR first."
-      return 1
-    fi
-
-    # PRs stacked directly on this PR's head bookmark.
-    next_prs=$(gh pr list --state open --json number,baseRefName \
-      --jq ".[] | select(.baseRefName == \"$head\") | .number")
-
-    gh pr merge "$number" --squash --admin || return 1
-
-    if [[ "$head_owner" == "$repo_owner" ]]; then
-      gh api -X DELETE "repos/$repo/git/refs/heads/$head" --silent
-    else
-      echo "Leaving fork branch '$head_owner:$head' alone."
-    fi
-
-    jj git fetch
-    jj bookmark set main -r main@origin
-    jj new main
-
-    for next in $next_prs; do
-      local next_head
-      next_head=$(gh pr view "$next" --json headRefName --jq .headRefName)
-
-      echo "Rebasing PR #$next ($next_head) onto main..."
-      jj rebase -b "$next_head" -d main
-      jj git push -b "$next_head"
-
-      echo "Retargeting PR #$next to main..."
-      gh pr edit "$next" --base main
-    done
-  }
-
 # History configuration
 HISTFILE=${HOME}/.zsh_history
 HISTSIZE=10000
@@ -142,7 +63,7 @@ fi
 # --follow: Follow symlinks
 # --glob: Additional conditions for search (in this case ignore VCS metadata folders)
 
-export FZF_DEFAULT_COMMAND='rg --files --fixed-strings --hidden --follow --glob "!.git/*" --glob "!.jj/*"'
+export FZF_DEFAULT_COMMAND='rg --files --fixed-strings --hidden --follow --glob "!.git/*"'
 
 # OpenCode
 export PATH="$HOME/.opencode/bin:$PATH"
@@ -160,4 +81,3 @@ export PATH="$HOME/.antigravity-ide/antigravity-ide/bin:$PATH"
 # Added by LM Studio CLI (lms)
 export PATH="$PATH:/Users/charliesbot/.lmstudio/bin"
 # End of LM Studio CLI section
-

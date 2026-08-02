@@ -78,10 +78,9 @@ prompt_for_vcs_config() {
 apply_vcs_config() {
     if [[ -n "${VCS_CONFIG_NAME:-}" && -n "${VCS_CONFIG_EMAIL:-}" ]]; then
         echo "Applying VCS configuration..."
-        jj config set --user user.name "${VCS_CONFIG_NAME}"
-        jj config set --user user.email "${VCS_CONFIG_EMAIL}"
-        jj config set --user ui.pager '["hunk", "pager"]'
-        jj config set --user ui.diff-formatter '":git"'
+        git config --global user.name "${VCS_CONFIG_NAME}"
+        git config --global user.email "${VCS_CONFIG_EMAIL}"
+        git config --global init.defaultBranch main
         echo "VCS user name and email have been set."
     else
         echo "VCS user details not provided, skipping VCS configuration."
@@ -141,8 +140,6 @@ install_brew_packages() {
         devcontainer \
         scrcpy \
         gh \
-        jj \
-        dmmulroy/tap/jj-starship \
         zig \
         go \
         node \

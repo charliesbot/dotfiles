@@ -1,6 +1,6 @@
 # nvim
 
-Personal Neovim config — modern, minimal, jj-first. Requires Neovim 0.12+.
+Personal Neovim config — modern, minimal, and Git-native. Requires Neovim 0.12+.
 
 - Plugins managed by **lazy.nvim** (`:Lazy`).
 - `init.lua` is a thin loader for `lua/config/*`; plugins live in `lua/plugins/*`;
