@@ -2,6 +2,7 @@
 
 export EDITOR='nvim'
 
+alias gst="git status"
 alias glg='git log --graph --decorate --oneline -20'
 
 # History configuration
