@@ -133,6 +133,7 @@ install_brew_packages() {
   brew install \
     jesseduffield/lazydocker/lazydocker \
     lazygit \
+    worktrunk \
     neovim \
     zoxide \
     zsh-autosuggestions \
