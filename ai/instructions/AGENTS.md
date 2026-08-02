@@ -3,29 +3,30 @@
 ## Hard Rules
 
 - For non-trivial changes, draft a plan first and wait for explicit approval before writing code. Trivial fixes (typos, one-line bug fixes, renames) can proceed directly.
-- For non-trivial changes, create and enter a dedicated worktree with `wt switch --create <branch>` and open a ready-for-review PR for the approved slice once ready. Approval to implement a non-trivial slice includes approval to commit the change, push its branch, and open its PR. Open draft PRs only when explicitly asked.
+- Treat the primary checkout as shared. For non-trivial changes, create a dedicated worktree with `wt switch --create <branch>` after approval; reuse one only when it is clearly assigned to the current task.
+- Use one worktree per independent PR or per complete PR stack. Never create a separate worktree for each layer of the same stack.
 - Use Worktrunk exclusively to create, switch, list, and remove worktrees. Never use native `git worktree` commands or manually delete worktree directories.
 - If Worktrunk is unavailable or fails, stop and notify the user instead of falling back.
 - Trivial fixes can be committed and pushed to `main` only when explicitly asked.
 - Do not perform opportunistic refactors. If adjacent cleanup is useful but not required, log it as follow-up work or propose a separate cleanup PR.
-- Do not commit, push, or open a PR outside an approved non-trivial slice unless explicitly asked. Before committing or pushing any change, verify no secrets are included.
-- For non-trivial changes, do not commit, push, or open a PR until a reviewer subagent reports PASS.
-- Treat `git commit`, `git push`, and `gh pr create` as unauthorized for non-trivial work unless reviewer status is PASS in the current session.
+- Approval to implement a non-trivial slice includes approval to commit, push, and open its ready-for-review PR after reviewer PASS. For stacks, each layer requires approved scope and reviewer PASS. Open drafts only when explicitly asked.
+- Treat `git commit`, `git push`, `gh pr create`, and `gh stack submit` as unauthorized for non-trivial work unless reviewer status is PASS in the current session.
+- Before committing or pushing, verify no secrets are included.
 - NEVER use hacks to bypass the type system or linters (e.g., `// @ts-ignore`, suppressing linter warnings) unless explicitly directed.
 - NEVER commit `.env` files or expose API keys, tokens, or secrets in any output.
 - Bug fixes follow TDD red-green: write a failing test first (red), then implement the fix (green).
 
 ## Version Control
 
-Use Git for local version control, Worktrunk for worktree management, and `gh` for GitHub operations.
+Use Git for local version control, Worktrunk for worktree management, and `gh` for GitHub and pull request operations.
 
 - Use `git status`, `git diff`, `git log`, and `git show` for inspection.
-- After approval of a non-trivial slice, create and enter its worktree with `wt switch --create <branch>`.
-- Use `wt list` to inspect managed worktrees and `wt switch <branch>` to enter one.
+- Use `wt list` before writable work. Use `wt switch --create <branch>` for a new task and `wt switch <branch>` only for an existing worktree assigned to that task.
 - Keep commits scoped to the approved slice.
-- Push the feature branch and manage its pull request with `gh`.
-- Continue merging PRs through GitHub; do not use `wt merge`.
-- After a PR is merged, remove its managed worktree with `wt remove`.
+- Use ordinary PRs by default. Use a stack only when two or more approved slices form a strict dependency chain and work must continue before lower PRs merge; use separate worktrees and PRs for independent changes.
+- For a stack, create one worktree for the bottom branch, run `gh stack init <bottom-branch>`, then use `gh stack add <branch>` and stack navigation inside that worktree.
+- Run stack commands non-interactively: `gh stack submit --auto --open`, `gh stack view --json`, and `gh stack merge <stack-or-pr> --yes --squash`. Never merge a stacked PR with `gh pr merge`.
+- Continue merging through GitHub; do not use `wt merge`. After merging, synchronize stacks with `gh stack sync --prune`, then remove finished worktrees with `wt remove`.
 
 ## Priorities
 
@@ -59,8 +60,6 @@ Before implementation, produce a lightweight PR plan and wait for approval. Incl
 - Verification for the first slice.
 
 Prefer small vertical slices that produce working behavior. Use foundation-only slices only when they reduce risk or unblock later work.
-
-Before implementation, create and enter the approved slice's worktree with `wt switch --create <branch>`.
 
 Implement only the approved slice. If scope grows beyond the approved file list, touches more than ~5 meaningful files, or approaches ~300 changed LOC excluding generated files, lockfiles, snapshots, and migrations, stop and propose a split.
 

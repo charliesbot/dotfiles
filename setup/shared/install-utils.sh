@@ -76,14 +76,17 @@ prompt_for_vcs_config() {
 
 # Apply stored VCS configuration
 apply_vcs_config() {
+  echo "Applying VCS configuration..."
+  git config --global init.defaultBranch main
+  git config --global rerere.enabled true
+  git config --global remote.pushDefault origin
+
   if [[ -n "${VCS_CONFIG_NAME:-}" && -n "${VCS_CONFIG_EMAIL:-}" ]]; then
-    echo "Applying VCS configuration..."
     git config --global user.name "${VCS_CONFIG_NAME}"
     git config --global user.email "${VCS_CONFIG_EMAIL}"
-    git config --global init.defaultBranch main
     echo "VCS user name and email have been set."
   else
-    echo "VCS user details not provided, skipping VCS configuration."
+    echo "VCS user details not provided."
   fi
 }
 
@@ -149,6 +152,8 @@ install_brew_packages() {
     ripgrep \
     tree-sitter \
     fzf
+
+  gh extension install github/gh-stack --force
 
   # Install fonts
   brew install --cask \
