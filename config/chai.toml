@@ -6,7 +6,6 @@ instructions = "~/dotfiles/ai/instructions/AGENTS.md"
 agent-skills = "https://github.com/addyosmani/agent-skills"
 android-skills = "https://github.com/android/skills"
 herdr = "https://github.com/ogulcancelik/herdr"
-jj-skill = "https://github.com/megumish/jj-skill"
 kotlin-compose-android-skills = "https://github.com/chrisbanes/skills"
 mattpocock-skills = "https://github.com/mattpocock/skills"
 modern-web-guidance = "https://github.com/GoogleChrome/modern-web-guidance"
@@ -36,8 +35,6 @@ paths = [
   "@emil-kowalski-skills/skills/*",
   # Herdr Skills
   "@herdr/SKILL.md",
-  # JJ Skill
-  "@jj-skill/skills/jj",
   # Kotlin Compose Android Skills
   "@kotlin-compose-android-skills/skills/*",
   # Matt Pocock Skills

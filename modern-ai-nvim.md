@@ -17,7 +17,7 @@ for an ADHD brain to focus.
 - **Low churn.** Once it works I should not be nudged to keep tweaking it.
 - **Bindings are sacred.** Muscle memory carries over verbatim. See the inventory below.
 - **Focus first.** Distraction-free tools (zen, dim) are first-class, not add-ons.
-- **jj, not git.** Version control tooling assumes jujutsu, with git colocated only where a plugin needs it.
+- **Git-native.** Version control tooling follows the Git and GitHub ecosystem directly.
 - **Native 0.12.** Use `vim.lsp.config` / `vim.lsp.enable`, treesitter `main`, `vim.hl`, `vim.diagnostic.jump`.
 
 ## Decisions (settled)
@@ -89,7 +89,7 @@ config/nvim/
     format.lua             -- conform.nvim + format on save, formatters from loader
     editor.lua             -- oil, mini.ai/surround/pairs, guess-indent, todo-comments
     ui.lua                 -- snacks, catppuccin, lualine, which-key, dropbar
-    git.lua                -- gitsigns (jj colocated) + jj terminal helper
+    git.lua                -- gitsigns + Git/GitHub terminal helper
 ```
 
 `lua/config/keymaps.lua` is deliberately the one place I look when a binding
@@ -182,7 +182,7 @@ paid API key and is not planned.
 
 - **Statusline** (`lualine`, already in the plugin set) is not wired yet.
 - AI autocomplete (Copilot via blink) is in place; the rest of the polish tier
-  (harpoon, which-key, snacks dashboard/zen/dim, gitsigns + jj terminal) and the
+  (harpoon, which-key, snacks dashboard/zen/dim, gitsigns + Git terminal) and the
   kickstart-cruft cleanup remain.
 
 Two integration modes, pick one:
@@ -281,19 +281,14 @@ settled it. One accepted tradeoff: tree-sitter-manager does highlighting and par
 management but not treesitter-based indentation, so indent falls back to Neovim's
 built-in indent files (fine for these languages).
 
-## jj workflow
+## Git workflow
 
-jj is the daily driver. Plan:
+Git and GitHub are the daily drivers. Plan:
 
-- Projects are a **mix** of jj, plain git, and not-yet-migrated repos.
-  `gitsigns.nvim` handles this for free: it paints signs wherever a `.git` exists
-  (plain git or colocated jj) and stays quiet on pure jj with no `.git`. When a
-  project moves to jj, running `jj git init --colocate` keeps signs working.
-  Signs and inline diff work, blame is best-effort under jj.
-- A **snacks floating terminal** bound for jj commands (`jj status`, `jj log`,
-  `jj diff`) so version control stays inside the editor without a dedicated
-  plugin. There is no mature jj-native Neovim UI yet, so a terminal is the
-  pragmatic modern answer.
+- `gitsigns.nvim` provides gutter signs, hunk navigation and actions, inline
+  previews, blame, diff views, and branch/statusline data in every Git repo.
+- A **snacks floating terminal** keeps `git` and `gh` commands inside the editor
+  without adding a full Git UI plugin.
 
 ## Focus and eye candy (snacks)
 
@@ -314,7 +309,7 @@ low-friction startup means getting into a fresh, ready project fast:
 - **Dashboard project shortcuts** to jump straight into a repo.
 - **Harpoon pins** bring the working set back on reopen, no layout restore needed.
 - **Templates.** A simple `templates/` directory plus a scaffolding command
-  (`:NewProject <template>`) that copies a template and runs `jj git init`.
+  (`:NewProject <template>`) that copies a template and runs `git init`.
   No heavyweight generator plugin. This is a small custom command, revisited
   only if it proves too limited.
 
@@ -379,13 +374,13 @@ Add snacks dashboard, zen, dim, indent, notifier. Bind a focus toggle.
 
 Verify: dashboard on launch, zen and dim toggle cleanly.
 
-### Phase 5 — jj workflow and project startup
+### Phase 5 — Git workflow and project startup
 
-gitsigns (lights up on any `.git`, quiet on pure jj), snacks jj terminal, and the
+gitsigns, a snacks Git terminal, and the
 `:NewProject` template command.
 
-Verify: signs render in a colocated or plain-git repo and stay quiet on pure jj,
-jj terminal runs, scaffolding a template lands a ready-to-edit project.
+Verify: signs render in a Git repo, the Git terminal runs, and scaffolding a
+template lands a ready-to-edit project.
 
 ## Open questions
 
@@ -401,7 +396,7 @@ jj terminal runs, scaffolding a template lands a ready-to-edit project.
 ## Non-goals
 
 - AI chat or agentic editing in-editor. Autocomplete only.
-- A jj-native GUI plugin. Terminal is enough.
+- A dedicated Git GUI plugin. The terminal is enough.
 - Porting kickstart comments or example plugins. Fresh and lean.
 
 ```

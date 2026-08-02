@@ -4,7 +4,9 @@ format = """
 $username\
 $hostname\
 $directory\
-${custom.jj}\
+$git_branch\
+$git_status\
+$git_state\
 $cmd_duration\
 $line_break\
 $python\
@@ -17,20 +19,6 @@ style = "bold lavender"
 success_symbol = "[❯](peach)"
 error_symbol = "[❯](peach)"
 vimcmd_symbol = "[❮](subtext1)"
-
-[custom.jj]
-when = "jj-starship detect"
-shell = ["jj-starship", "--no-git-prefix", "--no-jj-prefix"]
-format = "$output "
-
-[git_branch]
-disabled = true
-
-[git_status]
-disabled = true
-
-[git_state]
-disabled = true
 
 [cmd_duration]
 format = "[$duration]($style) "

@@ -4,7 +4,7 @@
 --
 -- Layout:
 --   MODE  file.ts (typescript, +0~1-0)      lua_ls      8  3   Ln 12, Col 34
---   └mode └file    └(filetype, diff from vcsigns)  └lsp  └diagnostics  └position
+--   └mode └file    └(filetype, diff from gitsigns) └lsp  └diagnostics  └position
 
 local M = {}
 
@@ -117,20 +117,19 @@ local function lsp()
   return '%#StlMeta#' .. LSP .. ' ' .. table.concat(names, ', ') .. '%*'
 end
 
--- VCS cluster: jj bookmark + diff counts. Diff counts come from vcsigns
--- (vim.b.vcsigns_stats), so they are jj-aware. No filetype, no parens.
+-- Git branch + diff counts from gitsigns. No filetype, no parens.
 local function vcs()
   local out = ''
-  local bm = vim.b.jj_bookmark
-  if bm and bm ~= '' then
-    out = out .. '%#StlMeta# #' .. bm
+  local head = vim.b.gitsigns_head
+  if head and head ~= '' then
+    out = out .. '%#StlMeta# #' .. head
   end
-  local s = vim.b.vcsigns_stats
-  if s and (s.added + s.modified + s.removed) > 0 then
+  local s = vim.b.gitsigns_status_dict
+  if s and (s.added + s.changed + s.removed) > 0 then
     out = out
       .. '%#StlMeta# '
       .. '%#Added#+' .. s.added
-      .. '%#Changed#~' .. s.modified
+      .. '%#Changed#~' .. s.changed
       .. '%#Removed#-' .. s.removed
   end
   if out ~= '' then
@@ -158,7 +157,7 @@ function M.render()
   return table.concat {
     '%#' .. hl .. '# ' .. label .. ' %*', -- colored mode block
     '%#StlFile# %<%t%m%r %*', -- filename block (with background)
-    vcs(), -- #bookmark +added~changed-removed
+    vcs(), -- #branch +added~changed-removed
     '%=', -- ---- center ----
     lsp(), -- attached LSP server(s)
     '%=', -- ---- right ----

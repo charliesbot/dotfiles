@@ -176,10 +176,10 @@ setup_github_ssh() {
 
   # Switch dotfiles remote from HTTPS to SSH if needed
   local remote_url
-  remote_url=$(jj -R "$DOTFILES_DIR" git remote list | awk '$1 == "origin" { print $2 }')
+  remote_url=$(git -C "$DOTFILES_DIR" remote get-url origin)
   if [[ "$remote_url" == https://* ]]; then
     echo "Switching dotfiles remote to SSH..."
-    jj -R "$DOTFILES_DIR" git remote set-url origin git@github.com:charliesbot/dotfiles.git
+    git -C "$DOTFILES_DIR" remote set-url origin git@github.com:charliesbot/dotfiles.git
   fi
 }
 
