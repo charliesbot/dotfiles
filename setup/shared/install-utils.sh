@@ -76,14 +76,17 @@ prompt_for_vcs_config() {
 
 # Apply stored VCS configuration
 apply_vcs_config() {
+  echo "Applying VCS configuration..."
+  git config --global init.defaultBranch main
+  git config --global rerere.enabled true
+  git config --global remote.pushDefault origin
+
   if [[ -n "${VCS_CONFIG_NAME:-}" && -n "${VCS_CONFIG_EMAIL:-}" ]]; then
-    echo "Applying VCS configuration..."
     git config --global user.name "${VCS_CONFIG_NAME}"
     git config --global user.email "${VCS_CONFIG_EMAIL}"
-    git config --global init.defaultBranch main
     echo "VCS user name and email have been set."
   else
-    echo "VCS user details not provided, skipping VCS configuration."
+    echo "VCS user details not provided."
   fi
 }
 
@@ -111,15 +114,16 @@ create_symlinks() {
   local dotfiles_dir="${DOTFILES_DIR:-$HOME/dotfiles}"
 
   echo "Replacing existing configs with dotfiles..."
-  rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.config/nvim ~/.ideavimrc ~/.config/starship.toml ~/.config/ghostty ~/.config/herdr/config.toml ~/chai.toml 2>/dev/null
+  rm -rf ~/.vim ~/.vimrc ~/.zshrc ~/.config/nvim ~/.ideavimrc ~/.config/starship.toml ~/.config/ghostty ~/.config/herdr/config.toml ~/.config/worktrunk/config.toml ~/chai.toml 2>/dev/null
 
   echo "Creating symlinks..."
-  mkdir -p ~/projects ~/.config ~/.config/herdr
+  mkdir -p ~/projects ~/.config ~/.config/herdr ~/.config/worktrunk
 
   ln -s "$dotfiles_dir/config/zshrc" ~/.zshrc
   ln -s "$dotfiles_dir/config/nvim" ~/.config/nvim
   ln -s "$dotfiles_dir/config/ghostty" ~/.config/ghostty
   ln -s "$dotfiles_dir/config/herdr.toml" ~/.config/herdr/config.toml
+  ln -s "$dotfiles_dir/config/worktrunk.toml" ~/.config/worktrunk/config.toml
   ln -s "$dotfiles_dir/config/starship.toml" ~/.config/starship.toml
   ln -s "$dotfiles_dir/config/ideavimrc" ~/.ideavimrc
   ln -s "$dotfiles_dir/config/chai.toml" ~/chai.toml
@@ -149,6 +153,8 @@ install_brew_packages() {
     ripgrep \
     tree-sitter \
     fzf
+
+  gh extension install github/gh-stack --force
 
   # Install fonts
   brew install --cask \
