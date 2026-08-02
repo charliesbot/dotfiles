@@ -12,6 +12,7 @@ modern-web-guidance = "https://github.com/GoogleChrome/modern-web-guidance"
 stitch-skills = "https://github.com/google-labs-code/stitch-skills"
 emil-kowalski-skills = "https://github.com/emilkowalski/skills"
 i-have-adhd = "https://github.com/ayghri/i-have-adhd"
+gh-stack = "https://github.com/github/gh-stack"
 
 [skills]
 paths = [
@@ -34,6 +35,8 @@ paths = [
   "@android-skills/xr/*",
   # Emil Kowalski Skills
   "@emil-kowalski-skills/skills/*",
+  # GitHub Stack Skills
+  "@gh-stack/skills/*",
   # Herdr Skills
   "@herdr/SKILL.md",
   # I Have ADHD Skills
