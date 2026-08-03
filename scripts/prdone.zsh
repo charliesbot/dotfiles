@@ -100,7 +100,7 @@ prdone() {
     rmdir -- "$worktree_parent" 2>/dev/null || true
   fi
 
-  git show-ref --exists "refs/heads/$head"
+  git show-ref --exists "refs/heads/$head" 2>/dev/null
   local_ref_status=$?
   case "$local_ref_status" in
     0)
