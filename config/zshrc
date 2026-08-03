@@ -5,6 +5,8 @@ export EDITOR='nvim'
 alias gst="git status"
 alias glg='git log --graph --decorate --oneline -20'
 
+source "$HOME/dotfiles/scripts/prdone.zsh"
+
 # History configuration
 HISTFILE=${HOME}/.zsh_history
 HISTSIZE=10000
