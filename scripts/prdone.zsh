@@ -6,7 +6,8 @@ prdone() {
 
   local pr="$1"
   local info number base head head_oid state cross_repo
-  local current_branch current_oid current_status common_dir main_worktree main_status stack_status
+  local current_branch current_worktree current_oid current_status common_dir main_worktree main_status stack_status
+  local worktree_parent sanitized_head
   local local_ref_status remote_info remote_status remote_oid
 
   info=$(gh pr view "$pr" \
@@ -29,6 +30,8 @@ prdone() {
     print -u2 -- "Refusing PR #$number: switch to the '$head' worktree first."
     return 1
   fi
+
+  current_worktree=$(git rev-parse --show-toplevel) || return 1
 
   current_oid=$(git rev-parse HEAD) || return 1
   if [[ "$current_oid" != "$head_oid" ]]; then
@@ -88,6 +91,14 @@ prdone() {
   wt switch main || return 1
   git pull --ff-only origin main || return 1
   wt remove "$head" --foreground -y || return 1
+
+  worktree_parent=${current_worktree:h}
+  sanitized_head=${head//\//-}
+  if [[ "$current_worktree" == "$HOME/.worktrees/"* \
+      && "${current_worktree:t}" == "${main_worktree:t}" \
+      && "${worktree_parent:t}" == "$sanitized_head" ]]; then
+    rmdir -- "$worktree_parent" 2>/dev/null || true
+  fi
 
   git show-ref --exists "refs/heads/$head"
   local_ref_status=$?
