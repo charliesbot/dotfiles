@@ -125,12 +125,15 @@ local function vcs()
     out = out .. '%#StlMeta# #' .. head
   end
   local s = vim.b.gitsigns_status_dict
-  if s and (s.added + s.changed + s.removed) > 0 then
+  local added = s and s.added or 0
+  local changed = s and s.changed or 0
+  local removed = s and s.removed or 0
+  if (added + changed + removed) > 0 then
     out = out
       .. '%#StlMeta# '
-      .. '%#Added#+' .. s.added
-      .. '%#Changed#~' .. s.changed
-      .. '%#Removed#-' .. s.removed
+      .. '%#Added#+' .. added
+      .. '%#Changed#~' .. changed
+      .. '%#Removed#-' .. removed
   end
   if out ~= '' then
     out = out .. '%*'
