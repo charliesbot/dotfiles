@@ -1,1 +1,1 @@
-worktree-path = "~/.worktrees/{{ owner }}/{{ repo }}/{{ branch | sanitize }}"
+worktree-path = "~/.worktrees/{{ owner }}/{{ branch | sanitize }}/{{ repo }}"
