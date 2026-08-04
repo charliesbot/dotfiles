@@ -1,5 +1,5 @@
 -- The single home for plugin-independent keymaps.
--- Plugin-backed keys (picker, explorer, harpoon, LSP) live with their plugin.
+-- Plugin-backed keys (picker, explorer, Git, LSP) live with their plugin.
 
 local map = vim.keymap.set
 

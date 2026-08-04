@@ -5,7 +5,7 @@ return {
   opts = {},
   keys = {
     {
-      '<leader>sr',
+      '<leader>gd',
       '<cmd>CodeDiff main...<cr>',
       desc = 'Review branch against main',
     },

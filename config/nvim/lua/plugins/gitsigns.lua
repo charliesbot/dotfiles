@@ -1,4 +1,4 @@
--- Git gutter signs, hunk actions, and statusline data.
+-- Git gutter signs, hunk navigation, and statusline data.
 return {
   'lewis6991/gitsigns.nvim',
   event = { 'BufReadPost', 'BufNewFile' },
@@ -24,9 +24,6 @@ return {
           gitsigns.nav_hunk 'prev'
         end
       end, 'Previous hunk')
-      map('<leader>su', gitsigns.reset_hunk, 'Reset hunk under cursor')
-      map('<leader>sd', gitsigns.preview_hunk_inline, 'Preview hunk inline')
-      map('<leader>sv', gitsigns.diffthis, 'Side-by-side diff view')
     end,
   },
 }
