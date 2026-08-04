@@ -136,7 +136,7 @@ install_brew_packages() {
 
   brew install \
     jesseduffield/lazydocker/lazydocker \
-    lazygit \
+    hunk \
     worktrunk \
     neovim \
     zoxide \
