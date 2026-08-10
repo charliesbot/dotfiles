@@ -1,60 +1,10 @@
-platforms = ["claude", "antigravity", "opencode", "codex", "cursor", "pi"]
 
-instructions = ["~/dotfiles/ai/instructions/AGENTS.md"]
+platforms = ['claude', 'antigravity', 'opencode', 'codex', 'cursor', 'pi']
 
-[deps]
-agent-skills = "https://github.com/addyosmani/agent-skills"
-android-skills = "https://github.com/android/skills"
-herdr = "https://github.com/ogulcancelik/herdr"
-kotlin-compose-android-skills = "https://github.com/chrisbanes/skills"
-mattpocock-skills = "https://github.com/mattpocock/skills"
-modern-web-guidance = "https://github.com/GoogleChrome/modern-web-guidance"
-stitch-skills = "https://github.com/google-labs-code/stitch-skills"
-emil-kowalski-skills = "https://github.com/emilkowalski/skills"
-i-have-adhd = "https://github.com/ayghri/i-have-adhd"
-gh-stack = "https://github.com/github/gh-stack"
-
-[skills]
-paths = [
-  "~/dotfiles/ai/skills/*",
-  # Addy Osmani Agent Skills
-  "@agent-skills/skills/code-simplification",
-  "@agent-skills/skills/context-engineering",
-  "@agent-skills/skills/incremental-implementation",
-  "@agent-skills/skills/planning-and-task-breakdown",
-  "@agent-skills/skills/source-driven-development",
-  # Android Skills
-  "@android-skills/device-ai/*",
-  "@android-skills/devtools/*",
-  "@android-skills/jetpack-compose/*",
-  "@android-skills/navigation/*",
-  "@android-skills/performance/*",
-  "@android-skills/system/*",
-  "@android-skills/testing/*",
-  "@android-skills/wear/*",
-  "@android-skills/xr/*",
-  # Emil Kowalski Skills
-  "@emil-kowalski-skills/skills/*",
-  # GitHub Stack Skills
-  "@gh-stack/skills/*",
-  # Herdr Skills
-  "@herdr/SKILL.md",
-  # I Have ADHD Skills
-  "@i-have-adhd/skills/*",
-  # Kotlin Compose Android Skills
-  "@kotlin-compose-android-skills/skills/*",
-  # Matt Pocock Skills
-  "@mattpocock-skills/skills/productivity/*",
-  # Modern Web Guidance
-  "@modern-web-guidance/skills/*",
-  # Stitch Skills
-  "@stitch-skills/skills/design-md",
-  "@stitch-skills/skills/enhance-prompt",
-  "@stitch-skills/skills/taste-design",
+instructions = [
+  '~/dotfiles/ai/instructions/AGENTS.md',
+  '~/dotfiles/ai/instructions/ADHD.md',
 ]
-
-[subagents]
-paths = ["~/dotfiles/ai/subagents/*"]
 
 [mcp.gcloud]
 command = "npx"
@@ -76,8 +26,95 @@ args = ["-y", "firebase-tools@latest", "mcp"]
 command = "/opt/homebrew/bin/node"
 args = ["/Applications/Tolaria.app/Contents/Resources/mcp-server/index.js"]
 env = { WS_UI_PORT = "9711" }
-type = "stdio"
 
 [mcp.engram]
 command = "/opt/homebrew/bin/engram"
 args = ["mcp", "--tools=agent"]
+
+[skills]
+local = ['~/dotfiles/ai/skills']
+
+[[skills.github]]
+url = 'https://github.com/addyosmani/agent-skills'
+include = [
+  'code-simplification',
+  'context-engineering',
+  'incremental-implementation',
+  'planning-and-task-breakdown',
+  'source-driven-development',
+]
+
+[[skills.github]]
+url = 'https://github.com/android/skills'
+include = [
+  'adaptive',
+  'agp-9-upgrade',
+  'android-cli',
+  'android-intent-security',
+  'appfunctions',
+  'camerax',
+  'display-glasses-with-jetpack-compose-glimmer',
+  'edge-to-edge',
+  'engage-sdk-integration',
+  'leanback-to-compose-tv-migration',
+  'media3-cast-integration',
+  'migrate-xml-views-to-jetpack-compose',
+  'navigation-3',
+  'perfetto-sql',
+  'perfetto-trace-analysis',
+  'play-billing-library-version-upgrade',
+  'play-policy-insights',
+  'r8-analyzer',
+  'styles',
+  'testing-setup',
+  'verified-email',
+  'wear-compose-m3',
+]
+
+[[skills.github]]
+url = 'https://github.com/chrisbanes/skills'
+include = [
+  'compose-animations',
+  'compose-component-design',
+  'compose-focus-navigation',
+  'compose-performance',
+  'compose-state-and-effects',
+  'compose-ui-testing-patterns',
+  'kotlin-api-design',
+  'kotlin-concurrency-and-flow',
+  'kotlin-control-flow',
+  'run-github-project',
+  'shepherd',
+  'to-plan',
+  'using-chrisbanes-skills',
+]
+
+[[skills.github]]
+url = 'https://github.com/emilkowalski/skills'
+include = [
+  'animate',
+  'animation-vocabulary',
+  'apple-design',
+  'emil-design-eng',
+  'find-animation-opportunities',
+  'improve-animations',
+  'pick-ui-library',
+  'prototype',
+  'review-animations',
+]
+
+[[skills.github]]
+url = 'https://github.com/github/gh-stack'
+include = ['gh-stack']
+
+[[skills.github]]
+url = 'https://github.com/googlechrome/modern-web-guidance'
+include = ['chrome-extensions', 'modern-web-guidance']
+
+[[skills.github]]
+url = 'https://github.com/mattpocock/skills'
+include = ['grill-me', 'grilling', 'handoff', 'teach', 'wait-what']
+
+[[skills.github]]
+url = 'https://github.com/ogulcancelik/herdr'
+include = ['herdr']
