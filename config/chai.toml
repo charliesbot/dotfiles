@@ -35,13 +35,7 @@ local = ['~/dotfiles/ai/skills', '~/projects/chai/skills']
 
 [[skills.github]]
 url = 'https://github.com/addyosmani/agent-skills'
-include = [
-  'code-simplification',
-  'context-engineering',
-  'incremental-implementation',
-  'planning-and-task-breakdown',
-  'source-driven-development',
-]
+include = ['code-simplification']
 
 [[skills.github]]
 url = 'https://github.com/android/skills'
@@ -82,10 +76,6 @@ include = [
   'kotlin-api-design',
   'kotlin-concurrency-and-flow',
   'kotlin-control-flow',
-  'run-github-project',
-  'shepherd',
-  'to-plan',
-  'using-chrisbanes-skills',
 ]
 
 [[skills.github]]
