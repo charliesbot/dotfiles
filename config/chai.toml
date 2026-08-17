@@ -115,5 +115,9 @@ url = 'https://github.com/mattpocock/skills'
 include = ['grill-me', 'grilling', 'handoff', 'teach', 'wait-what']
 
 [[skills.github]]
+url = 'https://github.com/max-sixty/worktrunk'
+include = ['worktrunk', 'wt-switch-create']
+
+[[skills.github]]
 url = 'https://github.com/ogulcancelik/herdr'
 include = ['herdr']
