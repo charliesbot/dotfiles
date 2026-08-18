@@ -27,11 +27,16 @@ args = ["/Applications/Tolaria.app/Contents/Resources/mcp-server/index.js"]
 env = { WS_UI_PORT = "9711" }
 
 [skills]
-local = ['~/dotfiles/ai/skills', '~/projects/chai/skills']
+local = [
+  '~/dotfiles/ai/skills',
+  '~/projects/chai/skills'
+]
 
 [[skills.github]]
 url = 'https://github.com/addyosmani/agent-skills'
-include = ['code-simplification']
+include = [
+  'code-simplification'
+]
 
 [[skills.github]]
 url = 'https://github.com/android/skills'
@@ -56,7 +61,7 @@ include = [
   'styles',
   'testing-setup',
   'verified-email',
-  'wear-compose-m3',
+  'wear-compose-m3'
 ]
 
 [[skills.github]]
@@ -70,7 +75,7 @@ include = [
   'compose-ui-testing-patterns',
   'kotlin-api-design',
   'kotlin-concurrency-and-flow',
-  'kotlin-control-flow',
+  'kotlin-control-flow'
 ]
 
 [[skills.github]]
@@ -84,25 +89,48 @@ include = [
   'improve-animations',
   'pick-ui-library',
   'prototype',
-  'review-animations',
+  'review-animations'
 ]
 
 [[skills.github]]
 url = 'https://github.com/github/gh-stack'
-include = ['gh-stack']
+include = [
+  'gh-stack'
+]
 
 [[skills.github]]
 url = 'https://github.com/googlechrome/modern-web-guidance'
-include = ['chrome-extensions', 'modern-web-guidance']
+include = [
+  'chrome-extensions',
+  'modern-web-guidance'
+]
 
 [[skills.github]]
 url = 'https://github.com/mattpocock/skills'
-include = ['grill-me', 'grilling', 'handoff', 'teach', 'wait-what']
+include = [
+  'code-review',
+  'codebase-design',
+  'diagnosing-bugs',
+  'grill-me',
+  'grill-with-docs',
+  'grilling',
+  'handoff',
+  'improve-codebase-architecture',
+  'research',
+  'teach',
+  'wait-what',
+  'writing-for-agents'
+]
 
 [[skills.github]]
 url = 'https://github.com/max-sixty/worktrunk'
-include = ['worktrunk', 'wt-switch-create']
+include = [
+  'worktrunk',
+  'wt-switch-create'
+]
 
 [[skills.github]]
 url = 'https://github.com/ogulcancelik/herdr'
-include = ['herdr']
+include = [
+  'herdr'
+]
