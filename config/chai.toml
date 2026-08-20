@@ -118,6 +118,7 @@ include = [
   'improve-codebase-architecture',
   'research',
   'teach',
+  'to-spec',
   'wait-what',
   'writing-for-agents'
 ]
