@@ -1,9 +1,12 @@
-platforms = ['claude', 'antigravity', 'opencode', 'codex', 'cursor', 'pi']
+platforms = ['antigravity', 'opencode', 'codex']
 
 instructions = [
   '~/projects/skills/instructions/AGENTS.md',
   '~/projects/skills/instructions/ADHD.md',
 ]
+
+[subagents]
+paths = ["~/projects/skills/subagents/*.md"]
 
 [mcp.gcloud]
 command = "npx"
