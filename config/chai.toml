@@ -1,4 +1,4 @@
-platforms = ['antigravity', 'opencode', 'codex']
+platforms = ['antigravity', 'opencode', 'codex', 'claude']
 
 instructions = [
   '~/projects/skills/instructions/AGENTS.md',
@@ -21,7 +21,11 @@ command = "npx"
 args = ["-y", "firebase-tools@latest", "mcp"]
 
 [skills]
-local = ['~/projects/skills/skills', '~/projects/chai/skills']
+local = [
+  '~/projects/skills/skills',
+  '~/projects/chai/skills',
+  '~/projects/android-design/skills',
+]
 
 [[skills.github]]
 url = 'https://github.com/addyosmani/agent-skills'
@@ -33,25 +37,39 @@ include = [
   'adaptive',
   'agp-9-upgrade',
   'android-cli',
+  'android-for-cars-parked-apps',
   'android-intent-security',
+  'android-permissions-security',
   'android-profiler',
+  'anr-audit-and-fix',
   'appfunctions',
   'camerax',
   'display-glasses-with-jetpack-compose-glimmer',
   'edge-to-edge',
   'engage-sdk-integration',
+  'glance-appwidget-updates-and-memory',
+  'glance-canonical-layouts',
+  'ink-app-builder',
+  'ink-custom-brush-builder',
+  'jetpack-compose-performance',
   'leanback-to-compose-tv-migration',
+  'litert-lm',
+  'litert-runtime',
   'media3-cast-integration',
   'migrate-xml-views-to-jetpack-compose',
+  'ml-kit-genai-prompt-api',
+  'mlkit-agent-api',
   'navigation-3',
+  'navigation-event',
   'play-billing-library-version-upgrade',
   'play-policy-insights',
+  'projected-hardware',
   'r8-analyzer',
   'restore-credentials',
-  'styles',
   'testing-setup',
   'verified-email',
   'wear-compose-m3',
+  'wear-widgets',
 ]
 
 [[skills.github]]
@@ -87,6 +105,10 @@ url = 'https://github.com/github/gh-stack'
 include = ['gh-stack']
 
 [[skills.github]]
+url = 'https://github.com/google-labs-code/stitch-skills'
+include = ['design-md', 'enhance-prompt', 'taste-design']
+
+[[skills.github]]
 url = 'https://github.com/googlechrome/modern-web-guidance'
 include = ['chrome-extensions', 'modern-web-guidance']
 
@@ -115,3 +137,7 @@ include = ['worktrunk', 'wt-switch-create']
 [[skills.github]]
 url = 'https://github.com/ogulcancelik/herdr'
 include = ['herdr']
+
+[[skills.github]]
+url = 'https://github.com/yschimke/skills'
+include = ['compose-preview', 'compose-ui-builder']
